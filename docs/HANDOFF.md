@@ -12,11 +12,15 @@
 
 ## First action for next session
 
-**Inspect this branch's PR and its CI for the final head SHA.** Fix failed tests before merging or moving on. Existing GitHub Actions may require manual activation on a newly forked repository.
+**Review [PR #1](https://github.com/Missel2/node-red-contrib-s7/pull/1) against the latest SHA and CI.** Six checks passed on `9b7fe3ffe658c588f4d97dcafd3b104e210260d9` in [workflow 42297490497](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42297490497), including a baseline negative control. This proves only scoped wrapper tests, not real S7 socket reliability. After any further commit, recheck CI before merge. Human maintainer decides the merge.
 
 ## Subsequent P0
 
 Recover the actual historical Musashi source patch rather than copying an image claim. Historical patch/image identifiers were recorded in private Musashi deployment work and must be recovered through authorized access; do not place internal registry hosts, infrastructure identifiers or production logs in this public fork. See [source investigation](MUSASHI_CONNECTION_REGRESSION.md). Reproduce the pending-transport case against a named nodes7 revision and check a scoped dependency-level correction.
+
+## Repository administration gap
+
+GitHub Issues are currently **disabled** in this fork (GitHub API returned HTTP 410 when an issue was attempted). Until the maintainer enables Issues under Repository Settings → General → Features, use [WORK_INDEX.md](WORK_INDEX.md) as the durable task inventory. The GitHub app in this session cannot change that repository setting; do not pretend issues were created.
 
 ## Next quality infrastructure
 
