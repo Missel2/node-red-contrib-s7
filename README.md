@@ -18,6 +18,7 @@ Start here:
 - [Human-directed, AI-led engineering](docs/AI_DEVELOPMENT.md) — responsibilities, disclosures and boundaries.
 - [Verification ledger](docs/EVIDENCE.md) — observed results versus unverified aims.
 - [Development work index](docs/WORK_INDEX.md) — concrete tasks and priority while issues are unavailable.
+- [Repository administration checklist](docs/REPOSITORY_SETUP.md) — manual GitHub settings required for enforceable checks.
 - [Development handoff](docs/HANDOFF.md) — resuming work from repository state.
 - [Maintainer and agent instructions](AGENTS.md) — repository workflow and limits.
 - [Decision log](docs/DECISIONS.md) — decisions and open design questions.
