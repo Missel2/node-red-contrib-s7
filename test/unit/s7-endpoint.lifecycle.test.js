@@ -6,7 +6,8 @@ const { EventEmitter } = require('node:events');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
-const source = fs.readFileSync(path.join(__dirname, '../../red/s7.js'), 'utf8');
+const sourceFile = process.env.S7_TEST_SOURCE || path.join(__dirname, '../../red/s7.js');
+const source = fs.readFileSync(path.resolve(sourceFile), 'utf8');
 
 function pending() {
     let resolve, reject;

@@ -46,3 +46,36 @@ jobs:
         run: npm install --no-package-lock --ignore-scripts --no-audit
       - name: Check package contents
         run: npm pack --dry-run
+
+  baseline-negative-control:
+    name: Baseline must fail stale-read regression
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Extract pre-fix source
+        shell: bash
+        run: git show e6b5c54f63bce6302f97a7659d258fa30d80caf0:red/s7.js > test/unit/original-s7.js
+      - name: Prove targeted test fails on pre-fix source
+        shell: bash
+        env:
+          S7_TEST_SOURCE: test/unit/original-s7.js
+        run: |
+          set +e
+          node --test --test-name-pattern="late successful read" test/unit/s7-endpoint.lifecycle.test.js > baseline.tap 2>&1
+          code=$?
+          set -e
+          cat baseline.tap
+          if [ "$code" -eq 0 ]; then
+            echo "::error::Regression test unexpectedly passes old source"
+            exit 1
+          fi
+          if ! grep -Eq "not ok .*late successful read" baseline.tap; then
+            echo "::error::Failure was unrelated to the targeted stale-read regression"
+            exit 1
+          fi
+          echo "Verified: the known pre-fix source fails the targeted test"
