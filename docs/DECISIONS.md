@@ -24,6 +24,14 @@ Dates describe the time a direction was documented. An accepted direction is not
 
 **Decision:** No automatic publication to npm or deployment to production controllers. Establish evidence and compatibility boundaries first. Preserve existing Node-RED behavior where possible, with documented major-version migrations if required.
 
+## D-005 — AI-assisted implementation, human review (2026-11-06)
+
+**Decision:** Disclose that most engineering work can be AI-assisted; the human maintainer determines requirements, evaluates evidence and authorizes substantive merges, live-PLC activity and package releases. Every PR records the actual assistance, tests, risks and rollback path. The Git commit author field is not evidence that each line was written by a human. See [operating model](AI_DEVELOPMENT.md).
+
+## D-006 — Scoped S7 wrapper regression (2026-11-06)
+
+**Decision:** Test and address stale callback and timer cleanup behavior in the Node-RED wrapper first, without conflating this with the Musashi pending-handshake/socket problem inside `@st-one-io/nodes7`. Protocol-level socket cleanup remains P0 and must be independently reproduced and verified.
+
 ## Open decisions
 
 - Exact dependency-fork strategy for `@st-one-io/nodes7` versus an alternative maintained protocol implementation.

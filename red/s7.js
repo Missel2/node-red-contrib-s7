@@ -153,6 +153,8 @@ module.exports = function (RED) {
         var readInProgress = false;
         var readDeferred = 0;
         var connected = false;
+        var connectionEpoch = 0;
+        var closing = false;
         var currentCycleTime = config.cycletime;
         var transport = config.transport || 'iso-on-tcp';
 
@@ -273,7 +275,8 @@ module.exports = function (RED) {
             });
         }
 
-        function cycleCallback(values) {
+        function cycleCallback(values, epoch) {
+            if (closing || !connected || epoch !== connectionEpoch) return;
             readInProgress = false;
 
             if (readDeferred && connected) {
@@ -300,50 +303,73 @@ module.exports = function (RED) {
         }
 
         function doCycle() {
-            if (!readInProgress && connected) {
-                itemGroup.readAllItems().then(cycleCallback).catch(e => {
+            if (closing || !connected) return;
+            if (!readInProgress) {
+                const epoch = connectionEpoch;
+                readInProgress = true;
+                Promise.resolve().then(() => itemGroup.readAllItems()).then(values => {
+                    cycleCallback(values, epoch);
+                }).catch(e => {
+                    if (closing || !connected || epoch !== connectionEpoch) return;
                     node.error(e, {});
                     readInProgress = false;
                     manageStatus('offline');
                 });
-                readInProgress = true;
             } else {
-                readDeferred++;
+                readDeferred = 1;
             }
         }
         node.doCycle = doCycle;
 
         function onConnect() {
+            if (closing) return;
+            connectionEpoch += 1;
             readInProgress = false;
             readDeferred = 0;
             connected = true;
-
             manageStatus('online');
-
             node.updateCycleTime(currentCycleTime);
         }
 
         function onDisconnect() {
-            manageStatus('offline');
+            connectionEpoch += 1;
             connected = false;
+            readInProgress = false;
+            readDeferred = 0;
+            clearInterval(node._td);
+            node._td = undefined;
+            manageStatus('offline');
         }
 
         node.on('close', done => {
+            closing = true;
+            connectionEpoch += 1;
+            connected = false;
+            readInProgress = false;
+            readDeferred = 0;
+            clearInterval(node._td);
+            node._td = undefined;
             manageStatus('offline');
-            if (!node.endpoint) done();
 
-            node.endpoint.disconnect().then(done).catch(e => {
-                node.error(e);
-            });
+            const endpoint = node.endpoint;
+            if (!endpoint) return done();
+            Promise.resolve().then(() => endpoint.disconnect()).then(
+                () => done(),
+                e => {
+                    node.error(e);
+                    done(e);
+                }
+            );
         });
 
         manageStatus('offline');
 
         node.endpoint = new nodes7.S7Endpoint(connOpts);
-        node.endpoint.on('connecting', () => manageStatus('connecting'));
+        node.endpoint.on('connecting', () => { if (!closing) manageStatus('connecting'); });
         node.endpoint.on('connect', onConnect);
         node.endpoint.on('disconnect', onDisconnect);
         node.endpoint.on('error', (e => {
+            if (closing) return;
             manageStatus('offline');
             node.error(e && e.toString(), {});
         }));

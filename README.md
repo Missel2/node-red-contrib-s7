@@ -8,11 +8,16 @@ This fork is intended to develop the existing Siemens S7 integration for Node-RE
 
 **Status (2026-11-06): objectives documented, implementation not yet validated.** The fork currently retains upstream version `3.1.3`. These documents describe intended engineering requirements, not verified properties of the present code. No Missel2 npm package or certified release is available. The installation instructions below continue to refer to the original upstream package, not a released build of this fork.
 
+**Development model:** This fork uses AI assistance for most engineering implementation and investigation. The human maintainer `Missel2` sets priorities, reviews the evidence and makes decisions on merges and releases. AI-generated code has no special exemption from testing or review. See [how the project is maintained](docs/AI_DEVELOPMENT.md).
+
 Start here:
 - [Scope and boundaries](docs/PROJECT_SCOPE.md) — what the fork does and does not attempt.
 - [Engineering and quality policy](docs/QUALITY_POLICY.md) — required behavior and evidence for changes.
 - [Test strategy](docs/TEST_STRATEGY.md) — protocol test doubles, fault injection and release validation.
 - [Roadmap](docs/ROADMAP.md) — ordered work, starting with the previously investigated connection-lifecycle defect.
+- [Human-directed, AI-led engineering](docs/AI_DEVELOPMENT.md) — responsibilities, disclosures and boundaries.
+- [Verification ledger](docs/EVIDENCE.md) — observed results versus unverified aims.
+- [Development handoff](docs/HANDOFF.md) — resuming work from repository state.
 - [Maintainer and agent instructions](AGENTS.md) — repository workflow and limits.
 - [Decision log](docs/DECISIONS.md) — decisions and open design questions.
 

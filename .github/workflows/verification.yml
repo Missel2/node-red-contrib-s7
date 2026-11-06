@@ -1,0 +1,48 @@
+name: Verification
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verification-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  wrapper-contract:
+    name: Wrapper contract (${{ matrix.os }}, Node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Syntax validation
+        run: npm run check:syntax
+      - name: Offline wrapper regression
+        run: npm test
+
+  package-smoke:
+    name: Package dependency smoke (Ubuntu, Node 22)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      # Inherited lockfile is out of sync with package.json.
+      # Temporary exception, NOT reproducible dependency verification.
+      - name: Check runtime dependency installation
+        run: npm install --no-package-lock --ignore-scripts --no-audit
+      - name: Check package contents
+        run: npm pack --dry-run

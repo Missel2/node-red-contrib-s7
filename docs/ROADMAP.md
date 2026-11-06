@@ -4,7 +4,7 @@
 
 ## P0 — Reproduce the previously investigated Musashi connection fault
 
-**First technical priority.** Do not start with feature development or a large protocol rewrite.
+**First technical priority.** Do not start with feature development or a large protocol rewrite. Initial wrapper-level timer/late-read/close regressions are proposed in a separate change from the historical pending TCP/COTP handshake issue in nodes7. See [Musashi regression investigation](MUSASHI_CONNECTION_REGRESSION.md) and [evidence ledger](EVIDENCE.md). Do not mark either resolved without CI and failure reproduction.
 
 - [ ] Locate the actual Musashi Node-RED image patch/source, its origin commit and failure evidence.
 - [ ] Separate `@st-one-io/nodes7` / classical S7 code from any independent `s7-plus` changes.
