@@ -1,19 +1,19 @@
 # Repository administration checklist
 
-**Status checked:** 2026-11-06. These are GitHub UI settings, not modifications that this repository file automatically enforces.
+**Status checked:** 2026-11-07. These are GitHub UI settings, not modifications that this repository file automatically enforces.
 
 ## Observed at initial setup
 
 - GitHub Actions is enabled and PR-triggered workflow runs were observed.
-- The default branch is `master`. It was reported as **not protected** at the fork baseline.
-- GitHub Issues is **disabled** (attempt to create the first engineering issue returned HTTP 410).
+- The default branch is `master`. A repository Ruleset named `protect-master` is **active**, requiring PRs, CI checks and resolved conversations; it disallows force-push/deletion. Verify enforcement in GitHub when changing check names.
+- GitHub Issues is **enabled**; work items #2–#5 are now in GitHub.
 - No npm publishing or OT deployment workflow has been added.
 - This assistant's available GitHub integration cannot change repository feature flags or branch-protection rulesets.
 
 ## Required one-time action for the human maintainer
 
-1. **Enable Issues:** Repository → Settings → General → Features → Issues. Then transfer WI-002, WI-003 and WI-004 from [WORK_INDEX.md](WORK_INDEX.md) into Issues. Check for duplicates first.
-2. **Protect master:** Repository → Settings → Rules → Rulesets (or Branch protection) → target `master`. Require pull requests and the validated CI checks from `.github/workflows/verification.yml`; disallow force pushes and deletion. Confirm the rule is active with a safe test PR.
+1. **Issues:** Already enabled; continue using [Issues](https://github.com/Missel2/node-red-contrib-s7/issues) and link the [work index](WORK_INDEX.md). Do not re-create duplicates.
+2. **Master ruleset:** Active as `protect-master`; monitor that the required CI check names continue to match workflow job names. Do not turn off protection just to bypass a test.
 3. **Set review policy suitable for a solo maintainer:** PRs created through the Missel2 account cannot be formally approved by the same account as an independent reviewer. Do not configure a required GitHub approving review without a second eligible reviewer, or the sole-maintainer workflow may deadlock. The human owner should still make an explicit merge decision after reviewing the PR and CI. A second independent reviewer can be introduced later.
 4. **Keep workflows least-privileged:** The first workflow requests `contents: read`, uses no production secrets and neither publishes packages nor accesses PLC networks.
 5. **Avoid auto-publishing:** Do not enable unattended npm package publishing or production OT deployments merely because a pull request passes CI.

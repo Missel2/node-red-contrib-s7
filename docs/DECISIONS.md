@@ -48,3 +48,7 @@ Dates describe the time a direction was documented. An accepted direction is not
 - Formal CI reliability thresholds and test duration based on first measurements.
 - Whether protocol simulation should be Python/Snap7-based, a custom minimal fixture, or both.
 - npm package identity and release-signing/attestation details.
+
+## D-009 — Separate CI/bootstrap from reliability fixes (2026-11-07)
+
+**Decision:** PR #1 establishes AI-assisted maintenance transparency, attribution, task tracking, hosted CI and tests against the unchanged S7 runtime. Its earlier experimental wrapper corrections are explicitly excluded from the final PR diff. Known defects remain tracked in GitHub Issues; first reproduce, then make one narrowly scoped fix. The required “Baseline must fail stale-read regression” check is an **expected-failure characterization**, not a passing repaired-behavior test. Its semantics must be migrated when Issue #3 is fixed. See [work index](WORK_INDEX.md) and [evidence](EVIDENCE.md).

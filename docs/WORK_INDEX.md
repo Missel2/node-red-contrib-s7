@@ -1,34 +1,18 @@
 # Work index — S7 reliability fork
 
-**Updated:** 2026-11-07. Tasks here are tracked until GitHub Issues are enabled. After enabling Issues, convert tasks to individually scoped issues and link them here. Do not create duplicates if they already exist.
+**Updated:** 2026-11-07. GitHub Issues are enabled. This file is a navigation index; do not duplicate tracked work.
 
-## Current change
+| ID | Priority | Work | State / next |
+| --- | --- | --- | --- |
+| WI-001 | P0 | [PR #1: AI-assisted process, upstream credits and first CI](https://github.com/Missel2/node-red-contrib-s7/pull/1) | Narrowed to **no runtime changes**; verify final six checks and seek human merge decision |
+| WI-002 | P0 | [Issue #2: pending transport teardown](https://github.com/Missel2/node-red-contrib-s7/issues/2) | Hypothesis from source inspection; test first |
+| WI-003 | P0 | [Issue #3: stale reads and reconnect overlap](https://github.com/Missel2/node-red-contrib-s7/issues/3) | First expected failure reproduced; add targeted cases before a fix PR |
+| WI-004 | P1 | [Issue #4: disposable S7 protocol endpoint](https://github.com/Missel2/node-red-contrib-s7/issues/4) | Wire-protocol CI not yet implemented |
+| WI-005 | P1 | [Issue #5: reproducible npm lockfile](https://github.com/Missel2/node-red-contrib-s7/issues/5) | Current inherited lockfile stale; release gate missing |
+| WI-006 | P2 | Data freshness, diagnostics and uncertain writes | Requirements only; do not implement before reliability baseline |
 
-| ID | Priority | Task | State | Next action |
-| --- | --- | --- | --- | --- |
-| WI-001 | P0 | [Transparent AI-assisted maintenance, credits and endpoint wrapper regressions](https://github.com/Missel2/node-red-contrib-s7/pull/1) | PR open; nine wrapper tests and both negative controls passed in [CI 42354533869](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42354533869) on commit `42ba5d7d95e46817931e8590907c65c3780e4db9` | Confirm final head CI after documentation refresh; human merge decision |
-| WI-002 | P0 | Pending COTP/socket cleanup from Musashi investigation | Not reproduced in this fork | Recover authorized source, build failing dependency-level fault case |
-| WI-003 | P1 | Disposable S7 protocol endpoint and TCP fault proxy on GitHub-hosted runners | Not implemented | Pick licensed test fixture, verify real S7 reads/writes, inject faults |
-| WI-004 | P1 | Reproducible dependency lockfile | Inherited lock stale | Generate current lock using trusted registry, enforce npm ci |
-| WI-005 | P2 | Diagnostic state, error taxonomy and data freshness semantics | Requirements only | Specify public contract, test invalid/old data and uncertain writes |
+## Continuation rules
 
-## Task acceptance notes
+Review open PRs, CI and issues before starting new work. Test one defect before patching it. The current expected-failing stale-read check is a **characterization**: it should be replaced with a passing regression after fixing #3, with any associated branch ruleset check name updated deliberately. Passing mock checks do not establish real S7 compatibility.
 
-**WI-002.** Isolate `@st-one-io/nodes7` from wrapper behavior and `s7-plus`; demonstrate a baseline handshake/timeout socket leak; fix at the correct dependency layer; show fail-before/pass-after and bounded reconnect resources.
-
-**WI-003.** Real network fixture on GitHub Ubuntu and Windows, tests that fail if the fixture does not start, reproducible resets and timeouts, bounded diagnostic artifacts, explicit distinction from Siemens hardware compatibility.
-
-**WI-004.** Correct all package and transitive dependency versions/integrity values using actual npm registry output; test `npm ci` on supported runners, `npm pack --dry-run` and security findings.
-
-**WI-005.** Report last successful PLC read separately from last output, never reclassify a cached value as fresh, classify disconnection and unknown write outcomes, preserve backwards compatibility.
-
-## How to resume
-
-1. Verify the status and CI of open PR #1.
-2. Continue WI-002 (highest technical priority), do not start a feature rewrite.
-3. Update this index and [HANDOFF.md](HANDOFF.md) after each substantive round.
-4. Before any claim about field reliability, verify real protocol/server and named Siemens hardware evidence separately.
-
-## Administrative prerequisite
-
-Issues are currently disabled in the fork. The maintainer can enable **Settings → General → Features → Issues**. No npm release, production OT sync or automatic merge is authorized by this index.
+Never automatically merge, publish packages or access a production PLC.

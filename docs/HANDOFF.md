@@ -1,33 +1,32 @@
 # Development handoff
 
-**Last updated:** 2026-11-07; check GitHub for fresher work. This file is a continuation point, not proof of successful CI.
+**Last updated:** 2026-11-07 — confirm current PR and CI before acting.
 
-## Current work
+## Working model and scope
 
-- Repository: `Missel2/node-red-contrib-s7`; default branch `master`.
-- Prior default-branch baseline: `e6b5c54f63bce6302f97a7659d258fa30d80caf0`.
-- Work branch: `feat/ai-first-maintenance-and-connection-regressions`.
-- Proposed changes: transparent AI-assisted maintainer model, upstream [credits](UPSTREAM_AND_CREDITS.md), PR template and CI, Node-RED endpoint wrapper lifecycle correction and mocked regression tests, including a pending-read serialization check across reconnect.
-- The critical wrapper invariant is now **at most one outstanding read promise per endpoint item group** through reconnect; a permanently unresolved dependency promise can prevent future polling until settled. This limitation is intentionally disclosed and needs dependency-level timeout/cancellation tests.
-- Protocol dependency remains `@st-one-io/nodes7@1.1.2`; this change **does not** claim to repair its partial COTP handshake socket handling.
+- Repository: `Missel2/node-red-contrib-s7`; protected default branch `master`.
+- PR #1: [development process and hosted CI baseline](https://github.com/Missel2/node-red-contrib-s7/pull/1).
+- The intended final PR #1 diff makes **no changes to `red/s7.js`**. Experimental code-level fixes from earlier PR revisions were intentionally returned to the upstream baseline on this branch. Do not revive them in this PR.
+- PR #1 includes AI assistance disclosure, upstream provenance/thanks, issue & PR templates, stable documentation handoff, Windows/Linux hosted CI, four positive wrapper baseline tests and one expected failing stale-read characterization test. Node-RED and nodes7 are mocked; no S7 wire/CPU evidence.
+- The baseline stale-read test is a **confirmed expected failure** on unmodified upstream code; green CI for that job means reproduction, not repair.
+- The inherited `package-lock.json` does not match `package.json` and remains a separately tracked issue.
 
 ## First action for next session
 
-**Review [PR #1](https://github.com/Missel2/node-red-contrib-s7/pull/1).** Its tested implementation head `42ba5d7d95e46817931e8590907c65c3780e4db9` passed all six checks in [workflow 42354533869](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42354533869), including stale-read and overlap negative controls. Any subsequent documentation commit still requires its own current-head CI confirmation. These tests use a mocked transport; a real socket fix or Siemens CPU compatibility is **not** proven. The human maintainer decides whether to merge.
+1. Check **PR #1 current head and CI**. Fix bootstrap test/workflow defects only.
+2. Review that `red/s7.js` has no PR diff, the source credit links are accurate, no release/deployment is implied, and the required status checks still match `protect-master`.
+3. If all six required CI checks pass on the actual head, provide concise human merge recommendation **for bootstrap only**. Do not claim any S7 runtime defect fixed.
+4. Do not merge automatically; human maintainer decides.
 
-**One-time maintainer action:** follow [repository setup](REPOSITORY_SETUP.md) to enable GitHub Issues and branch rules; the GitHub connector cannot change these settings.
+## Follow-up work (test first)
 
-## Subsequent P0
+- [#2](https://github.com/Missel2/node-red-contrib-s7/issues/2): prove or disprove pending ISO-on-TCP handshake teardown defect in nodes7, then patch independently.
+- [#3](https://github.com/Missel2/node-red-contrib-s7/issues/3): characterize stale reads/reconnect overlap with baseline-failing tests; then a narrow wrapper fix PR.
+- [#4](https://github.com/Missel2/node-red-contrib-s7/issues/4): licensed disposable S7 protocol fixture and controllable TCP faults on hosted Ubuntu/Windows.
+- [#5](https://github.com/Missel2/node-red-contrib-s7/issues/5): regenerate the stale lockfile and enforce npm ci.
 
-Recover the actual historical Musashi source patch rather than copying an image claim. Historical patch/image identifiers were recorded in private Musashi deployment work and must be recovered through authorized access; do not place internal registry hosts, infrastructure identifiers or production logs in this public fork. See [source investigation](MUSASHI_CONNECTION_REGRESSION.md). Reproduce the pending-transport case against a named nodes7 revision and check a scoped dependency-level correction.
+## Guards
 
-## Repository administration gap
-
-GitHub Issues are currently **disabled** in this fork (GitHub API returned HTTP 410 when an issue was attempted). Until the maintainer enables Issues under Repository Settings → General → Features, use [WORK_INDEX.md](WORK_INDEX.md) as the durable task inventory. The GitHub app in this session cannot change that repository setting; do not pretend issues were created.
-
-## Next quality infrastructure
-
-- GitHub-hosted disposable S7 protocol fixture with fault proxy (not yet implemented).
-- Regenerate correct dependency lockfile and replace temporary no-lock smoke installation with npm ci.
-- Add integration, repeated disconnect/timeout and resource-bound tests.
-- No production OT access, npm publish or real PLC writes without human authorization.
+- No auto-merge, npm publication, productive OT deploy or real PLC writes.
+- Separate mocked behavior from wire-protocol/server tests and hardware verification.
+- A previous public PR revision contained a private registry hostname; the current documents omit it, but old GitHub references could persist. Do not repeat private identifiers.
