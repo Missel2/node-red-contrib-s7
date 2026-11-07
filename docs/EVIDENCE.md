@@ -7,7 +7,7 @@
 | Upstream runtime | Preserved in PR #1 | `red/s7.js` is restored to the current fork master content; no connection bugfix in the proposed bootstrap diff |
 | Project governance and credits | Proposed in PR #1 | Public AI-assisted workflow, license/author links, GitHub tasks and branch review rules |
 | Baseline wrapper behavior | Added, verification pending on final head | Four isolated Node-RED wrapper tests; `nodes7` is stubbed |
-| Stale read after disconnect | **Confirmed bug reproduction** | [Initial expected-failure check, CI 42358368272](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42358368272): baseline test reported `actual: online` when `expected: offline`. This is not a fix |
+| Stale read after disconnect | **Confirmed bug reproduction** | [Initial expected-failure check, CI 42358368272](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42358368272): baseline test reported `actual: online` when `expected: offline`. This is not a fix. Issue #3 expands this into two further expected-failure tests (obsolete rejection and concurrent reads), with verification pending. |
 | Prior experimental wrapper patches | Excluded from PR #1 | Earlier PR branch revisions passed mocked tests; they were removed to enforce one-defect-per-fix work |
 | Pending nodes7 handshake cleanup | Source-inspection concern, unproven | [Issue #2](https://github.com/Missel2/node-red-contrib-s7/issues/2) |
 | Reconnect and stale-read scenarios | Test design underway, not fixed | [Issue #3](https://github.com/Missel2/node-red-contrib-s7/issues/3) |

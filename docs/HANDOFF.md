@@ -1,11 +1,12 @@
 # Development handoff
 
-**Last updated:** 2026-11-07 — confirm current PR and CI before acting.
+**Last updated:** 2026-11-07 — verify live GitHub state before acting.
 
 ## Working model and scope
 
 - Repository: `Missel2/node-red-contrib-s7`; protected default branch `master`.
-- PR #1: [development process and hosted CI baseline](https://github.com/Missel2/node-red-contrib-s7/pull/1).
+- PR #1: [development process and hosted CI baseline](https://github.com/Missel2/node-red-contrib-s7/pull/1), squash-merged to `master` as commit `42296d8`.
+- Current follow-up branch: `test/issue-3-characterize-stale-read-reconnect`; adds **only characterization tests**, CI log capture and handoff. No runtime corrections.
 - The intended final PR #1 diff makes **no changes to `red/s7.js`**. Experimental code-level fixes from earlier PR revisions were intentionally returned to the upstream baseline on this branch. Do not revive them in this PR.
 - PR #1 includes AI assistance disclosure, upstream provenance/thanks, issue & PR templates, stable documentation handoff, Windows/Linux hosted CI, four positive wrapper baseline tests and one expected failing stale-read characterization test. Node-RED and nodes7 are mocked; no S7 wire/CPU evidence.
 - The baseline stale-read test is a **confirmed expected failure** on unmodified upstream code; green CI for that job means reproduction, not repair.
@@ -13,10 +14,10 @@
 
 ## First action for next session
 
-1. Check **PR #1 current head and CI**. Fix bootstrap test/workflow defects only.
-2. Review that `red/s7.js` has no PR diff, the source credit links are accurate, no release/deployment is implied, and the required status checks still match `protect-master`.
-3. If all six required CI checks pass on the actual head, provide concise human merge recommendation **for bootstrap only**. Do not claim any S7 runtime defect fixed.
-4. Do not merge automatically; human maintainer decides.
+1. Verify the final CI run on squash-merged `master` and the current Issue #3 test-only PR/branch. Do not start another overlapping PR.
+2. Confirm no `red/s7.js` runtime diff. The additional three expected-failure tests must **each** fail against the original wrapper by the named assertion, while the six required CI checks remain green.
+3. If verified, decide whether to merge the test-only suite. Never claim the bugs fixed.
+4. Next, prepare a separate Issue #3 single-purpose wrapper correction, with the negative-control gate converted to positive verification on that fix PR. No unattended merges.
 
 ## Follow-up work (test first)
 
