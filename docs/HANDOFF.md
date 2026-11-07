@@ -36,3 +36,6 @@ No automatic merge, npm release, production PLC deployment, or unapproved real-P
 
 
 - The first [Linux real S7Comm roundtrip job on PR #10 run 42406148441](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406148441) **passed** against `python-snap7==3.3.1`; later Windows parity and partial COTP failure tests must be verified independently.
+
+
+- [PR #10 CI 42406338762](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406338762) verified both Ubuntu/Windows real S7Comm roundtrip and bounded partial-COTP abort cases (8/8 jobs) on commit `650de1e`. A follow-up tightens timeout and disconnect assertions; check latest head CI. Never merge PR #9 as part of Issue #4 without separate maintainer decision.

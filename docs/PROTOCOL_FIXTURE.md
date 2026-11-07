@@ -1,6 +1,6 @@
 # Disposable classic S7Comm protocol fixture (Issue #4)
 
-**Status: first Linux real-wire roundtrip verified; expanded Windows/fault checks pending their own CI.** No Siemens hardware or licensed PLCSIM used.
+**Status: real-wire roundtrip and partial-COTP abort passed on hosted Ubuntu/Windows at `650de1e` (CI 42406338762); later strict teardown assertions pending.** No Siemens hardware or licensed PLCSIM used.
 
 ## Implementation
 
@@ -15,7 +15,7 @@
 
 Passing tests would demonstrate a real ISO-on-TCP/S7Comm interchange with a compatible *software server* only. It cannot establish real Siemens S7 firmware behavior, multi-session reconnect safety or PLC-specific PUT/GET defaults. HIL-S7-001/-002/-003 remain pending under Issue #8.
 
-**Not yet implemented**: protocol fault injection, server restart/reconnect, Windows runner parity, bounded repeated-failure metrics and secure release gating. Do not mark Issue #4 complete until these are confirmed.
+**Still not implemented**: server restart/reconnect, blackhole/timeout fault proxy, repeated-failure/socket metrics and secure release gating. A controlled partial COTP handshake abort and Windows runner parity are now present; these do not cover all requested fault cases. Do not mark Issue #4 complete until these are confirmed.
 
 All test writes target a synthetic in-process data block; no external PLC addresses, credentials, real industrial network routes or productive outputs are used.
 
@@ -25,3 +25,8 @@ All test writes target a synthetic in-process data block; no external PLC addres
 - [PR #10 run 42406148441](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406148441) proved the Linux real-wire roundtrip at commit `88ac3011`.
 - Next candidate includes `s7-wire-faults.test.js`: opens a real loopback TCP listener, accepts a genuine RFC1006 TPKT, then intentionally aborts before sending COTP confirmation. Asserts no false connection; this is an actual wire fault, not a fake Node-RED transport. If a connection promise never settles, the test fails with a bounded timeout and records that limitation.
 - Windows CI is a platform compatibility check against the **same software server**, not PLCSIM or Siemens firmware. HIL-S7-001/002/003/005 remain pending.
+
+
+## Confirmed two-platform protocol/fault evidence
+
+[Run 42406338762](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406338762) passed **8/8 jobs**, including both dedicated S7 wire jobs. On **Ubuntu 24.04** and **Windows 2025**, Node 22 ran two real-network assertions: 1) connection, typed DB reads and scratch write/readback through `python-snap7==3.3.1`; 2) injected partial COTP handshake abort without false positive connection. This verifies **software wire interoperability only**. Updated follow-up tests now distinguish an explicit connection rejection from a hung connection and require a clean successful disconnect; recheck newer head before considering these extra guards verified.

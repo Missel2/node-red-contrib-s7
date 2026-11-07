@@ -44,3 +44,10 @@ Record every later test's actual commit SHA, OS, command, workflow URL, fixture 
 
 - [PR #10 first CI run 42406148441](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406148441), exact commit `88ac3011b7232e977ef924a2e497e1e036cd439a`: **S7 wire roundtrip (Ubuntu, Node 22) passed** a test with the real `@st-one-io/nodes7@1.1.2` against `python-snap7==3.3.1` loopback server: COTP/S7Comm connection, DB1 REAL/INT reads, synthetic REAL write/readback. No physical CPU. This is confirmed only for Linux at this commit.
 - Follow-up branch aims to add Windows parity and partial COTP failure test. **These additions are not verified until the new head CI succeeds.**
+
+
+### Issue #4 Windows parity and partial COTP injection — CI verified at `650de1e`
+
+- [Run 42406338762](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406338762) completed all **8/8** jobs successfully, including **2 real S7Comm tests on each of Ubuntu 24.04 and Windows 2025** (Node 22).
+- Both OS runs confirmed actual `nodes7` COTP/S7Comm roundtrip via `python-snap7==3.3.1` and explicit TCP abort after a genuine TPKT before COTP confirmation; both had `# pass 2`, `# fail 0`.
+- Hardware not tested; this is a software fixture, not a Siemens compatibility claim. The follow-up commit adds stricter handshake timeout rejection and explicit clean disconnect assertions; **its own exact-head CI must still pass before claiming these enhancements verified**.

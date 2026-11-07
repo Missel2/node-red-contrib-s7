@@ -152,4 +152,7 @@ test('actual nodes7 S7Comm connects, reads and writes synthetic DB1', { timeout:
     evidence.checks.push('S7 WRITE_VAR: synthetic DB1 REAL8 and READ_VAR readback');
 
     assert.deepEqual(errors, [], 'healthy wire roundtrip must not emit endpoint errors');
+    await Promise.race([endpoint.disconnect(), deadline(4000, 'healthy S7 disconnect')]);
+    assert.equal(endpoint.isConnected, false, 'clean session disconnect must complete');
+    evidence.checks.push('clean nodes7 endpoint.disconnect');
 });

@@ -44,10 +44,16 @@ test('real nodes7 COTP handshake abort is reported without a false connect', { t
     const errors = [];
     client.on('error', error => errors.push(String(error)));
     try {
-        await assert.rejects(
-            Promise.race([client.connect(), timeout(6000, 'partial COTP handshake')]),
-            'a dropped COTP handshake must reject connection'
-        );
+        // A timeout would mean the client hung, not a successful fault test.
+        let connectionFailure;
+        try {
+            await Promise.race([client.connect(), timeout(6000, 'partial COTP handshake')]);
+        } catch (error) {
+            connectionFailure = error;
+        }
+        assert.ok(connectionFailure, 'a dropped COTP handshake must reject connection');
+        assert.doesNotMatch(String(connectionFailure), /exceeded 6000ms/,
+            'do not count a hung handshake as a successful rejection');
         assert.equal(client.isConnected, false);
         assert.equal(accepted, 1, 'one controlled TCP connection');
         assert.equal(receivedTpkt, true, 'the client sent a real RFC1006 TPKT');
