@@ -107,9 +107,20 @@ async function runBlackholeAttempt(index) {
     } finally {
         try {
             await bounded(endpoint.disconnect(), 2000, 'client cleanup');
+            attempt.explicitDisconnectResolved = true;
         } catch (error) {
             attempt.clientCleanupError = String(error);
+            attempt.explicitDisconnectResolved = false;
         }
+        // Give underlying async TCP close notifications a chance to run.
+        // These are diagnostic observations, not a pass/fail leak-free claim.
+        await sleep(200);
+        attempt.peerSocketsStillOpenAfterExplicitDisconnect =
+            [...sockets].filter(socket => !socket.destroyed).length;
+        attempt.visibleClientSocketsAfterExplicitDisconnect =
+            instrumentedClientSocketCount(port);
+        // The fixture deliberately forces a close only AFTER recording whether
+        // nodes7 closed the session on its own.
         for (const socket of sockets) socket.destroy();
         let serverClosed = false;
         try {

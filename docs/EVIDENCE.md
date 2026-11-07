@@ -57,3 +57,8 @@ Record every later test's actual commit SHA, OS, command, workflow URL, fixture 
 ### Issue #4 proposed repeated TCP blackhole fixture (await exact-head CI)
 
 A new genuine `nodes7` test accepts TCP but suppresses COTP response in **three sequential attempts**, testing a bound on the client's own rejection (not the test timeout). It records peer socket open state after the client error plus a best-effort experimental `process._getActiveHandles()` observation, then explicitly cleans up. **Not yet verified; not a leak-free claim.** HIL-S7-001/-005 remain `PENDING_HARDWARE`.
+
+
+### Issue #4 real TCP blackhole verified at `66997fd` (2026-11-07)
+
+[GitHub CI 42414980669](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42414980669) 8/8 pass on `66997fd98087afe7774fc4ed70018cd018d9a9ea`; [CodeQL run 42414976685](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42414976685) 2/2 pass. In 3 attempts per Ubuntu and Windows, the real client sent 22-byte RFC1006 handshake traffic to a peer that never replied, then rejected via its own `ERR_TIMEOUT` after ~10s; the test was not satisfied by a harness timeout. Captured archive data shows **one live peer TCP socket and one client-visible active Socket** immediately after each nodes7 error, in all six attempts. This does not establish a permanent socket leak or distinguish cleanup after `endpoint.disconnect()`. The follow-up test attempts that distinction; results pending CI. HIL-S7-001/-005 pending.

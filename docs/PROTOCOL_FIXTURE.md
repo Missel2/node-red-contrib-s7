@@ -67,3 +67,12 @@ PR #10 incorporates `master` at `c931dbac4232d3f4481812a65597301548f30739`, reta
 The test records: accepted TCP sockets, actual RFC1006 header, elapsed watchdog time, client rejection, whether the peer socket is still open at the moment of failure, and an **experimental process active-handle count** for sockets matching the peer port (Node's `_getActiveHandles()` is internal and may omit sockets). It then forcibly closes the synthetic peer and listener to avoid orphaning CI processes. **Peer sockets remaining open after client rejection are recorded as a possible transport cleanup defect, never mislabeled as a passing teardown assertion.**
 
 This candidate **must pass Ubuntu/Windows exact-head CI** before claiming its bounded failure test verified. A positive blackhole watchdog test is not proof of leak-free TCP resources or vendor firmware compatibility. Any recorded open handles warrant a focused Issue #2 reproduction with stronger instrumentation before a library patch. HIL-S7-001/-005 still PENDING_HARDWARE.
+
+
+### Exact-run blackhole baseline, and follow-up
+
+On [PR #10 run 42414980669](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42414980669), commit `66997fd98087afe7774fc4ed70018cd018d9a9ea`, **all eight CI jobs passed** (both real-wire OS jobs included). [CodeQL 42414976685](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42414976685) also passed both analysis jobs.
+
+Actual archived `s7-blackhole-evidence.json` on **both** Ubuntu and Windows shows three full TCP connections accepted with valid RFC1006 TPKT; real nodes7 `ERR_TIMEOUT` at about 10 seconds, zero false connected events, and **one peer socket and one visible client Socket still open immediately after that error in each of six observations**. The fixture explicitly destroyed those sockets afterward to avoid polluting the runner. This is a concrete **socket still open at timeout** observation, not proof of permanent leak or resource accumulation.
+
+A follow-up adds a second measurement after explicit `endpoint.disconnect()` plus a short async-close allowance, and separates the eventual forced fixture cleanup from the library's own cleanup. **New exact-head CI and artifacts are required** before conclusions about explicit disconnect.

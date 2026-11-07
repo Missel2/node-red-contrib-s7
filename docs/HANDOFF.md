@@ -27,3 +27,6 @@ No unattended merge, npm release, productive OT deployment, or real-device acces
 
 
 - Proposed next CI test: `test/protocol/s7-wire-blackhole.test.js` with three sequential COTP blackholes and explicit failure/peer-socket diagnostic evidence. Do not claim this passed before exact-head Linux/Windows CI, and do not interpret cleanup performed by the test harness as cleanup by nodes7. HIL remains pending.
+
+
+- Real TCP COTP blackhole scenario: [CI 42414980669](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42414980669) 8/8 and [CodeQL 42414976685](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42414976685) 2/2, SHA `66997fd`. Six archived attempts (3/OS) show actual nodes7 10-second `ERR_TIMEOUT` and one still-open peer TCP socket plus one visible active client Socket **before** explicit disconnect/forced cleanup. New test measures after explicit disconnect and is not yet verified. Treat as a near-timeout resource observation, not leak-free or confirmed permanent leak evidence; Issue #2 remains open.
