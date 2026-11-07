@@ -23,6 +23,7 @@ This project openly uses AI assistance for most implementation, tests and docume
 - A passed mocked-protocol test does not establish compatibility with a Siemens CPU/firmware revision.
 - Do not suppress connection exceptions, silently reuse stale data or retry non-idempotent PLC writes. Define behavior explicitly, including error and freshness metadata.
 - Preserve existing Node-RED node types and configuration compatibility unless a breaking change is justified, versioned and documented.
+- Preserve and update [docs/UPSTREAM_AND_CREDITS.md](docs/UPSTREAM_AND_CREDITS.md) when code lineage or dependencies change; distinguish direct fork, direct runtime dependency, indirect historical influence and third-party platform.
 - Follow existing GPL-3.0-or-later obligations and preserve upstream authorship/notices. Audit licenses before introducing code from other forks.
 - Do not copy proprietary PLC projects, credentials, network identifiers or production traces into the public repository. Redact diagnosis artifacts.
 - Do not automatically publish to npm, deploy into production OT environments, or make PLC write operations on real hardware. Require explicit authorization and safety checks.

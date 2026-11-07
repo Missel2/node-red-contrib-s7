@@ -32,6 +32,14 @@ Dates describe the time a direction was documented. An accepted direction is not
 
 **Decision:** Test and address stale callback and timer cleanup behavior in the Node-RED wrapper first, without conflating this with the Musashi pending-handshake/socket problem inside `@st-one-io/nodes7`. Protocol-level socket cleanup remains P0 and must be independently reproduced and verified.
 
+## D-007 — Public provenance and credits (2026-11-07)
+
+**Decision:** Document upstream origin, original contributors, licenses, direct dependencies and indirect historical influences prominently and with gratitude. Retain the original history and notices. Acknowledgement does not imply external endorsement or industrial certification. See [credits](UPSTREAM_AND_CREDITS.md).
+
+## D-008 — Serialize reads across reconnect (2026-11-07)
+
+**Decision:** Keep ownership of a pending read until its promise settles, even if the transport disconnects and reconnects. Ignore stale results and start at most one coalesced follow-up read after the earlier operation settles. This prioritizes avoiding overlapping operations on the same S7 item group; a permanently unsettled dependency promise can delay recovery and requires a separate dependency-level timeout/cancellation design and tests.
+
 ## Open decisions
 
 - Exact dependency-fork strategy for `@st-one-io/nodes7` versus an alternative maintained protocol implementation.

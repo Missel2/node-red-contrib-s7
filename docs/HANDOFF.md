@@ -7,12 +7,13 @@
 - Repository: `Missel2/node-red-contrib-s7`; default branch `master`.
 - Prior default-branch baseline: `e6b5c54f63bce6302f97a7659d258fa30d80caf0`.
 - Work branch: `feat/ai-first-maintenance-and-connection-regressions`.
-- Proposed changes: transparent AI-assisted maintainer model, repository PR template and CI, Node-RED endpoint wrapper lifecycle correction and mocked regression tests.
+- Proposed changes: transparent AI-assisted maintainer model, upstream [credits](UPSTREAM_AND_CREDITS.md), PR template and CI, Node-RED endpoint wrapper lifecycle correction and mocked regression tests, including a pending-read serialization check across reconnect.
+- The critical wrapper invariant is now **at most one outstanding read promise per endpoint item group** through reconnect; a permanently unresolved dependency promise can prevent future polling until settled. This limitation is intentionally disclosed and needs dependency-level timeout/cancellation tests.
 - Protocol dependency remains `@st-one-io/nodes7@1.1.2`; this change **does not** claim to repair its partial COTP handshake socket handling.
 
 ## First action for next session
 
-**Review [PR #1](https://github.com/Missel2/node-red-contrib-s7/pull/1) against the latest SHA and CI.** Six checks passed on `9b7fe3ffe658c588f4d97dcafd3b104e210260d9` in [workflow 42297490497](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42297490497), including a baseline negative control. This proves only scoped wrapper tests, not real S7 socket reliability. After any further commit, recheck CI before merge. Human maintainer decides the merge.
+**Review [PR #1](https://github.com/Missel2/node-red-contrib-s7/pull/1) against the latest SHA and CI.** Do not rely on an older successful run; new serialization tests and baseline negative controls require fresh verification. Six checks previously passed on `9b7fe3ffe658c588f4d97dcafd3b104e210260d9` in [workflow 42297490497](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42297490497), including a baseline negative control. This proves only scoped wrapper tests, not real S7 socket reliability. After any further commit, recheck CI before merge. Human maintainer decides the merge.
 
 **One-time maintainer action:** follow [repository setup](REPOSITORY_SETUP.md) to enable GitHub Issues and branch rules; the GitHub connector cannot change these settings.
 

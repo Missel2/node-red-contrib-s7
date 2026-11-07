@@ -9,6 +9,7 @@
 | Original test command | Replaced in topic branch | Six built-in offline wrapper tests; prior placeholder returned an error |
 | Node-RED endpoint wrapper lifecycle | CI-verified on topic branch SHA `9b7fe3ffe658c588f4d97dcafd3b104e210260d9` | [Workflow 42297490497](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42297490497): Windows 2025 and Ubuntu 24.04 on Node.js 22/24, all four wrapper jobs passed |
 | Targeted negative-control test | CI-verified on topic branch SHA `9b7fe3ffe658c588f4d97dcafd3b104e210260d9` | [Workflow 42297490497](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42297490497): targeted stale-read test fails on known pre-fix source as required |
+| Reconnect read serialization | Change proposed on PR #1; latest CI not yet verified | New test should fail on previous wrapper head `e0aa944691a6fb304e33ae5d98b428b0c411b157`; check current workflow conclusion. A permanently unsettled read can still delay new polling. |
 | Musashi pending TCP/COTP transport bug | Historical lead, **unverified here** | No original source patch or failing dependency-level regression yet |
 | S7 wire protocol CI | Not implemented | No real S7 server/fixture included in this branch |
 | Siemens PLC/firmware | Not tested | Neither simulator nor hardware compatibility claimed |

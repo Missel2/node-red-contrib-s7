@@ -16,6 +16,7 @@ Start here:
 - [Test strategy](docs/TEST_STRATEGY.md) — protocol test doubles, fault injection and release validation.
 - [Roadmap](docs/ROADMAP.md) — ordered work, starting with the previously investigated connection-lifecycle defect.
 - [Human-directed, AI-led engineering](docs/AI_DEVELOPMENT.md) — responsibilities, disclosures and boundaries.
+- [Origins and acknowledgements](docs/UPSTREAM_AND_CREDITS.md) — sources, maintainers, licenses and thanks.
 - [Verification ledger](docs/EVIDENCE.md) — observed results versus unverified aims.
 - [Development work index](docs/WORK_INDEX.md) — concrete tasks and priority while issues are unavailable.
 - [Repository administration checklist](docs/REPOSITORY_SETUP.md) — manual GitHub settings required for enforceable checks.
@@ -23,7 +24,7 @@ Start here:
 - [Maintainer and agent instructions](AGENTS.md) — repository workflow and limits.
 - [Decision log](docs/DECISIONS.md) — decisions and open design questions.
 
-Development may take place independently in this fork; contribution to upstream is optional. The existing upstream documentation and historical attribution follow below.
+Development may take place independently in this fork; contribution to upstream is optional. Thanks to [ST-One and the original contributors](docs/UPSTREAM_AND_CREDITS.md), the [nodes7 contributors](https://github.com/st-one-io/nodes7), and the [Node-RED community](https://github.com/node-red/node-red). The existing upstream documentation and historical attribution follow below.
 
 ---
 

@@ -6,7 +6,7 @@
 
 | ID | Priority | Task | State | Next action |
 | --- | --- | --- | --- | --- |
-| WI-001 | P0 | [Transparent AI-assisted maintenance and endpoint wrapper regressions](https://github.com/Missel2/node-red-contrib-s7/pull/1) | PR open; tests passed on SHA `9b7fe3ffe658c588f4d97dcafd3b104e210260d9` | Human review / merge decision |
+| WI-001 | P0 | [Transparent AI-assisted maintenance, credits and endpoint wrapper regressions](https://github.com/Missel2/node-red-contrib-s7/pull/1) | PR open; new reconnect serialization test added; fresh CI pending | Check latest CI and review evidence before human merge decision |
 | WI-002 | P0 | Pending COTP/socket cleanup from Musashi investigation | Not reproduced in this fork | Recover authorized source, build failing dependency-level fault case |
 | WI-003 | P1 | Disposable S7 protocol endpoint and TCP fault proxy on GitHub-hosted runners | Not implemented | Pick licensed test fixture, verify real S7 reads/writes, inject faults |
 | WI-004 | P1 | Reproducible dependency lockfile | Inherited lock stale | Generate current lock using trusted registry, enforce npm ci |
