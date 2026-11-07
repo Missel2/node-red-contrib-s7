@@ -1,5 +1,6 @@
 """Disposable loopback S7Comm test fixture. Synthetic DB1 only; never use on a production network."""
 import logging
+import os
 import signal
 import struct
 import threading
@@ -8,7 +9,9 @@ from snap7.server import Server
 from snap7.type import SrvArea
 
 LISTEN_ADDRESS = "127.0.0.1"
-LISTEN_PORT = 1102
+LISTEN_PORT = int(os.environ.get("S7_FIXTURE_PORT", "1102"))
+if not 1024 <= LISTEN_PORT <= 65535:
+    raise ValueError("S7 test port must be unprivileged")
 stop_requested = threading.Event()
 
 
