@@ -20,7 +20,7 @@
 
 - [ ] Select and pin supported Node.js/Node-RED platforms.
 - [ ] Replace the current failing `npm test` placeholder with real automated tests.
-- [ ] Verify an S7-compatible server/fixture on GitHub-hosted Ubuntu and Windows runners.
+- [ ] Verify an S7-compatible server/fixture on GitHub-hosted Ubuntu and Windows runners (first **proposed** Linux loopback roundtrip in Issue #4; must check CI before claiming success).
 - [ ] Test TCP fault injection and ensure the workflow fails if the server cannot start.
 - [ ] Add static analysis, dependency/security checks and redacted downloadable diagnostics.
 - [ ] Record covered protocol operations and fixture limitations.

@@ -26,3 +26,10 @@
 ## Safety boundaries
 
 No automatic merge, npm release, production PLC deployment, or unapproved real-PLC read/write activity. Earlier public commit history included a historic infrastructure identifier now redacted in current files; maintainer accepted residual historic-access risk. Do not reintroduce those identifiers or imply all public history was purged.
+
+
+## Parallel protocol-fixture proof of concept (2026-11-07)
+
+- Independent Issue #4 branch `test/issue-4-s7-wire-roundtrip` starts from `master` merge of PR #6, **not** the open PR #9.
+- Adds pinned python-snap7 3.3.1 synthetic S7Comm server on loopback TCP 1102 and a Node.js test using **actual** `@st-one-io/nodes7@1.1.2` to read and write DB1. Adds an Ubuntu hosted CI job and redacted logs. This is a first PoC; check the first CI result before any interoperability claim.
+- Keep separate from Issue #3 runtime fix (PR #9), protocol fault-injection, Windows fixture verification and all physical HIL.

@@ -31,3 +31,10 @@ Record every later test's actual commit SHA, OS, command, workflow URL, fixture 
 - Positive coalescing of repeated triggers during one unresolved read is added to the passing mocked baseline suite.
 - **HIL pending:** HIL-S7-004, HIL-S7-005 and HIL-S7-007; no physical Siemens CPU tested. See [HIL_TEST_MATRIX.md](HIL_TEST_MATRIX.md). These findings are mocks, not protocol or hardware tests.
 - Confirmed all five individually named assertions fail as expected (five TAP logs in the baseline-negative-control job) on [GitHub Actions run 42375597004](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42375597004), commit `1fbd93da39e7f52fc8b9581b417f7ada7a7c328b`. All six required checks passed. The tests are negative characterizations, **not successful behavior regressions or hardware verification**.
+
+
+### Issue #4 first actual-wire PoC (2026-11-07, not yet independently verified)
+
+- Branch `test/issue-4-s7-wire-roundtrip` proposes `python-snap7==3.3.1` (MIT-licensed, pinned), an ephemeral synthetic DB1 server on loopback port 1102 and an actual `@st-one-io/nodes7@1.1.2` COTP/S7Comm read/write/readback.
+- Expected evidence: successful handshake, DB1 REAL/INT read and REAL scratch write/readback, plus fixture logs. The new `S7 wire roundtrip (Ubuntu, Node 22)` job must actually pass on the exact SHA. **Not a Siemens PLC, not real firmware, not Windows validation or TCP fault injection yet.**
+- HIL-S7-001/-002/-003: `PENDING_HARDWARE`; synthetic writes are isolated to a disposable test process, not an authorized physical PLC.
