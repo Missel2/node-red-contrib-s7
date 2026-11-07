@@ -52,3 +52,8 @@ Record every later test's actual commit SHA, OS, command, workflow URL, fixture 
 - [PR #9](https://github.com/Missel2/node-red-contrib-s7/pull/9) merged into `master` as `c931dbac4232d3f4481812a65597301548f30739`; its [post-merge CI 42412786650](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42412786650) passed all six required jobs. Ten lifecycle regressions must fail on immutable original `e79c151` and pass on the corrected runtime.
 - [PR #10 previously verified protocol CI 42412099544](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42412099544) passed 8/8 jobs including genuine `@st-one-io/nodes7@1.1.2` with pinned `python-snap7==3.3.1` on Ubuntu/Windows: synthetic DB1 read/write, client-originated COTP abort at ~10 s, two process restarts with explicit ECONNREFUSED retries and fresh reset DB1 reads.
 - This merge-reconciliation commit retains the PR #9 source and six mandatory checks while adding two actual-wire jobs. Exact-head CI remains required. No Siemens CPU, firmware or PLC writes tested; HIL-S7-001/-002/-003/-005 PENDING_HARDWARE.
+
+
+### Issue #4 proposed repeated TCP blackhole fixture (await exact-head CI)
+
+A new genuine `nodes7` test accepts TCP but suppresses COTP response in **three sequential attempts**, testing a bound on the client's own rejection (not the test timeout). It records peer socket open state after the client error plus a best-effort experimental `process._getActiveHandles()` observation, then explicitly cleans up. **Not yet verified; not a leak-free claim.** HIL-S7-001/-005 remain `PENDING_HARDWARE`.

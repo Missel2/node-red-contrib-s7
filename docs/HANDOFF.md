@@ -24,3 +24,6 @@
 ## Operational safety
 
 No unattended merge, npm release, productive OT deployment, or real-device access. All current protocol writes are against disposable synthetic DB1 on loopback.
+
+
+- Proposed next CI test: `test/protocol/s7-wire-blackhole.test.js` with three sequential COTP blackholes and explicit failure/peer-socket diagnostic evidence. Do not claim this passed before exact-head Linux/Windows CI, and do not interpret cleanup performed by the test harness as cleanup by nodes7. HIL remains pending.

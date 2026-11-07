@@ -58,3 +58,12 @@ The fixture port can be selected using `S7_FIXTURE_PORT` (default 1102), limited
 ## Integration with merged PR #9
 
 PR #10 incorporates `master` at `c931dbac4232d3f4481812a65597301548f30739`, retaining all ten old-red/new-green lifecycle cases and the protected CI gate. Only protocol test files, a separate workflow matrix and documentation are introduced; the runtime remains identical to `master`. Exact-head CI after this reconciliation is required before any further merge decision.
+
+
+## Three repeated COTP blackhole scenarios — candidate, pending CI
+
+`test/protocol/s7-wire-blackhole.test.js` creates a real ephemeral **127.0.0.1** TCP listener for each of three successive client attempts. It accepts an RFC1006/COTP request and **never replies**, keeping the TCP session open during the dependency's own connection watchdog. A `nodes7` `S7Endpoint.connect()` must reject each attempt within 14.5 seconds **without a false connected event** and without counting a *harness timeout* as a success.
+
+The test records: accepted TCP sockets, actual RFC1006 header, elapsed watchdog time, client rejection, whether the peer socket is still open at the moment of failure, and an **experimental process active-handle count** for sockets matching the peer port (Node's `_getActiveHandles()` is internal and may omit sockets). It then forcibly closes the synthetic peer and listener to avoid orphaning CI processes. **Peer sockets remaining open after client rejection are recorded as a possible transport cleanup defect, never mislabeled as a passing teardown assertion.**
+
+This candidate **must pass Ubuntu/Windows exact-head CI** before claiming its bounded failure test verified. A positive blackhole watchdog test is not proof of leak-free TCP resources or vendor firmware compatibility. Any recorded open handles warrant a focused Issue #2 reproduction with stronger instrumentation before a library patch. HIL-S7-001/-005 still PENDING_HARDWARE.
