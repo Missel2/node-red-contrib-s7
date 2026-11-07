@@ -85,7 +85,7 @@ jobs:
               echo "::error::Named defect not observed: $pattern"
               exit 1
             fi
-            if ! grep -Eq '^# fail 1 "$output"; then
+            if ! grep -Fq '# fail 1' "$output"; then
               echo "::error::Unexpected additional test failure: $pattern"
               exit 1
             fi
