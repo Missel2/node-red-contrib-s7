@@ -85,10 +85,10 @@ function fixture() {
 }
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const close = node => new Promise(resolve => node.emit('close', resolve));
-// Known defect: the unmodified wrapper marks itself online when a read from
-// a disconnected session resolves late. This test is EXPECTED TO FAIL until a
-// separate issue #3 change fixes and validates the behavior.
-// Keep this in a separate file from required passing baseline tests.
+// Issue #3 reliability regression suite. Tests MUST PASS on the corrected
+// wrapper and MUST FAIL individually on pinned, unmodified master e79c151.
+// The protected branch's historic required check name is retained, but it now
+// enforces BOTH the red baseline and the green corrected implementation.
 // HIL-S7-004, HIL-S7-005: pending physical CPU read/fault tests.
 test('late successful read cannot resurrect disconnected status', async () => {
     const { node, transport, group, events } = fixture();
@@ -123,8 +123,7 @@ test('late failure from an obsolete read must not mark a reconnected endpoint of
 
     oldRead.reject(Error('obsolete session read failed'));
     await tick();
-    // Original wrapper logs an obsolete error and drops a healthy connection
-    // back to offline. Do not change runtime code in this characterization PR.
+    // A prior session failure must not demote the newly healthy endpoint.
     assert.equal(node.getStatus(), 'online');
     assert.equal(errors.length, 0, 'obsolete rejection must not emit a new error');
 });
@@ -186,4 +185,37 @@ test('closing an endpoint cancels its polling timer during a pending read', asyn
     await close(node);
     assert.equal(node.getStatus(), 'offline');
     assert.equal(timers.size, 0, 'closed endpoint must stop scheduling new PLC polls');
+});
+
+test('stale success after reconnect cannot publish old data or delay a fresh read', async () => {
+    // HIL-S7-004 / HIL-S7-005: hardware verification remains pending.
+    const { node, transport, group } = fixture();
+    const first = pending();
+    const all = [];
+    let calls = 0;
+    node.on('__ALL__', values => all.push(values.tag));
+    group.nextRead = () => ++calls === 1 ? first.promise : Promise.resolve({ tag: 22 });
+    transport.emit('connect');
+    node.doCycle();
+    transport.emit('disconnect');
+    transport.emit('connect');
+    node.doCycle();
+    assert.equal(calls, 1, 'new session must wait for unsettled old read');
+    first.resolve({ tag: 11 });
+    await tick();
+    assert.equal(calls, 2, 'fresh read must start after old operation settles');
+    assert.deepEqual(all, [22], 'obsolete data must never be emitted');
+});
+
+test('close reports completion even when transport disconnect rejects', async () => {
+    // HIL-S7-007: pending isolated physical CPU cleanup validation.
+    const { node, transport, errors } = fixture();
+    transport.emit('connect');
+    transport.disconnectPromise = Promise.reject(new Error('transport shutdown failed'));
+    let completed = 0;
+    node.emit('close', () => { completed++; });
+    await tick();
+    assert.equal(completed, 1, 'Node-RED close callback must not be stranded');
+    assert.equal(errors.length, 1, 'the disconnect error should remain observable');
+    assert.equal(node.getStatus(), 'offline');
 });
