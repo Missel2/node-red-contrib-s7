@@ -1,6 +1,6 @@
 # Development handoff
 
-**Last updated:** 2026-11-06; check GitHub for fresher work. This file is a continuation point, not proof of successful CI.
+**Last updated:** 2026-11-07; check GitHub for fresher work. This file is a continuation point, not proof of successful CI.
 
 ## Current work
 
@@ -13,7 +13,7 @@
 
 ## First action for next session
 
-**Review [PR #1](https://github.com/Missel2/node-red-contrib-s7/pull/1) against the latest SHA and CI.** Do not rely on an older successful run; new serialization tests and baseline negative controls require fresh verification. Six checks previously passed on `9b7fe3ffe658c588f4d97dcafd3b104e210260d9` in [workflow 42297490497](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42297490497), including a baseline negative control. This proves only scoped wrapper tests, not real S7 socket reliability. After any further commit, recheck CI before merge. Human maintainer decides the merge.
+**Review [PR #1](https://github.com/Missel2/node-red-contrib-s7/pull/1).** Its tested implementation head `42ba5d7d95e46817931e8590907c65c3780e4db9` passed all six checks in [workflow 42354533869](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42354533869), including stale-read and overlap negative controls. Any subsequent documentation commit still requires its own current-head CI confirmation. These tests use a mocked transport; a real socket fix or Siemens CPU compatibility is **not** proven. The human maintainer decides whether to merge.
 
 **One-time maintainer action:** follow [repository setup](REPOSITORY_SETUP.md) to enable GitHub Issues and branch rules; the GitHub connector cannot change these settings.
 

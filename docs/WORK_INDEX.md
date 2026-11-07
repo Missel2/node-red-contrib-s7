@@ -1,12 +1,12 @@
 # Work index — S7 reliability fork
 
-**Updated:** 2026-11-06. Tasks here are tracked until GitHub Issues are enabled. After enabling Issues, convert tasks to individually scoped issues and link them here. Do not create duplicates if they already exist.
+**Updated:** 2026-11-07. Tasks here are tracked until GitHub Issues are enabled. After enabling Issues, convert tasks to individually scoped issues and link them here. Do not create duplicates if they already exist.
 
 ## Current change
 
 | ID | Priority | Task | State | Next action |
 | --- | --- | --- | --- | --- |
-| WI-001 | P0 | [Transparent AI-assisted maintenance, credits and endpoint wrapper regressions](https://github.com/Missel2/node-red-contrib-s7/pull/1) | PR open; new reconnect serialization test added; fresh CI pending | Check latest CI and review evidence before human merge decision |
+| WI-001 | P0 | [Transparent AI-assisted maintenance, credits and endpoint wrapper regressions](https://github.com/Missel2/node-red-contrib-s7/pull/1) | PR open; nine wrapper tests and both negative controls passed in [CI 42354533869](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42354533869) on commit `42ba5d7d95e46817931e8590907c65c3780e4db9` | Confirm final head CI after documentation refresh; human merge decision |
 | WI-002 | P0 | Pending COTP/socket cleanup from Musashi investigation | Not reproduced in this fork | Recover authorized source, build failing dependency-level fault case |
 | WI-003 | P1 | Disposable S7 protocol endpoint and TCP fault proxy on GitHub-hosted runners | Not implemented | Pick licensed test fixture, verify real S7 reads/writes, inject faults |
 | WI-004 | P1 | Reproducible dependency lockfile | Inherited lock stale | Generate current lock using trusted registry, enforce npm ci |
