@@ -45,3 +45,10 @@ Record every later test's actual commit SHA, OS, command, workflow URL, fixture 
 - Follow-up added three more red-before/green-after edge cases: disabled polling through reconnect, late connect/read after close and transient transport error without disconnect. [CI 42378583520](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42378583520) verified all ten controls on commit `64d3d33`.
 
 - Compatibility refinement: a transport `error` alone does not imply `disconnect`. Preserve polling, discard the pending result and coalesce one fresh retry; verified on candidate commit `64d3d33` via a failing original baseline control. No claim of actual wire behavior.
+
+
+### Issue #5 npm lockfile source and proposed reproducibility gate (2026-11-07)
+
+- Baseline mismatch: inherited `package-lock.json` was v1 and described `node-red-contrib-s7@3.0.0`, while package manifest is `3.1.3` with exact `@st-one-io/nodes7@1.1.2`. The normal CI used `npm install --no-package-lock`, not reproducible `npm ci`.
+- [GitHub runner 42415922024](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42415922024) on the #12 generator commit ran `npm install --package-lock-only --ignore-scripts`, `npm ci --ignore-scripts`, `npm ls --all`, nodes7 import and `npm pack --dry-run` successfully; it then **intentionally failed `git diff --exit-code`** because a newly generated lock was not yet committed. A real `package-lock.json` from the artifact is now proposed, with npm-provided SHA512 hashes for nodes7 1.1.2 and iso-on-tcp 0.1.0. No hashes were invented or manually substituted.
+- New exact-head CI must prove the unchanged generated lock resolves **deterministically on both Ubuntu and Windows**, and six required checks (especially the renamed semantics of `Baseline must fail stale-read regression`) remain green. The added npm audit step is informational until findings are triaged; this is **not a security release claim**.

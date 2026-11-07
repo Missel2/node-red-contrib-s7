@@ -42,9 +42,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      # Inherited package-lock.json is stale; this is not reproducible installation.
-      - name: Install current declared dependencies without using stale lock
-        run: npm install --no-package-lock --ignore-scripts --no-audit
+      - name: Install exact locked dependencies without executing dependency scripts
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Validate genuine nodes7 import and dependency tree
+        run: |
+          npm ls --all
+          node -e "if(typeof require('@st-one-io/nodes7').S7Endpoint!=='function')throw new Error('nodes7 S7Endpoint unavailable')"
       - name: Inspect package composition
         run: npm pack --dry-run
 

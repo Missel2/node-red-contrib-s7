@@ -19,9 +19,13 @@ permissions:
 
 jobs:
   npm-lockfile:
-    name: NPM lockfile (Ubuntu, Node 22)
-    runs-on: ubuntu-24.04
+    name: NPM lockfile (${{ matrix.os }}, Node 22)
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -39,15 +43,19 @@ jobs:
           node -e "if(typeof require('@st-one-io/nodes7').S7Endpoint!=='function')throw new Error('nodes7 missing S7Endpoint')"
       - name: Package composition smoke
         run: npm pack --dry-run --json > package-composition.json
+      - name: Registry security advisory inventory (informational, triage required)
+        continue-on-error: true
+        run: npm audit --omit=dev --json > npm-audit.json
       - name: Lockfile must be committed exactly as npm resolves it
         run: git diff --exit-code -- package-lock.json
       - name: Preserve generated lockfile for initial repair and audited evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: npm-lockfile-node22
+          name: npm-lockfile-${{ matrix.os }}-node22
           path: |
             package-lock.json
             package-composition.json
+            npm-audit.json
           if-no-files-found: warn
           retention-days: 14
