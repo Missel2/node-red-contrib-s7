@@ -57,3 +57,11 @@ Record every later test's actual commit SHA, OS, command, workflow URL, fixture 
 
 - [PR #10 CI 42406520582](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406520582) failed the *strict* handshake check on both Ubuntu and Windows: the client had **not rejected within 6 s** after an aborted COTP handshake. The previous green fault test had incorrectly accepted the test's own timeout as a rejection; no S7 runtime regression was proven by this result.
 - Source inspection of `@st-one-io/nodes7@1.1.2` shows an explicit **10,000 ms** timeout in `S7Endpoint._connect()` for transport creation. The adjusted test permits up to **14 s** for the client's own failure and still **rejects a timeout raised by the test itself**. CI on the adjusted commit is required before attributing any pass. Issue #2 remains open for cleanup/resource testing, not marked repaired.
+
+
+### Issue #4 strict-head Linux/Windows verification (2026-11-07)
+
+- [Run 42406722052](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406722052) completed **8/8** checks on candidate commit `1aff19956113b9736bbf20b6c15663603bac9c54`. Both real-wire jobs ran **two tests**, `# pass 2`, `# fail 0`.
+- Healthy classic-S7 transport: actual `nodes7` connects over COTP/S7Comm, reads REAL and INT from synthetic DB1, writes REAL to scratch DB and reads it back, and **endpoint.disconnect resolves**.
+- Partial-handshake fault: genuine RFC1006 TPKT accepted then TCP dropped before COTP confirmation. The **client itself rejects the connection** (not our test timeout) after **10.01 s on Ubuntu and 10.03 s on Windows**, matching its hard-coded 10-second transport-setup watchdog. No false `connect`. This confirms a bounded fallback, **not prompt teardown** and not leak freedom.
+- Do not claim fault handling earlier than ~10 seconds or all transport resources are reclaimed. See Issue #2; no Siemens firmware, no physical CPU, no production writes. HIL-S7-001/-002/-003/-005 pending.

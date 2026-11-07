@@ -42,3 +42,6 @@ No automatic merge, npm release, production PLC deployment, or unapproved real-P
 
 
 - [Strict COTP CI 42406520582](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406520582) **failed** because 6-second test deadline was shorter than real nodes7's 10-second connection-setup watchdog; previous fault test accepted its own timeout erroneously. New head uses 14-second ceiling and forbids counting the test timeout as a successful rejection. Must check new exact-head CI and record the *actual* error path before claiming fault-test recovery. Do not call this a proven pending-handshake resource leak.
+
+
+- **Issue #4 verified strict PoC:** [CI 42406722052](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406722052), SHA `1aff199`, 8/8 jobs. Genuine read/write and clean disconnect plus client-originated failure after partial COTP abort on Ubuntu/Windows. The fault takes about 10 seconds (nodes7's built-in watchdog); any faster teardown/resource-reclamation claim is unsupported. [PR #10](https://github.com/Missel2/node-red-contrib-s7/pull/10) remains a draft PoC; no automatic merge.

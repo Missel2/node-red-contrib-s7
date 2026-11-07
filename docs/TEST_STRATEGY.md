@@ -65,3 +65,6 @@ A second phase must add controlled TCP handshake corruption/drop, blackhole/time
 
 
 The first real-wire Linux roundtrip passed on [PR #10 run 42406148441](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406148441), SHA `88ac3011`. The next candidate adds a loopback TCP server aborting after an RFC1006 TPKT but before COTP confirmation, and Windows hosted-runner parity. **Do not claim those newly added scenarios passed before checking exact-head CI.** This is not the same as validating a real PLC's transport behavior.
+
+
+The stricter false-positive-resistant abort test and an explicit clean disconnect passed on both platforms at [run 42406722052](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406722052), SHA `1aff199`. **A partial COTP abort takes about 10 seconds to reject** under nodes7's configured transport-setup watchdog. This is an observed limitation, not an industrial recovery guarantee.

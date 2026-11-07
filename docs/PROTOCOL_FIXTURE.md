@@ -1,6 +1,6 @@
 # Disposable classic S7Comm protocol fixture (Issue #4)
 
-**Status: real-wire roundtrip and partial-COTP abort passed on hosted Ubuntu/Windows at `650de1e` (CI 42406338762); later strict teardown assertions pending.** No Siemens hardware or licensed PLCSIM used.
+**Status: Linux/Windows real-wire roundtrip and strict partial-COTP abort both passed at `1aff199` (CI 42406722052); firmware and network-fault completeness remain unverified.** No Siemens hardware or licensed PLCSIM used.
 
 ## Implementation
 
@@ -35,3 +35,8 @@ All test writes target a synthetic in-process data block; no external PLC addres
 ### Diagnosed stricter fault test
 
 [Run 42406520582](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406520582) exposed a false-positive design in the earlier aborted-handshake test: its own 6-second timeout was being counted as a successful client rejection. The real `nodes7@1.1.2` transport connection includes a 10-second setup watchdog, so a 6-second limit was not equivalent to a hung connection. We now require a rejection raised by the **actual client**, with a 14-second upper bound; the test-runner's own timeout explicitly fails. Future sessions should examine any 10-second latency and resource leakage under Issue #2 without extrapolating from one software-fault scenario.
+
+
+### Exact-head verification and latency finding
+
+[PR #10 CI 42406722052](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406722052) verified both new strict assertions on commit `1aff199`: **8/8 jobs green**, the genuine S7Comm read/write/readback and clean endpoint.disconnect, plus a real aborted COTP connection that fails by the **dependency's own 10s watchdog**, not the harness deadline. The aborted handshake takes **~10.01s (Ubuntu)** / **~10.03s (Windows)**. This timing should be evaluated under [Issue #2](https://github.com/Missel2/node-red-contrib-s7/issues/2), especially the unresolved `iso-on-tcp` stream-close promise and possible pending-handle cleanup, before reliability claims.
