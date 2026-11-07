@@ -15,7 +15,7 @@
 
 Passing tests would demonstrate a real ISO-on-TCP/S7Comm interchange with a compatible *software server* only. It cannot establish real Siemens S7 firmware behavior, multi-session reconnect safety or PLC-specific PUT/GET defaults. HIL-S7-001/-002/-003 remain pending under Issue #8.
 
-**Still not implemented**: server restart/reconnect, blackhole/timeout fault proxy, repeated-failure/socket metrics and secure release gating. A controlled partial COTP handshake abort and Windows runner parity are now present; these do not cover all requested fault cases. Do not mark Issue #4 complete until these are confirmed.
+**Already verified:** two software-server restart cycles on both Ubuntu and Windows at CI 42412099544. **Still missing:** TCP blackhole/half-open, OS-level socket resource metrics and release gates. A controlled partial COTP handshake abort and Windows runner parity are now present; these do not cover all requested fault cases. Do not mark Issue #4 complete until these are confirmed.
 
 All test writes target a synthetic in-process data block; no external PLC addresses, credentials, real industrial network routes or productive outputs are used.
 
@@ -53,3 +53,8 @@ The exact candidate commit `c1b5bdb8cd1c8f59fea60d903f571364d82111cb` passed [Gi
 The fixture port can be selected using `S7_FIXTURE_PORT` (default 1102), limited to nonprivileged ports and bound only to 127.0.0.1. This supports simultaneous protocol test files without TCP listener collisions.
 
 **Unverified:** total client-side active sockets/handles, transport teardown speed, TCP blackhole/half-open behavior, multiple concurrent endpoints, Siemens firmware characteristics, and physical-CPU HIL-S7-001/-002/-003/-005. There is no claim that the tests prove leak freedom. The fixture still does not model an actual PLC program.
+
+
+## Integration with merged PR #9
+
+PR #10 incorporates `master` at `c931dbac4232d3f4481812a65597301548f30739`, retaining all ten old-red/new-green lifecycle cases and the protected CI gate. Only protocol test files, a separate workflow matrix and documentation are introduced; the runtime remains identical to `master`. Exact-head CI after this reconciliation is required before any further merge decision.
