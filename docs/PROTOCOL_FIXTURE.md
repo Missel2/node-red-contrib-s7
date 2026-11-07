@@ -40,3 +40,16 @@ All test writes target a synthetic in-process data block; no external PLC addres
 ### Exact-head verification and latency finding
 
 [PR #10 CI 42406722052](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406722052) verified both new strict assertions on commit `1aff199`: **8/8 jobs green**, the genuine S7Comm read/write/readback and clean endpoint.disconnect, plus a real aborted COTP connection that fails by the **dependency's own 10s watchdog**, not the harness deadline. The aborted handshake takes **~10.01s (Ubuntu)** / **~10.03s (Windows)**. This timing should be evaluated under [Issue #2](https://github.com/Missel2/node-red-contrib-s7/issues/2), especially the unresolved `iso-on-tcp` stream-close promise and possible pending-handle cleanup, before reliability claims.
+
+
+## Verified repeated failures and real auto-reconnect (Issue #4, 2026-11-07)
+
+The exact candidate commit `c1b5bdb8cd1c8f59fea60d903f571364d82111cb` passed [GitHub Actions run 42411812676](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42411812676) with **8/8 jobs**. Both Ubuntu 24.04 and Windows 2025 ran **three real-wire tests** (`# pass 3`, `# fail 0`):
+
+1. Genuine S7Comm handshake, synthetic DB1 typed read/write/readback and clean `nodes7` disconnect on port 1102.
+2. Aborted RFC1006/COTP handshake produces an explicit `nodes7` failure after ~10 seconds, **not** merely the harness deadline.
+3. A single real `nodes7` endpoint remains alive across **two consecutive restarts** of the pure-Python S7 server on separate loopback port 1103. Each cycle writes a synthetic scratch value, verifies it, observes TCP/S7 disconnect, waits 1.6 seconds for at least one **actual failed retry during downtime**, restarts the server, observes automatic reconnect, and reads the reset DB1 content instead of stale scratch data. Test evidence contains bounded error/event counters, not client socket-handle measurements.
+
+The fixture port can be selected using `S7_FIXTURE_PORT` (default 1102), limited to nonprivileged ports and bound only to 127.0.0.1. This supports simultaneous protocol test files without TCP listener collisions.
+
+**Unverified:** total client-side active sockets/handles, transport teardown speed, TCP blackhole/half-open behavior, multiple concurrent endpoints, Siemens firmware characteristics, and physical-CPU HIL-S7-001/-002/-003/-005. There is no claim that the tests prove leak freedom. The fixture still does not model an actual PLC program.

@@ -1,47 +1,28 @@
-# Development handoff
+# Development handoff — node-red-contrib-s7
 
-**Last updated:** 2026-11-07. Review current branches/issues/CI before assuming this snapshot is fresh.
+**Updated:** 2026-11-07. Recheck GitHub heads, reviews and CI when resuming; links here are historical evidence, not live status.
 
-## Repository and current reviewed facts
+## Verified current branch baseline
 
-- Repo: `Missel2/node-red-contrib-s7`; protected default branch `master`, current base after PR #1 squash `42296d824c09964f6f10a2ed0e9ce469f3600555`. PR #1 is merged and the master push workflow passed.
-- **Draft PR #6:** https://github.com/Missel2/node-red-contrib-s7/pull/6, branch `test/issue-3-characterize-stale-read-reconnect`. All five known defects are individually reproduced via expected-failure mocked tests against **unchanged** `red/s7.js`, and one positive repeated-trigger test passed.
-- [CI 42375597004](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42375597004) passed all six required checks for commit `1fbd93da39e7f52fc8b9581b417f7ada7a7c328b`. This includes a **green expected-failure characterization gate**; it is not a working S7 reliability fix. Any later doc commits will need exact-head checks.
-- `package-lock.json` inherited stale, and real S7 wire protocol has not yet been tested. No fork npm release or physical PLC evidence.
+- Repository: `Missel2/node-red-contrib-s7`; protected `master` baseline `e79c15107731e0387d1b3679f2409aef043e87f5`. Merged PR #6 added test-only characterization; **no runtime fix on master**.
+- [PR #9](https://github.com/Missel2/node-red-contrib-s7/pull/9): open runtime fix for Issue #3 at last inspected SHA `7eed4d3`. [CI 42378784504](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42378784504) passed 6/6 on that SHA. Requires explicit human merge permission; do not merge as part of protocol testing. The locked legacy required-check name is retained while testing original-red/candidate-green.
+- [PR #10](https://github.com/Missel2/node-red-contrib-s7/pull/10): draft for Issue #4, branched independently from `master`. Adds a disposable true S7Comm fixture, **without modifying the runtime** `red/s7.js`. [CI 42411812676](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42411812676) passed 8/8 on `c1b5bdb`; Ubuntu/Windows each passed three real-wire test cases. If later commits exist, verify their exact-head checks before claiming green.
+- Dependency `@st-one-io/nodes7@1.1.2`; synthetic server `python-snap7==3.3.1` (MIT). The inherited lockfile still prevents `npm ci` (Issue #5).
 
-## Future physical hardware test requirement
+## New real-wire coverage in draft PR #10
 
-- The maintainer plans an isolated Siemens S7-1200 on a dedicated RischLab runner, tracked in [Issue #8](https://github.com/Missel2/node-red-contrib-s7/issues/8). **No hardware exists in this CI yet.**
-- Every change/PR must list applicable future `HIL-S7-*` cases (or a justified N/A) from [HIL_TEST_MATRIX.md](HIL_TEST_MATRIX.md). Current work in PR #6 maps to HIL-S7-004, HIL-S7-005 and HIL-S7-007, all `PENDING_HARDWARE`.
-- Do not run public/untrusted PR head code against any hardware-accessible runner. Real PLC writes require separate authorization and isolated scratch data; no actual PLC interaction has been authorized.
+- Port 1102: real COTP/S7Comm read REAL/INT, scratch DB write/readback, clean disconnect; partial handshake aborted before COTP completion, client rejects by its own ~10-second transport watchdog, not the test deadline.
+- Port 1103: same real nodes7 endpoint across **two** full software-server process restarts. Both cycles verify disconnect, a refused connection attempt during 1.6 seconds of downtime, automatic reconnect and fresh reset DB1 data. Python fixture accepts `S7_FIXTURE_PORT` and binds to 127.0.0.1 only. These are not Siemens firmware tests.
+- **Not proven:** OS socket/handle leak freedom, blackhole/half-open recovery, general operational suitability or CPU/firmware compatibility.
 
 ## Next focused work
 
-1. Verify draft PR #6 current head and full six-job CI; inspect five expected failures are named **assertion failures**, not fixture crashes. Review its diff: no `red/s7.js` changes, PR HIL impact declared. After human approval, merge the **test-only** PR; do not claim runtime fixed.
-2. In a subsequent independent fix PR, use this reproduction to correct one coherent Issue #3 lifecycle defect. Convert the old negative gate to a positive regression gate in coordination with the protected `master` required check name; do not make successful defect reproduction look like a fix.
-3. Continue [Issue #4](https://github.com/Missel2/node-red-contrib-s7/issues/4): pinned disposable S7 wire protocol fixture and fault testing on hosted runners. Its success does not prove Siemens CPU compatibility.
-4. Continue [Issue #5](https://github.com/Missel2/node-red-contrib-s7/issues/5): regenerate stale lockfile and verify `npm ci` on exact commit.
-5. Keep [Issue #2](https://github.com/Missel2/node-red-contrib-s7/issues/2) pending transport/COTP hypothesis independent until reproducible.
+1. Check PR #10's current head CI and any regression; do not merge automatically.
+2. Extend Issue #4 with controlled TCP blackhole/reset and instrumented repeated-fault socket/handle metrics; do not conflate transport-level failures with a proven runtime fix.
+3. Investigate Issue #2: aborted COTP handshake takes approximately 10 seconds; trace outstanding underlying transport handles and create a baseline-failing regression before patching `iso-on-tcp` or nodes7.
+4. Restore reproducible `npm ci` and a coherent lockfile in Issue #5, separate from runtime/protocol scope.
+5. Once authorized HIL bench exists, run HIL-S7-001/-002/-003/-005 and relevant #3 cases -005/-007 against named S7-1200 firmware and isolated scratch DB. They are **PENDING_HARDWARE**.
 
-## Safety boundaries
+## Safety/approval
 
-No automatic merge, npm release, production PLC deployment, or unapproved real-PLC read/write activity. Earlier public commit history included a historic infrastructure identifier now redacted in current files; maintainer accepted residual historic-access risk. Do not reintroduce those identifiers or imply all public history was purged.
-
-
-## Parallel protocol-fixture proof of concept (2026-11-07)
-
-- Independent Issue #4 branch `test/issue-4-s7-wire-roundtrip` starts from `master` merge of PR #6, **not** the open PR #9.
-- Adds pinned python-snap7 3.3.1 synthetic S7Comm server on loopback TCP 1102 and a Node.js test using **actual** `@st-one-io/nodes7@1.1.2` to read and write DB1. Adds an Ubuntu hosted CI job and redacted logs. This is a first PoC; check the first CI result before any interoperability claim.
-- Keep separate from Issue #3 runtime fix (PR #9), protocol fault-injection, Windows fixture verification and all physical HIL.
-
-
-- The first [Linux real S7Comm roundtrip job on PR #10 run 42406148441](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406148441) **passed** against `python-snap7==3.3.1`; later Windows parity and partial COTP failure tests must be verified independently.
-
-
-- [PR #10 CI 42406338762](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406338762) verified both Ubuntu/Windows real S7Comm roundtrip and bounded partial-COTP abort cases (8/8 jobs) on commit `650de1e`. A follow-up tightens timeout and disconnect assertions; check latest head CI. Never merge PR #9 as part of Issue #4 without separate maintainer decision.
-
-
-- [Strict COTP CI 42406520582](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406520582) **failed** because 6-second test deadline was shorter than real nodes7's 10-second connection-setup watchdog; previous fault test accepted its own timeout erroneously. New head uses 14-second ceiling and forbids counting the test timeout as a successful rejection. Must check new exact-head CI and record the *actual* error path before claiming fault-test recovery. Do not call this a proven pending-handshake resource leak.
-
-
-- **Issue #4 verified strict PoC:** [CI 42406722052](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406722052), SHA `1aff199`, 8/8 jobs. Genuine read/write and clean disconnect plus client-originated failure after partial COTP abort on Ubuntu/Windows. The fault takes about 10 seconds (nodes7's built-in watchdog); any faster teardown/resource-reclamation claim is unsupported. [PR #10](https://github.com/Missel2/node-red-contrib-s7/pull/10) remains a draft PoC; no automatic merge.
+No auto-merge of #9/#10, no npm publication, no productive OT deployment, no test runner with a public-PR-triggered path to a physical PLC. Only synthetic loopback server receives test writes. Human approval is required for material merges and all real-PLC writes.

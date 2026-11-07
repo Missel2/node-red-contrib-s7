@@ -65,3 +65,10 @@ Record every later test's actual commit SHA, OS, command, workflow URL, fixture 
 - Healthy classic-S7 transport: actual `nodes7` connects over COTP/S7Comm, reads REAL and INT from synthetic DB1, writes REAL to scratch DB and reads it back, and **endpoint.disconnect resolves**.
 - Partial-handshake fault: genuine RFC1006 TPKT accepted then TCP dropped before COTP confirmation. The **client itself rejects the connection** (not our test timeout) after **10.01 s on Ubuntu and 10.03 s on Windows**, matching its hard-coded 10-second transport-setup watchdog. No false `connect`. This confirms a bounded fallback, **not prompt teardown** and not leak freedom.
 - Do not claim fault handling earlier than ~10 seconds or all transport resources are reclaimed. See Issue #2; no Siemens firmware, no physical CPU, no production writes. HIL-S7-001/-002/-003/-005 pending.
+
+
+### Issue #4 two restarts and actual refused retries — CI verified on `c1b5bdb`
+
+- [Workflow 42411812676](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42411812676) **8/8 successful jobs** on `c1b5bdb8cd1c8f59fea60d903f571364d82111cb`; Ubuntu 24.04 and Windows 2025 each had three protocol tests pass, zero failures.
+- `test/protocol/s7-wire-restart.test.js` keeps one real `@st-one-io/nodes7@1.1.2` endpoint through two Python server process restarts on `127.0.0.1:1103`. In both rounds: synthetic DB write/readback, stop the Python process, detect real disconnect, wait **1.6 s** for a failed TCP retry to be emitted, restart, observe reconnect and confirm reset DB1 bytes. This is software S7Comm behavior, **not** Siemens CPU verification.
+- No OS-level open-socket leak metrics were collected; no blackhole/half-open fault tested. HIL-S7-001/-002/-003/-005 remain pending. The following commit modifies documentation and syntax checking only and requires a fresh exact-head CI check.

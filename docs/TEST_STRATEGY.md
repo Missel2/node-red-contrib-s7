@@ -68,3 +68,8 @@ The first real-wire Linux roundtrip passed on [PR #10 run 42406148441](https://g
 
 
 The stricter false-positive-resistant abort test and an explicit clean disconnect passed on both platforms at [run 42406722052](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406722052), SHA `1aff199`. **A partial COTP abort takes about 10 seconds to reject** under nodes7's configured transport-setup watchdog. This is an observed limitation, not an industrial recovery guarantee.
+
+
+## Two actual software server restarts (CI verified 2026-11-07)
+
+[PR #10 run 42411812676](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42411812676) passed on Ubuntu and Windows with a *single real S7Endpoint* reused across two killed/recreated `python-snap7==3.3.1` server processes. Each cycle includes an observed TCP disconnect, at least one refused retry while the server is down, successful reconnect and fresh reset DB1 read. These are protocol-level integration results, distinct from hardware HIL or proof of all resource cleanup. The remaining priority for Issue #4 is bounded blackhole/half-open fault injection and explicit client/socket resource measurements.
