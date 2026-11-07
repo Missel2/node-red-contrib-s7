@@ -15,7 +15,7 @@ function timeout(ms, label) {
     });
 }
 
-test('real nodes7 COTP handshake abort is reported without a false connect', { timeout: 14000 }, async () => {
+test('real nodes7 COTP handshake abort is reported without a false connect', { timeout: 22000 }, async () => {
     let accepted = 0;
     let receivedTpkt = false;
     const server = net.createServer(socket => {
@@ -45,15 +45,20 @@ test('real nodes7 COTP handshake abort is reported without a false connect', { t
     client.on('error', error => errors.push(String(error)));
     try {
         // A timeout would mean the client hung, not a successful fault test.
+        // nodes7 1.1.2 has a 10s transport-setup watchdog in _connect;
+        // do not mistake its built-in bounded error for our own test timeout.
+        const startedAt = Date.now();
         let connectionFailure;
         try {
-            await Promise.race([client.connect(), timeout(6000, 'partial COTP handshake')]);
+            await Promise.race([client.connect(), timeout(14000, 'partial COTP handshake')]);
         } catch (error) {
             connectionFailure = error;
         }
         assert.ok(connectionFailure, 'a dropped COTP handshake must reject connection');
-        assert.doesNotMatch(String(connectionFailure), /exceeded 6000ms/,
+        assert.doesNotMatch(String(connectionFailure), /exceeded 14000ms/,
             'do not count a hung handshake as a successful rejection');
+        assert.ok(Date.now() - startedAt < 14000,
+            'the dependency must terminate the connection attempt within its watchdog window');
         assert.equal(client.isConnected, false);
         assert.equal(accepted, 1, 'one controlled TCP connection');
         assert.equal(receivedTpkt, true, 'the client sent a real RFC1006 TPKT');

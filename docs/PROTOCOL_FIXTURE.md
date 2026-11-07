@@ -30,3 +30,8 @@ All test writes target a synthetic in-process data block; no external PLC addres
 ## Confirmed two-platform protocol/fault evidence
 
 [Run 42406338762](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406338762) passed **8/8 jobs**, including both dedicated S7 wire jobs. On **Ubuntu 24.04** and **Windows 2025**, Node 22 ran two real-network assertions: 1) connection, typed DB reads and scratch write/readback through `python-snap7==3.3.1`; 2) injected partial COTP handshake abort without false positive connection. This verifies **software wire interoperability only**. Updated follow-up tests now distinguish an explicit connection rejection from a hung connection and require a clean successful disconnect; recheck newer head before considering these extra guards verified.
+
+
+### Diagnosed stricter fault test
+
+[Run 42406520582](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406520582) exposed a false-positive design in the earlier aborted-handshake test: its own 6-second timeout was being counted as a successful client rejection. The real `nodes7@1.1.2` transport connection includes a 10-second setup watchdog, so a 6-second limit was not equivalent to a hung connection. We now require a rejection raised by the **actual client**, with a 14-second upper bound; the test-runner's own timeout explicitly fails. Future sessions should examine any 10-second latency and resource leakage under Issue #2 without extrapolating from one software-fault scenario.

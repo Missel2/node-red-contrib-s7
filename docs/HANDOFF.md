@@ -39,3 +39,6 @@ No automatic merge, npm release, production PLC deployment, or unapproved real-P
 
 
 - [PR #10 CI 42406338762](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406338762) verified both Ubuntu/Windows real S7Comm roundtrip and bounded partial-COTP abort cases (8/8 jobs) on commit `650de1e`. A follow-up tightens timeout and disconnect assertions; check latest head CI. Never merge PR #9 as part of Issue #4 without separate maintainer decision.
+
+
+- [Strict COTP CI 42406520582](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406520582) **failed** because 6-second test deadline was shorter than real nodes7's 10-second connection-setup watchdog; previous fault test accepted its own timeout erroneously. New head uses 14-second ceiling and forbids counting the test timeout as a successful rejection. Must check new exact-head CI and record the *actual* error path before claiming fault-test recovery. Do not call this a proven pending-handshake resource leak.
