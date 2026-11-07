@@ -40,3 +40,6 @@ Record every later test's actual commit SHA, OS, command, workflow URL, fixture 
 - `npm test` must run passing baseline and lifecycle tests on Windows/Linux Node 22/24. This is mocked behavior only.
 - Do **not** mark this as `CI-verified` until checking the exact branch head's hosted GitHub Actions run.
 - **Unverified:** real S7 wire/session teardown and socket counts; HIL-S7-004/005/007 pending; an endlessly unresolved ItemGroup read may still block recovery. Do not claim vendor firmware compatibility.
+
+- [Initial proposed fix CI 42378264839](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42378264839) passed 6/6 on `d16c65a34dae53fe5ddcac808a46851e3d1ed0ec`; each of the seven desired-behavior tests failed on original `e79c151` and passed on the corrected runtime, plus five positive baseline tests on Windows/Linux.
+- Follow-up adds three further expected-red/required-green edge cases: disabling polling through reconnect, blocking late connect/read after close, and late read after transport error. **Verify again on the resulting exact SHA**, not merely the earlier passing commit.

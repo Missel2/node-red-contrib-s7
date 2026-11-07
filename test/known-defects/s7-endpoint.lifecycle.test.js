@@ -219,3 +219,55 @@ test('close reports completion even when transport disconnect rejects', async ()
     assert.equal(errors.length, 1, 'the disconnect error should remain observable');
     assert.equal(node.getStatus(), 'offline');
 });
+
+test('disabled polling remains disabled across a disconnect and reconnect', () => {
+    // HIL-S7-005 / HIL-S7-007: physical hardware validation is pending.
+    const { node, transport, timers } = fixture();
+    transport.emit('connect');
+    assert.equal(timers.size, 1);
+    node.updateCycleTime(0);
+    assert.equal(timers.size, 0, 'disabled timer is removed');
+    transport.emit('disconnect');
+    transport.emit('connect');
+    assert.equal(timers.size, 0, 'reconnect must honor the disabled interval');
+});
+
+test('closed endpoint ignores a late connect and a pending read result', async () => {
+    // HIL-S7-004 / HIL-S7-007: hardware verification pending.
+    const { node, transport, group, timers } = fixture();
+    const first = pending();
+    const all = [];
+    let calls = 0;
+    group.nextRead = () => ++calls === 1 ? first.promise : Promise.resolve({ tag: 222 });
+    node.on('__ALL__', values => all.push(values.tag));
+    transport.emit('connect');
+    node.doCycle();
+    await close(node);
+    transport.emit('connect');
+    node.doCycle();
+    first.resolve({ tag: 111 });
+    await tick();
+    assert.equal(node.getStatus(), 'offline');
+    assert.equal(timers.size, 0, 'closed endpoint must not resume polling');
+    assert.equal(calls, 1, 'closed endpoint must not launch another read');
+    assert.deepEqual(all, [], 'old read must never publish after close');
+});
+
+test('transport error invalidates a pending read and stops the polling timer', async () => {
+    // HIL-S7-004 / HIL-S7-005: hardware fault injection pending.
+    const { node, transport, group, errors, timers } = fixture();
+    const first = pending();
+    const all = [];
+    node.on('__ALL__', values => all.push(values.tag));
+    group.nextRead = () => first.promise;
+    transport.emit('connect');
+    node.doCycle();
+    transport.emit('error', new Error('connection reset by peer'));
+    assert.equal(node.getStatus(), 'offline');
+    assert.equal(timers.size, 0, 'error must stop polling');
+    first.resolve({ tag: 333 });
+    await tick();
+    assert.equal(node.getStatus(), 'offline', 'error result cannot resurrect online');
+    assert.deepEqual(all, [], 'error result cannot publish stale values');
+    assert.equal(errors.length, 1, 'actual transport error remains observable');
+});

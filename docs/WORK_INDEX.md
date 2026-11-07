@@ -6,7 +6,7 @@
 | --- | --- | --- | --- |
 | WI-001 | Completed | [PR #1: AI-assisted process, upstream credits and first CI](https://github.com/Missel2/node-red-contrib-s7/pull/1) | Squash-merged on `master` as `42296d8`; no S7 runtime changes |
 | WI-002 | P0 | [Issue #2: pending transport teardown](https://github.com/Missel2/node-red-contrib-s7/issues/2) | Hypothesis from source inspection; test first |
-| WI-003 | P0 | [Issue #3 / PR #6: stale reads and reconnect overlap](https://github.com/Missel2/node-red-contrib-s7/pull/6) | PR #6 merged as `e79c151`; follow-up fix PR in development: session-owned reads, obsolete callbacks and timer cleanup. Await exact-head CI and human review. |
+| WI-003 | P0 | [Issue #3 / PR #6: stale reads and reconnect overlap](https://github.com/Missel2/node-red-contrib-s7/pull/6) | PR #6 merged as `e79c151`; [PR #9](https://github.com/Missel2/node-red-contrib-s7/pull/9) fixes session-owned reads and timer cleanup; candidate CI [42378264839](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42378264839) passed 6/6 before 3 further edge-case tests; await exact-head CI and human review. |
 | WI-004 | P1 | [Issue #4: disposable S7 protocol endpoint](https://github.com/Missel2/node-red-contrib-s7/issues/4) | Wire-protocol CI not yet implemented |
 | WI-005 | P1 | [Issue #5: reproducible npm lockfile](https://github.com/Missel2/node-red-contrib-s7/issues/5) | Current inherited lockfile stale; release gate missing |
 | WI-006 | P2 | Data freshness, diagnostics and uncertain writes | Requirements only; do not implement before reliability baseline |

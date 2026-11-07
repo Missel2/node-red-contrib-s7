@@ -78,6 +78,9 @@ jobs:
             "closing an endpoint cancels its polling timer during a pending read"
             "stale success after reconnect cannot publish old data or delay a fresh read"
             "close reports completion even when transport disconnect rejects"
+            "disabled polling remains disabled across a disconnect and reconnect"
+            "closed endpoint ignores a late connect and a pending read result"
+            "transport error invalidates a pending read and stops the polling timer"
           )
           index=0
           for pattern in "${patterns[@]}"; do
