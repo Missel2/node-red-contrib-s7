@@ -1,0 +1,53 @@
+name: NPM lockfile reproducibility
+
+on:
+  pull_request:
+    paths:
+      - package.json
+      - package-lock.json
+      - .github/workflows/npm-lockfile.yml
+  push:
+    branches: [master]
+    paths:
+      - package.json
+      - package-lock.json
+      - .github/workflows/npm-lockfile.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  npm-lockfile:
+    name: NPM lockfile (Ubuntu, Node 22)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Regenerate and verify registry-signed dependency integrity metadata
+        run: |
+          npm --version
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          node -e "const p=require('./package.json');const l=require('./package-lock.json');if(l.lockfileVersion!==3||l.version!==p.version||l.packages?.['']?.dependencies?.['@st-one-io/nodes7']!=='1.1.2'){throw new Error('lockfile metadata mismatch')}"
+      - name: Clean dependency installation without lifecycle scripts
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm ls --all
+          node -e "if(typeof require('@st-one-io/nodes7').S7Endpoint!=='function')throw new Error('nodes7 missing S7Endpoint')"
+      - name: Package composition smoke
+        run: npm pack --dry-run --json > package-composition.json
+      - name: Lockfile must be committed exactly as npm resolves it
+        run: git diff --exit-code -- package-lock.json
+      - name: Preserve generated lockfile for initial repair and audited evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-lockfile-node22
+          path: |
+            package-lock.json
+            package-composition.json
+          if-no-files-found: warn
+          retention-days: 14
