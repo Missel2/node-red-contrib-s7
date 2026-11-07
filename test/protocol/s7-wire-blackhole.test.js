@@ -148,6 +148,8 @@ test('real nodes7 COTP blackhole is bounded across three repeated attempts', { t
     for (let n = 1; n <= RUNS; n++) {
         const result = await runBlackholeAttempt(n);
         evidence.observations.push(result);
+        assert.equal(result.explicitDisconnectResolved, true,
+            'nodes7 disconnect must complete even after a failed COTP setup');
         assert.equal(result.fixtureServerClosed, true,
             'each temporary server must close before starting a new attempt');
     }

@@ -62,3 +62,11 @@ A new genuine `nodes7` test accepts TCP but suppresses COTP response in **three 
 ### Issue #4 real TCP blackhole verified at `66997fd` (2026-11-07)
 
 [GitHub CI 42414980669](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42414980669) 8/8 pass on `66997fd98087afe7774fc4ed70018cd018d9a9ea`; [CodeQL run 42414976685](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42414976685) 2/2 pass. In 3 attempts per Ubuntu and Windows, the real client sent 22-byte RFC1006 handshake traffic to a peer that never replied, then rejected via its own `ERR_TIMEOUT` after ~10s; the test was not satisfied by a harness timeout. Captured archive data shows **one live peer TCP socket and one client-visible active Socket** immediately after each nodes7 error, in all six attempts. This does not establish a permanent socket leak or distinguish cleanup after `endpoint.disconnect()`. The follow-up test attempts that distinction; results pending CI. HIL-S7-001/-005 pending.
+
+
+### Issue #2 reproduced incomplete transport cleanup after blackholed handshake (2026-11-07)
+
+- [PR #10 workflow 42415198163](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42415198163), code `440368df57418fad98662662e9a1c036bb6e4864`, **8/8 CI checks** on Ubuntu and Windows; [CodeQL 42415194594](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42415194594) **2/2** passed.
+- **All six software-only trials (3 per OS):** a genuine 22-byte RFC1006/COTP request to a nonresponding TCP listener; `nodes7` reports `ERR_TIMEOUT` after 10.001–10.011s; no false connect; **one peer socket and one client Socket remain open immediately afterward**; `endpoint.disconnect()` resolves but **one peer socket and one client Socket remain open 200ms later**. Hosted CI artifacts include `s7-blackhole-evidence.json`; `process._getActiveHandles()` is an internal diagnostic, not an OS-level general-purpose leak counter.
+- The test then forcibly closes the synthetic server-side connection to avoid leaking CI processes. **This means cleanup is not validated.** Issue #2 now has direct real-TCP evidence; fix remains pending; no permanent process-handle growth rate or hardware effect has been measured.
+- The next commit makes successful public `disconnect()` a positive test assertion and needs exact-head CI. HIL-S7-001/-005 remain pending.

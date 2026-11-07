@@ -76,3 +76,16 @@ On [PR #10 run 42414980669](https://github.com/Missel2/node-red-contrib-s7/actio
 Actual archived `s7-blackhole-evidence.json` on **both** Ubuntu and Windows shows three full TCP connections accepted with valid RFC1006 TPKT; real nodes7 `ERR_TIMEOUT` at about 10 seconds, zero false connected events, and **one peer socket and one visible client Socket still open immediately after that error in each of six observations**. The fixture explicitly destroyed those sockets afterward to avoid polluting the runner. This is a concrete **socket still open at timeout** observation, not proof of permanent leak or resource accumulation.
 
 A follow-up adds a second measurement after explicit `endpoint.disconnect()` plus a short async-close allowance, and separates the eventual forced fixture cleanup from the library's own cleanup. **New exact-head CI and artifacts are required** before conclusions about explicit disconnect.
+
+
+### Confirmed: TCP sockets survive successful public disconnect (2026-11-07)
+
+[PR #10 exact-head CI 42415198163](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42415198163), commit `440368df57418fad98662662e9a1c036bb6e4864`, passed **8/8 CI jobs**, and [CodeQL 42415194594](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42415194594) passed **2/2 checks**. The uploaded `s7-blackhole-evidence.json` from each OS demonstrates the same pattern in **all 3 runs on Ubuntu and all 3 on Windows**:
+
+- Actual `@st-one-io/nodes7@1.1.2` sends 22 bytes of an RFC1006/COTP connection request; synthetic peer never replies.
+- `connect()` rejects after approximately **10.00 seconds** with `ERR_TIMEOUT`, correctly rejecting rather than falsely claiming a connected session.
+- **At the moment of that error:** one open server-side socket and one active client-side Socket (as counted using internal Node handle inspection).
+- **After `await endpoint.disconnect()` successfully resolves and 200ms pass:** still **one open server-side socket and one matching client Socket** in every one of the six trials.
+- Only after capturing both measurements does the **test harness forcibly destroy the server socket**, then close the listener. This manual cleanup must not be credited to `nodes7`.
+
+Therefore the earlier hypothesis in [Issue #2](https://github.com/Missel2/node-red-contrib-s7/issues/2#issuecomment-6713161172) is now supported by concrete repeated transport observations. These observations establish a **still-open TCP connection after successful public disconnect** under this very specific scenario, not quantified indefinite resource growth, production impact, or Siemens firmware behavior. A separate isolated transport correction must start with a red-on-current / green-on-fixed assertion that sockets close **without any fixture-side forced destroy**. The follow-up commit adds a pass/fail assertion that the public `disconnect()` actually resolves; its own CI must be verified.
