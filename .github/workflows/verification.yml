@@ -57,7 +57,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Reproduce three known read/reconnect defects on the original wrapper
+      - name: Reproduce five known read/reconnect lifecycle defects on the original wrapper
         shell: bash
         run: |
           set -euo pipefail
@@ -65,6 +65,8 @@ jobs:
             "late successful read cannot resurrect disconnected status"
             "late failure from an obsolete read must not mark a reconnected endpoint offline"
             "a reconnect must not overlap a pending read on the same item group"
+            "late successful read must not publish obsolete data after disconnect"
+            "closing an endpoint cancels its polling timer during a pending read"
           )
           index=0
           for pattern in "${patterns[@]}"; do

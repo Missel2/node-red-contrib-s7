@@ -23,3 +23,11 @@
 - **Package dependency smoke:** install and `npm pack --dry-run`, without a coherent lockfile. It is not a reproducible release test.
 
 Record every later test's actual commit SHA, OS, command, workflow URL, fixture version and whether it was run; never state “green CI” without naming its coverage.
+
+
+### Issue #3 characterization follow-up (2026-11-07; awaiting hosted CI)
+
+- Draft PR #6 expands the expected-failure harness to **five** individually named lifecycle defects: stale successful status, stale rejection, overlapping reads after reconnect, obsolete value publication, and active polling timer on close.
+- Positive coalescing of repeated triggers during one unresolved read is added to the passing mocked baseline suite.
+- **HIL pending:** HIL-S7-004, HIL-S7-005 and HIL-S7-007; no physical Siemens CPU tested. See [HIL_TEST_MATRIX.md](HIL_TEST_MATRIX.md). These findings are mocks, not protocol or hardware tests.
+- Confirm the exact SHA and five independently failing TAP outputs on hosted GitHub Actions before claiming this extension is verified.
