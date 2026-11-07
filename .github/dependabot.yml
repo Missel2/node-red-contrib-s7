@@ -1,0 +1,32 @@
+# Automated dependency-maintenance pull requests in the downstream fork.
+# Alerts and automatic security PRs are controlled separately in GitHub Settings.
+# All changes remain subject to the same protected-master CI and human approval.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 5
+    groups:
+      routine-npm:
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:15"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 5
+    groups:
+      routine-github-actions:
+        update-types:
+          - "minor"
+          - "patch"
