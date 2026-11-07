@@ -118,7 +118,8 @@ test('late successful read cannot resurrect disconnected status', async () => {
 test('late failure from an old session cannot mark a new session offline', async () => {
     const { node, transport, group, errors } = fixture();
     const p = pending();
-    group.nextRead = () => p.promise;
+    let reads = 0;
+    group.nextRead = () => ++reads === 1 ? p.promise : Promise.resolve({ tag: 42 });
     transport.emit('connect');
     node.doCycle();
     await tick();
@@ -126,6 +127,7 @@ test('late failure from an old session cannot mark a new session offline', async
     transport.emit('connect');
     p.reject(Error('old session'));
     await tick();
+    assert.equal(reads, 2, 'new session starts one independent read after old failure');
     assert.equal(node.getStatus(), 'online');
     assert.equal(errors.length, 0);
     await close(node);
