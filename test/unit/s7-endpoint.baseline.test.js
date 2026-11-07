@@ -90,7 +90,7 @@ test('baseline endpoint starts offline with the configured variable mapping', ()
     const { node, group, timers, errors } = fixture();
     assert.equal(node.getStatus(), 'offline');
     assert.equal(group.translate('tag'), 'DB1,REAL0');
-    assert.deepEqual(group.keys, ['tag']);
+    assert.equal(Array.from(group.keys).join(','), 'tag');
     assert.equal(timers.size, 0);
     assert.equal(errors.length, 0);
 });
