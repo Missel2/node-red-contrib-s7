@@ -26,6 +26,12 @@
 - [#4](https://github.com/Missel2/node-red-contrib-s7/issues/4): licensed disposable S7 protocol fixture and controllable TCP faults on hosted Ubuntu/Windows.
 - [#5](https://github.com/Missel2/node-red-contrib-s7/issues/5): regenerate the stale lockfile and enforce npm ci.
 
+## Future S7-1200 hardware tests
+
+- [Issue #8](https://github.com/Missel2/node-red-contrib-s7/issues/8): future dedicated, isolated S7-1200 bench on a RischLab runner, **not yet available**.
+- Every new change/PR must list pending `HIL-S7-*` IDs from [HIL_TEST_MATRIX.md](HIL_TEST_MATRIX.md), or an explicit reason why it is not applicable.
+- The live hardware bench must not be accessible from untrusted public pull_request code. Hardware testing, especially writes, requires explicit authorization and a known safe scratch DB; no automatic CI run or hardware pass today.
+
 ## Guards
 
 - No auto-merge, npm publication, productive OT deploy or real PLC writes.

@@ -1,6 +1,6 @@
 # Roadmap and next verified work
 
-**Status date:** 2026-11-06. This is an ordered engineering plan, not a delivery claim. Work state must be updated from code, PRs and CI logs at the time of each change.
+**Status date:** 2026-11-07. This is an ordered engineering plan, not a delivery claim. Work state must be updated from code, PRs and CI logs at the time of each change.
 
 ## P0 — Reproduce the previously investigated Musashi connection fault
 
@@ -36,6 +36,18 @@
 - [ ] Test redeploy, shutdown, repeated faults and sustained recovery for leaks.
 
 **Exit evidence:** specified and tested behavior, not merely absence of observed errors.
+
+## P2H — Future isolated physical S7-1200 verification ([Issue #8](https://github.com/Missel2/node-red-contrib-s7/issues/8))
+
+**Planned, not deployed and not run.** The maintainer intends to provide a dedicated S7-1200 reachable only through an isolated RischLab hardware-in-the-loop test runner. Continue mock and disposable protocol CI while awaiting hardware.
+
+- [ ] Identify the exact CPU order number, firmware and a dedicated test PLC program with a non-optimized scratch DB and no physical I/O effects.
+- [ ] Approve topology, TCP/102 egress constraints, test-data addresses, power/reset and safe read/write procedures.
+- [ ] Run only trusted, approved source revisions against the hardware; do not expose the test runner or PLC to arbitrary public PR code.
+- [ ] For **every development PR**, mark required future tests by stable `HIL-S7-*` IDs from [HIL_TEST_MATRIX.md](HIL_TEST_MATRIX.md). Pending means **not executed**, even if mocked tests are green.
+- [ ] Create a separately authorized, gated HIL workflow with evidence (CPU, firmware, project SHA, commit SHA, test logs), after the bench is available.
+
+**Exit evidence:** verified runs on the named S7-1200 with safe setup and reset. Until then all HIL cases remain pending.
 
 ## P3 — Compatibility and controlled releases
 

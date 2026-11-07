@@ -13,7 +13,7 @@
 | Reconnect and stale-read scenarios | Test design underway, not fixed | [Issue #3](https://github.com/Missel2/node-red-contrib-s7/issues/3) |
 | Actual S7 wire protocol CI | Not tested | [Issue #4](https://github.com/Missel2/node-red-contrib-s7/issues/4) |
 | Reproducible package install | Not tested | Inherited lockfile v1 lists different package/dependency versions; smoke job temporarily installs without it. [Issue #5](https://github.com/Missel2/node-red-contrib-s7/issues/5) |
-| Siemens CPU/firmware support | Not verified | No PLC or Siemens simulator tests on this branch |
+| Siemens CPU/firmware support | Not verified | No PLC or Siemens simulator tests on this branch. [HIL-S7 test matrix](HIL_TEST_MATRIX.md) and [Issue #8](https://github.com/Missel2/node-red-contrib-s7/issues/8) track **future pending** physical CPU tests only |
 | Fork npm package | Not released | No publish workflow or release approval |
 
 ## Check semantics
