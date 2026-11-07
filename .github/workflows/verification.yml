@@ -17,6 +17,7 @@ jobs:
   wrapper-contract:
     name: Wrapper contract (${{ matrix.os }}, Node ${{ matrix.node }})
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
@@ -27,77 +28,51 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      - name: Syntax validation
+      - name: Syntax verification
         run: npm run check:syntax
-      - name: Offline wrapper regression
+      - name: Baseline behavior tests (unmodified upstream wrapper)
         run: npm test
 
   package-smoke:
     name: Package dependency smoke (Ubuntu, Node 22)
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      # Inherited lockfile is out of sync with package.json.
-      # Temporary exception, NOT reproducible dependency verification.
-      - name: Check runtime dependency installation
+      # Inherited package-lock.json is stale; this is not reproducible installation.
+      - name: Install current declared dependencies without using stale lock
         run: npm install --no-package-lock --ignore-scripts --no-audit
-      - name: Check package contents
+      - name: Inspect package composition
         run: npm pack --dry-run
 
   baseline-negative-control:
     name: Baseline must fail stale-read regression
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Extract pre-fix source
+      - name: Show the original known defect is reproducible
         shell: bash
-        run: git show e6b5c54f63bce6302f97a7659d258fa30d80caf0:red/s7.js > test/unit/original-s7.js
-      - name: Prove targeted test fails on pre-fix source
-        shell: bash
-        env:
-          S7_TEST_SOURCE: test/unit/original-s7.js
         run: |
           set +e
-          node --test --test-name-pattern="late successful read" test/unit/s7-endpoint.lifecycle.test.js > baseline.tap 2>&1
+          node --test --test-name-pattern="late successful read cannot resurrect" test/known-defects/s7-endpoint.lifecycle.test.js > known-defect.tap 2>&1
           code=$?
           set -e
-          cat baseline.tap
+          cat known-defect.tap
+          # This is an *expected-failure characterization*, not a passing
+          # reliability regression. It must fail for the exact known test.
           if [ "$code" -eq 0 ]; then
-            echo "::error::Regression test unexpectedly passes old source"
+            echo "::error::Known defect did not reproduce; update the test/gate alongside the fix"
             exit 1
           fi
-          if ! grep -Eq "not ok .*late successful read" baseline.tap; then
-            echo "::error::Failure was unrelated to the targeted stale-read regression"
+          if ! grep -Eq "not ok .*late successful read cannot resurrect" known-defect.tap; then
+            echo "::error::Unexpected failure unrelated to the known defect"
             exit 1
           fi
-          echo "Verified: the known pre-fix source fails the targeted test"
-      - name: Extract previous wrapper source
-        shell: bash
-        run: git show e0aa944691a6fb304e33ae5d98b428b0c411b157:red/s7.js > test/unit/previous-wrapper.js
-      - name: Prove reconnect-overlap test fails on prior wrapper revision
-        shell: bash
-        env:
-          S7_TEST_SOURCE: test/unit/previous-wrapper.js
-        run: |
-          set +e
-          node --test --test-name-pattern="reconnect does not overlap" test/unit/s7-endpoint.lifecycle.test.js > overlap-baseline.tap 2>&1
-          code=$?
-          set -e
-          cat overlap-baseline.tap
-          if [ "$code" -eq 0 ]; then
-            echo "::error::Overlap regression test unexpectedly passes prior wrapper"
-            exit 1
-          fi
-          if ! grep -Eq "not ok .*reconnect does not overlap" overlap-baseline.tap; then
-            echo "::error::Failure was unrelated to the reconnect-overlap regression"
-            exit 1
-          fi
-          echo "Verified: previous wrapper overlaps reads after reconnect"
+          echo "::notice::Known stale-read defect reproduced; not repaired in PR #1"

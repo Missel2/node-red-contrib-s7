@@ -153,8 +153,6 @@ module.exports = function (RED) {
         var readInProgress = false;
         var readDeferred = 0;
         var connected = false;
-        var connectionEpoch = 0;
-        var closing = false;
         var currentCycleTime = config.cycletime;
         var transport = config.transport || 'iso-on-tcp';
 
@@ -275,8 +273,13 @@ module.exports = function (RED) {
             });
         }
 
-        function cycleCallback(values, epoch) {
-            if (closing || !connected || epoch !== connectionEpoch) return;
+        function cycleCallback(values) {
+            readInProgress = false;
+
+            if (readDeferred && connected) {
+                doCycle();
+                readDeferred = 0;
+            }
 
             manageStatus('online');
 
@@ -297,89 +300,50 @@ module.exports = function (RED) {
         }
 
         function doCycle() {
-            if (closing || !connected) return;
-            if (readInProgress) {
-                // Bound the number of deferred reads while the active one settles.
-                readDeferred = 1;
-                return;
-            }
-
-            const epoch = connectionEpoch;
-            // Keep ownership of the in-flight promise even across a reconnect.
-            // Starting another read on the same item group before it settles
-            // would overlap operations from different connection generations.
-            readInProgress = true;
-            Promise.resolve().then(() => itemGroup.readAllItems())
-                .then(values => cycleCallback(values, epoch))
-                .catch(e => {
-                    if (closing || !connected || epoch !== connectionEpoch) return;
+            if (!readInProgress && connected) {
+                itemGroup.readAllItems().then(cycleCallback).catch(e => {
                     node.error(e, {});
+                    readInProgress = false;
                     manageStatus('offline');
-                }).finally(() => {
-                readInProgress = false;
-                if (closing || !connected) {
-                    readDeferred = 0;
-                    return;
-                }
-                // A reconnect needs a fresh read after the old one finishes.
-                // Multiple deferred requests are coalesced into one.
-                if (readDeferred || epoch !== connectionEpoch) {
-                    readDeferred = 0;
-                    doCycle();
-                }
-            });
+                });
+                readInProgress = true;
+            } else {
+                readDeferred++;
+            }
         }
         node.doCycle = doCycle;
 
         function onConnect() {
-            if (closing) return;
-            connectionEpoch += 1;
-            // An earlier in-flight read may still own the item group.
+            readInProgress = false;
             readDeferred = 0;
             connected = true;
+
             manageStatus('online');
+
             node.updateCycleTime(currentCycleTime);
         }
 
         function onDisconnect() {
-            connectionEpoch += 1;
-            connected = false;
-            // Retain the in-flight guard until the pending promise settles.
-            readDeferred = 0;
-            clearInterval(node._td);
-            node._td = undefined;
             manageStatus('offline');
+            connected = false;
         }
 
         node.on('close', done => {
-            closing = true;
-            connectionEpoch += 1;
-            connected = false;
-            readInProgress = false;
-            readDeferred = 0;
-            clearInterval(node._td);
-            node._td = undefined;
             manageStatus('offline');
+            if (!node.endpoint) done();
 
-            const endpoint = node.endpoint;
-            if (!endpoint) return done();
-            Promise.resolve().then(() => endpoint.disconnect()).then(
-                () => done(),
-                e => {
-                    node.error(e);
-                    done(e);
-                }
-            );
+            node.endpoint.disconnect().then(done).catch(e => {
+                node.error(e);
+            });
         });
 
         manageStatus('offline');
 
         node.endpoint = new nodes7.S7Endpoint(connOpts);
-        node.endpoint.on('connecting', () => { if (!closing) manageStatus('connecting'); });
+        node.endpoint.on('connecting', () => manageStatus('connecting'));
         node.endpoint.on('connect', onConnect);
         node.endpoint.on('disconnect', onDisconnect);
         node.endpoint.on('error', (e => {
-            if (closing) return;
             manageStatus('offline');
             node.error(e && e.toString(), {});
         }));
