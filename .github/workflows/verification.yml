@@ -88,7 +88,7 @@ jobs:
             negative="test-reports/baseline-${index}.tap"
             positive="test-reports/fixed-${index}.tap"
             set +e
-            S7_TEST_SOURCE="$PWD/test-reports/original-s7.js" node --test --test-name-pattern="$pattern" test/known-defects/s7-endpoint.lifecycle.test.js > "$negative" 2>&1
+            S7_TEST_SOURCE="$PWD/test-reports/original-s7.js" node --test --test-name-pattern="$pattern" test/regression/s7-endpoint.lifecycle.test.js > "$negative" 2>&1
             baseline_code=$?
             set -e
             if [ "$baseline_code" -eq 0 ] ||
@@ -99,7 +99,7 @@ jobs:
               echo "::error::Original baseline must fail ONLY the named assertion: $pattern"
               exit 1
             fi
-            S7_TEST_SOURCE="$PWD/red/s7.js" node --test --test-name-pattern="$pattern" test/known-defects/s7-endpoint.lifecycle.test.js > "$positive" 2>&1 || {
+            S7_TEST_SOURCE="$PWD/red/s7.js" node --test --test-name-pattern="$pattern" test/regression/s7-endpoint.lifecycle.test.js > "$positive" 2>&1 || {
               cat "$positive"
               echo "::error::Patched lifecycle regression failed: $pattern"
               exit 1

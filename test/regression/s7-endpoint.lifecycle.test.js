@@ -85,8 +85,8 @@ function fixture() {
 }
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const close = node => new Promise(resolve => node.emit('close', resolve));
-// Issue #3 reliability regression suite. Tests MUST PASS on the corrected
-// wrapper and MUST FAIL individually on pinned, unmodified master e79c151.
+// Issue #3 positive reliability regressions. Tests MUST PASS on this wrapper
+// and FAIL individually on pinned, unmodified master e79c151.
 // The protected branch's historic required check name is retained, but it now
 // enforces BOTH the red baseline and the green corrected implementation.
 // HIL-S7-004, HIL-S7-005: pending physical CPU read/fault tests.
