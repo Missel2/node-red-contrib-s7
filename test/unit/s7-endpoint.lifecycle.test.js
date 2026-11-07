@@ -203,3 +203,16 @@ test('repeated triggers during an in-flight read coalesce into one next read', a
     assert.equal(calls, 2, 'deferred requests must not multiply reads');
     await close(node);
 });
+
+test('downstream callback exceptions are reported without leaking the read guard', async () => {
+    const { node, transport, errors } = fixture();
+    const failure = Error('listener threw');
+    node.on('__ALL__', () => { throw failure; });
+    transport.emit('connect');
+    node.doCycle();
+    await tick();
+    assert.equal(errors.length, 1);
+    assert.equal(errors[0], failure);
+    assert.equal(node.getStatus(), 'offline');
+    await close(node);
+});

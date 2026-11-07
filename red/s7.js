@@ -309,14 +309,13 @@ module.exports = function (RED) {
             // Starting another read on the same item group before it settles
             // would overlap operations from different connection generations.
             readInProgress = true;
-            Promise.resolve().then(() => itemGroup.readAllItems()).then(
-                values => cycleCallback(values, epoch),
-                e => {
+            Promise.resolve().then(() => itemGroup.readAllItems())
+                .then(values => cycleCallback(values, epoch))
+                .catch(e => {
                     if (closing || !connected || epoch !== connectionEpoch) return;
                     node.error(e, {});
                     manageStatus('offline');
-                }
-            ).finally(() => {
+                }).finally(() => {
                 readInProgress = false;
                 if (closing || !connected) {
                     readDeferred = 0;
