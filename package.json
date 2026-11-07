@@ -16,7 +16,7 @@
   "scripts": {
     "test": "node --test test/unit/s7-endpoint.baseline.test.js",
     "test:unit": "node --test test/unit/s7-endpoint.baseline.test.js",
-    "check:syntax": "node --check red/s7.js && node --check src/tools.js && node --check test/unit/s7-endpoint.baseline.test.js && node --check test/known-defects/s7-endpoint.lifecycle.test.js && node --check test/protocol/s7-wire-roundtrip.test.js"
+    "check:syntax": "node --check red/s7.js && node --check src/tools.js && node --check test/unit/s7-endpoint.baseline.test.js && node --check test/known-defects/s7-endpoint.lifecycle.test.js && node --check test/protocol/s7-wire-roundtrip.test.js && node --check test/protocol/s7-wire-faults.test.js"
   },
   "keywords": [
     "hardware",

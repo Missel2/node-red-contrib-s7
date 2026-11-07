@@ -38,3 +38,9 @@ Record every later test's actual commit SHA, OS, command, workflow URL, fixture 
 - Branch `test/issue-4-s7-wire-roundtrip` proposes `python-snap7==3.3.1` (MIT-licensed, pinned), an ephemeral synthetic DB1 server on loopback port 1102 and an actual `@st-one-io/nodes7@1.1.2` COTP/S7Comm read/write/readback.
 - Expected evidence: successful handshake, DB1 REAL/INT read and REAL scratch write/readback, plus fixture logs. The new `S7 wire roundtrip (Ubuntu, Node 22)` job must actually pass on the exact SHA. **Not a Siemens PLC, not real firmware, not Windows validation or TCP fault injection yet.**
 - HIL-S7-001/-002/-003: `PENDING_HARDWARE`; synthetic writes are isolated to a disposable test process, not an authorized physical PLC.
+
+
+### Issue #4 first verified S7 wire roundtrip
+
+- [PR #10 first CI run 42406148441](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406148441), exact commit `88ac3011b7232e977ef924a2e497e1e036cd439a`: **S7 wire roundtrip (Ubuntu, Node 22) passed** a test with the real `@st-one-io/nodes7@1.1.2` against `python-snap7==3.3.1` loopback server: COTP/S7Comm connection, DB1 REAL/INT reads, synthetic REAL write/readback. No physical CPU. This is confirmed only for Linux at this commit.
+- Follow-up branch aims to add Windows parity and partial COTP failure test. **These additions are not verified until the new head CI succeeds.**

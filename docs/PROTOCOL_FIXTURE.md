@@ -1,6 +1,6 @@
 # Disposable classic S7Comm protocol fixture (Issue #4)
 
-**Status: candidate, pending first GitHub Actions CI result.** No Siemens hardware or licensed PLCSIM used.
+**Status: first Linux real-wire roundtrip verified; expanded Windows/fault checks pending their own CI.** No Siemens hardware or licensed PLCSIM used.
 
 ## Implementation
 
@@ -8,7 +8,7 @@
 - Client: existing `@st-one-io/nodes7@1.1.2` (GPL-3.0-or-later), loaded as a **real dependency**, not a substituted mock.
 - Bind: only loopback `127.0.0.1:1102`. Synthetic DB1 is 64 bytes, with REAL 12.5 at 0, INT -123 at 4, REAL 3.25 at 8.
 - Harness: `test/protocol/s7-wire-roundtrip.test.js` starts and stops the fixture per test, waits for a readiness signal, connects using COTP and S7Comm, verifies typed reads and a scratch write/readback, then saves bounded synthetic logs to `test-reports/`.
-- CI: hosted Ubuntu Node 22 / Python 3.12, exact package version `python-snap7==3.3.1`. Run locally in an environment with Python/Node available via `python -m pip install python-snap7==3.3.1`, `npm install --no-package-lock --ignore-scripts --no-audit`, `node --test test/protocol/s7-wire-roundtrip.test.js`.
+- CI: hosted Ubuntu and Windows Node 22 / Python 3.12, exact package version `python-snap7==3.3.1`. Run locally in an environment with Python/Node available via `python -m pip install python-snap7==3.3.1`, `npm install --no-package-lock --ignore-scripts --no-audit`, `node --test test/protocol/s7-wire-roundtrip.test.js`.
 - The inherited lockfile is stale; dependency installation is **not** yet reproducible via `npm ci` (Issue #5).
 
 ## Evidence and limitations
@@ -18,3 +18,10 @@ Passing tests would demonstrate a real ISO-on-TCP/S7Comm interchange with a comp
 **Not yet implemented**: protocol fault injection, server restart/reconnect, Windows runner parity, bounded repeated-failure metrics and secure release gating. Do not mark Issue #4 complete until these are confirmed.
 
 All test writes target a synthetic in-process data block; no external PLC addresses, credentials, real industrial network routes or productive outputs are used.
+
+
+## First CI proof and next fault scenario
+
+- [PR #10 run 42406148441](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406148441) proved the Linux real-wire roundtrip at commit `88ac3011`.
+- Next candidate includes `s7-wire-faults.test.js`: opens a real loopback TCP listener, accepts a genuine RFC1006 TPKT, then intentionally aborts before sending COTP confirmation. Asserts no false connection; this is an actual wire fault, not a fake Node-RED transport. If a connection promise never settles, the test fails with a bounded timeout and records that limitation.
+- Windows CI is a platform compatibility check against the **same software server**, not PLCSIM or Siemens firmware. HIL-S7-001/002/003/005 remain pending.

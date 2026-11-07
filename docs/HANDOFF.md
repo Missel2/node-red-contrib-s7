@@ -33,3 +33,6 @@ No automatic merge, npm release, production PLC deployment, or unapproved real-P
 - Independent Issue #4 branch `test/issue-4-s7-wire-roundtrip` starts from `master` merge of PR #6, **not** the open PR #9.
 - Adds pinned python-snap7 3.3.1 synthetic S7Comm server on loopback TCP 1102 and a Node.js test using **actual** `@st-one-io/nodes7@1.1.2` to read and write DB1. Adds an Ubuntu hosted CI job and redacted logs. This is a first PoC; check the first CI result before any interoperability claim.
 - Keep separate from Issue #3 runtime fix (PR #9), protocol fault-injection, Windows fixture verification and all physical HIL.
+
+
+- The first [Linux real S7Comm roundtrip job on PR #10 run 42406148441](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406148441) **passed** against `python-snap7==3.3.1`; later Windows parity and partial COTP failure tests must be verified independently.

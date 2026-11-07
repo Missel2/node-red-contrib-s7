@@ -1,0 +1,75 @@
+'use strict';
+// Real ISO-on-TCP stream abort: no nodes7 mocks, no physical PLC.
+// HIL-S7-001/-005 (planned isolated S7-1200 fault tests): PENDING_HARDWARE.
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const net = require('node:net');
+const fs = require('node:fs');
+const path = require('node:path');
+const { S7Endpoint } = require('@st-one-io/nodes7');
+const OUT = path.resolve(__dirname, '../../test-reports');
+
+function timeout(ms, label) {
+    return new Promise((_, reject) => {
+        setTimeout(() => reject(new Error(label + ' exceeded ' + ms + 'ms')), ms).unref();
+    });
+}
+
+test('real nodes7 COTP handshake abort is reported without a false connect', { timeout: 14000 }, async () => {
+    let accepted = 0;
+    let receivedTpkt = false;
+    const server = net.createServer(socket => {
+        accepted++;
+        socket.once('data', bytes => {
+            receivedTpkt = bytes.length >= 4 && bytes[0] === 3 && bytes[1] === 0;
+            // Deliberately abort after a client's initial RFC1006 TPKT,
+            // before returning a COTP connection confirmation.
+            socket.destroy();
+        });
+    });
+    const sockets = new Set();
+    server.on('connection', socket => {
+        sockets.add(socket);
+        socket.on('close', () => sockets.delete(socket));
+    });
+    await new Promise((resolve, reject) => {
+        server.once('error', reject);
+        server.listen(0, '127.0.0.1', resolve);
+    });
+    const port = server.address().port;
+    const client = new S7Endpoint({
+        host: '127.0.0.1', port, rack: 0, slot: 1, autoReconnect: 0,
+        s7ConnOpts: { timeout: 1500 }
+    });
+    const errors = [];
+    client.on('error', error => errors.push(String(error)));
+    try {
+        await assert.rejects(
+            Promise.race([client.connect(), timeout(6000, 'partial COTP handshake')]),
+            'a dropped COTP handshake must reject connection'
+        );
+        assert.equal(client.isConnected, false);
+        assert.equal(accepted, 1, 'one controlled TCP connection');
+        assert.equal(receivedTpkt, true, 'the client sent a real RFC1006 TPKT');
+        fs.mkdirSync(OUT, { recursive: true });
+        fs.writeFileSync(path.join(OUT, 's7-fault-evidence.json'),
+            JSON.stringify({
+                transport: 'real TCP loopback partial COTP abort',
+                actualClient: '@st-one-io/nodes7@1.1.2',
+                acceptedConnections: accepted, receivedTpkt,
+                connectRejected: true, hardware: false
+            }, null, 2) + '\n');
+    } finally {
+        try {
+            await Promise.race([client.disconnect(), timeout(1500, 'fault fixture cleanup')]);
+        } catch (_ignored) {
+            // An unclean teardown is recorded as a follow-up defect if shown
+            // by the assertion; do not let it hide the handshake outcome.
+        }
+        for (const socket of sockets) socket.destroy();
+        await Promise.race([
+            new Promise(resolve => server.close(resolve)),
+            new Promise(resolve => setTimeout(resolve, 2000))
+        ]);
+    }
+});
