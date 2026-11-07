@@ -155,3 +155,49 @@ test('connection events after close cannot restart polling', async () => {
     assert.equal(node.getStatus(), 'offline');
     assert.equal(timers.size, 0);
 });
+
+test('reconnect does not overlap an in-flight read and resumes when it settles', async () => {
+    const { node, transport, group, errors } = fixture();
+    const oldRead = pending();
+    let calls = 0;
+    group.nextRead = () => {
+        calls++;
+        return calls === 1 ? oldRead.promise : Promise.resolve({ tag: 11 });
+    };
+    transport.emit('connect');
+    node.doCycle();
+    await tick();
+    assert.equal(calls, 1, 'one read belongs to the first connection');
+
+    transport.emit('disconnect');
+    transport.emit('connect');
+    node.doCycle();
+    await tick();
+    assert.equal(calls, 1, 'a reconnect must not start a concurrent read');
+
+    oldRead.resolve({ tag: 10 });
+    await tick();
+    assert.equal(calls, 2, 'a fresh read starts after the obsolete read settles');
+    assert.equal(node.getStatus(), 'online');
+    assert.equal(errors.length, 0);
+    await close(node);
+});
+
+test('repeated triggers during an in-flight read coalesce into one next read', async () => {
+    const { node, transport, group } = fixture();
+    const firstRead = pending();
+    let calls = 0;
+    group.nextRead = () => {
+        calls++;
+        return calls === 1 ? firstRead.promise : Promise.resolve({ tag: 22 });
+    };
+    transport.emit('connect');
+    node.doCycle();
+    await tick();
+    for (let i = 0; i < 20; i++) node.doCycle();
+    assert.equal(calls, 1);
+    firstRead.resolve({ tag: 21 });
+    await tick();
+    assert.equal(calls, 2, 'deferred requests must not multiply reads');
+    await close(node);
+});

@@ -79,3 +79,25 @@ jobs:
             exit 1
           fi
           echo "Verified: the known pre-fix source fails the targeted test"
+      - name: Extract previous wrapper source
+        shell: bash
+        run: git show e0aa944691a6fb304e33ae5d98b428b0c411b157:red/s7.js > test/unit/previous-wrapper.js
+      - name: Prove reconnect-overlap test fails on prior wrapper revision
+        shell: bash
+        env:
+          S7_TEST_SOURCE: test/unit/previous-wrapper.js
+        run: |
+          set +e
+          node --test --test-name-pattern="reconnect does not overlap" test/unit/s7-endpoint.lifecycle.test.js > overlap-baseline.tap 2>&1
+          code=$?
+          set -e
+          cat overlap-baseline.tap
+          if [ "$code" -eq 0 ]; then
+            echo "::error::Overlap regression test unexpectedly passes prior wrapper"
+            exit 1
+          fi
+          if ! grep -Eq "not ok .*reconnect does not overlap" overlap-baseline.tap; then
+            echo "::error::Failure was unrelated to the reconnect-overlap regression"
+            exit 1
+          fi
+          echo "Verified: previous wrapper overlaps reads after reconnect"

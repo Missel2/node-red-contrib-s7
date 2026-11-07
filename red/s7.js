@@ -277,12 +277,6 @@ module.exports = function (RED) {
 
         function cycleCallback(values, epoch) {
             if (closing || !connected || epoch !== connectionEpoch) return;
-            readInProgress = false;
-
-            if (readDeferred && connected) {
-                doCycle();
-                readDeferred = 0;
-            }
 
             manageStatus('online');
 
@@ -304,27 +298,44 @@ module.exports = function (RED) {
 
         function doCycle() {
             if (closing || !connected) return;
-            if (!readInProgress) {
-                const epoch = connectionEpoch;
-                readInProgress = true;
-                Promise.resolve().then(() => itemGroup.readAllItems()).then(values => {
-                    cycleCallback(values, epoch);
-                }).catch(e => {
+            if (readInProgress) {
+                // Bound the number of deferred reads while the active one settles.
+                readDeferred = 1;
+                return;
+            }
+
+            const epoch = connectionEpoch;
+            // Keep ownership of the in-flight promise even across a reconnect.
+            // Starting another read on the same item group before it settles
+            // would overlap operations from different connection generations.
+            readInProgress = true;
+            Promise.resolve().then(() => itemGroup.readAllItems()).then(
+                values => cycleCallback(values, epoch),
+                e => {
                     if (closing || !connected || epoch !== connectionEpoch) return;
                     node.error(e, {});
-                    readInProgress = false;
                     manageStatus('offline');
-                });
-            } else {
-                readDeferred = 1;
-            }
+                }
+            ).finally(() => {
+                readInProgress = false;
+                if (closing || !connected) {
+                    readDeferred = 0;
+                    return;
+                }
+                // A reconnect needs a fresh read after the old one finishes.
+                // Multiple deferred requests are coalesced into one.
+                if (readDeferred || epoch !== connectionEpoch) {
+                    readDeferred = 0;
+                    doCycle();
+                }
+            });
         }
         node.doCycle = doCycle;
 
         function onConnect() {
             if (closing) return;
             connectionEpoch += 1;
-            readInProgress = false;
+            // An earlier in-flight read may still own the item group.
             readDeferred = 0;
             connected = true;
             manageStatus('online');
@@ -334,7 +345,7 @@ module.exports = function (RED) {
         function onDisconnect() {
             connectionEpoch += 1;
             connected = false;
-            readInProgress = false;
+            // Retain the in-flight guard until the pending promise settles.
             readDeferred = 0;
             clearInterval(node._td);
             node._td = undefined;
