@@ -43,3 +43,5 @@ Record every later test's actual commit SHA, OS, command, workflow URL, fixture 
 
 - [Initial proposed fix CI 42378264839](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42378264839) passed 6/6 on `d16c65a34dae53fe5ddcac808a46851e3d1ed0ec`; each of the seven desired-behavior tests failed on original `e79c151` and passed on the corrected runtime, plus five positive baseline tests on Windows/Linux.
 - Follow-up adds three further expected-red/required-green edge cases: disabling polling through reconnect, blocking late connect/read after close, and late read after transport error. **Verify again on the resulting exact SHA**, not merely the earlier passing commit.
+
+- Compatibility refinement: a transport `error` by itself does **not** imply `disconnect`. Preserve the existing poll/retry timer, invalidate the pending old read generation and coalesce a fresh retry after it settles. The matching negative control must fail against original `e79c151`; confirm on final exact-head CI.

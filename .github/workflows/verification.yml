@@ -80,7 +80,7 @@ jobs:
             "close reports completion even when transport disconnect rejects"
             "disabled polling remains disabled across a disconnect and reconnect"
             "closed endpoint ignores a late connect and a pending read result"
-            "transport error invalidates a pending read and stops the polling timer"
+            "transport error discards old read but allows a subsequent polling retry"
           )
           index=0
           for pattern in "${patterns[@]}"; do

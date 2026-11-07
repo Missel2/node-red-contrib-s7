@@ -253,21 +253,24 @@ test('closed endpoint ignores a late connect and a pending read result', async (
     assert.deepEqual(all, [], 'old read must never publish after close');
 });
 
-test('transport error invalidates a pending read and stops the polling timer', async () => {
+test('transport error discards old read but allows a subsequent polling retry', async () => {
     // HIL-S7-004 / HIL-S7-005: hardware fault injection pending.
+    // An error event alone does not prove that the connection was closed.
     const { node, transport, group, errors, timers } = fixture();
     const first = pending();
     const all = [];
+    let calls = 0;
     node.on('__ALL__', values => all.push(values.tag));
-    group.nextRead = () => first.promise;
+    group.nextRead = () => ++calls === 1 ? first.promise : Promise.resolve({ tag: 42 });
     transport.emit('connect');
     node.doCycle();
-    transport.emit('error', new Error('connection reset by peer'));
+    transport.emit('error', new Error('transient S7 transport fault'));
     assert.equal(node.getStatus(), 'offline');
-    assert.equal(timers.size, 0, 'error must stop polling');
+    assert.equal(timers.size, 1, 'error alone retains the existing retry schedule');
     first.resolve({ tag: 333 });
     await tick();
-    assert.equal(node.getStatus(), 'offline', 'error result cannot resurrect online');
-    assert.deepEqual(all, [], 'error result cannot publish stale values');
+    assert.equal(calls, 2, 'a clean follow-up read must occur after old read settles');
+    assert.deepEqual(all, [42], 'stale error-era read must not publish its old value');
+    assert.equal(node.getStatus(), 'online', 'successful fresh read restores status');
     assert.equal(errors.length, 1, 'actual transport error remains observable');
 });

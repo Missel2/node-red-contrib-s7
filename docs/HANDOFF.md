@@ -14,7 +14,7 @@
 - Pending ItemGroup read ownership retained through disconnect/reconnect; per-connection generation marks late success/rejection stale; old values do not publish.
 - Stop/close cancels polling timer and makes close callback complete even if disconnect rejects; repeated read requests coalesce. Keep disabled cycle interval through reconnect.
 - **Known limitation:** an `@st-one-io/nodes7` read promise that never settles still blocks subsequent reads on the same item group. True transport abort/recreation belongs to an independent, test-first dependency strategy; do not silently overlap operations.
-- Existing required check `Baseline must fail stale-read regression` is retained for branch ruleset continuity. It now checks seven assertions **red against frozen original master `e79c151` AND green against proposed corrected wrapper**. Five were characterized in PR #6, five are added as negative controls here (including disabled polling, post-close events and transport-error callbacks). `npm test` must now run positive corrected lifecycle checks.
+- Existing required check `Baseline must fail stale-read regression` is retained for branch ruleset continuity. It now checks seven assertions **red against frozen original master `e79c151` AND green against proposed corrected wrapper**. Five were characterized in PR #6, five are added as negative controls here (including disabled polling, post-close events and a transient transport-error retry without a disconnect). `npm test` must now run positive corrected lifecycle checks.
 - Only mock Node-RED/transport tests have run, no actual wire, Siemens simulator or physical S7-1200 tests.
 
 ## Future hardware testing

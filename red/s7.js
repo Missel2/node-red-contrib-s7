@@ -398,7 +398,12 @@ module.exports = function (RED) {
         node.endpoint.on('disconnect', onDisconnect);
         node.endpoint.on('error', error => {
             if (closed) return;
-            onDisconnected('offline');
+            // An error alone is not necessarily a transport disconnect:
+            // preserve the existing polling/retry path until 'disconnect' or
+            // 'connecting' is emitted, but invalidate the in-flight result.
+            connectionGeneration++;
+            readDeferred = readInProgress && connected ? 1 : 0;
+            manageStatus('offline');
             node.error(error && error.toString(), {});
         });
 
