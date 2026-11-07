@@ -167,6 +167,17 @@ test('real S7Comm endpoint reconnects through two software server restarts', { t
         await expectEventually(endpoint, 'disconnect', false, 8000);
         assert.equal(endpoint.isConnected, false, 'actual S7 connection must be lost');
 
+        // Allow the *real* nodes7 retry loop to encounter a refused TCP port.
+        // A fixed observation window avoids a false pass caused by restarting
+        // the fixture before any reconnect attempt is made.
+        const errorsAtDisconnect = evidence.errors.length;
+        await sleep(1600);
+        assert.equal(endpoint.isConnected, false,
+            'client must not report connected while its S7 server is stopped');
+        assert.ok(evidence.errors.length > errorsAtDisconnect,
+            'at least one actual TCP connection refusal must be surfaced during downtime');
+        const failuresDuringDowntime = evidence.errors.length - errorsAtDisconnect;
+
         activeServer = await startServer();
         servers.push(activeServer);
         await expectEventually(endpoint, 'connect', true, 12000);
@@ -176,7 +187,8 @@ test('real S7Comm endpoint reconnects through two software server restarts', { t
             'restarted server DB must be read, not an obsolete cached value');
         evidence.cycles.push({
             index: cycle, disconnected: true, reconnected: true,
-            priorScratchValue: scratch, resetValueObserved: after.writable
+            priorScratchValue: scratch, resetValueObserved: after.writable,
+            failuresDuringDowntime
         });
     }
     assert.equal(evidence.cycles.length, 2);
