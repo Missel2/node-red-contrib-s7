@@ -143,7 +143,7 @@ test('real S7Comm endpoint reconnects through two software server restarts', { t
     endpoint.on('connect', () => evidence.connectionEvents++);
     endpoint.on('disconnect', () => evidence.disconnectEvents++);
     endpoint.on('error', error => {
-        if (evidence.errors.length < 15) evidence.errors.push(String(error));
+        if (evidence.errors.length < 64) evidence.errors.push(String(error));
     });
     await expectEventually(endpoint, 'connect', true, 9000);
 
@@ -170,13 +170,14 @@ test('real S7Comm endpoint reconnects through two software server restarts', { t
         // Allow the *real* nodes7 retry loop to encounter a refused TCP port.
         // A fixed observation window avoids a false pass caused by restarting
         // the fixture before any reconnect attempt is made.
-        const errorsAtDisconnect = evidence.errors.length;
+        const refusalsAtDisconnect = evidence.errors.filter(error => error.includes('ECONNREFUSED')).length;
         await sleep(1600);
         assert.equal(endpoint.isConnected, false,
             'client must not report connected while its S7 server is stopped');
-        assert.ok(evidence.errors.length > errorsAtDisconnect,
-            'at least one actual TCP connection refusal must be surfaced during downtime');
-        const failuresDuringDowntime = evidence.errors.length - errorsAtDisconnect;
+        const failuresDuringDowntime =
+            evidence.errors.filter(error => error.includes('ECONNREFUSED')).length - refusalsAtDisconnect;
+        assert.ok(failuresDuringDowntime >= 1,
+            'at least one actual ECONNREFUSED must be surfaced while the server is stopped');
 
         activeServer = await startServer();
         servers.push(activeServer);
