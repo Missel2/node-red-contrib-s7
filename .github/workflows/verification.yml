@@ -34,10 +34,20 @@ jobs:
         run: npm test
 
   package-smoke:
+    # This job name is already required by protect-master.
+    # Make BOTH hosted S7 wire tests mandatory without relying on adding
+    # unprotected status checks to the ruleset before this PR is merged.
+    needs: wire-protocol
+    if: ${{ always() }}
     name: Package dependency smoke (Ubuntu, Node 22)
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
+      - name: Gate protected package check on both S7 wire-protocol matrix jobs
+        env:
+          S7_WIRE_RESULT: ${{ needs.wire-protocol.result }}
+        run: |
+          node -e "if(process.env.S7_WIRE_RESULT !== 'success') { throw new Error('S7 wire-protocol matrix did not pass: ' + process.env.S7_WIRE_RESULT) }"
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
