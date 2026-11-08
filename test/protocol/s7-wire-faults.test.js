@@ -71,16 +71,25 @@ test('real nodes7 COTP handshake abort is reported without a false connect', { t
                 connectRejected: true, hardware: false
             }, null, 2) + '\n');
     } finally {
+        // Always clean up the synthetic peer before checking teardown.
+        // The known pre-confirmation client socket defect is characterized
+        // independently; here we must not silently accept a hung fixture or
+        // a failed public disconnect after a server-initiated abort.
+        let disconnectError;
         try {
-            await Promise.race([client.disconnect(), timeout(1500, 'fault fixture cleanup')]);
-        } catch (_ignored) {
-            // An unclean teardown is recorded as a follow-up defect if shown
-            // by the assertion; do not let it hide the handshake outcome.
+            await Promise.race([client.disconnect(), timeout(1500, 'fault endpoint disconnect')]);
+        } catch (error) {
+            disconnectError = error;
         }
         for (const socket of sockets) socket.destroy();
         await Promise.race([
-            new Promise(resolve => server.close(resolve)),
-            new Promise(resolve => setTimeout(resolve, 2000))
+            new Promise((resolve, reject) =>
+                server.close(error => error ? reject(error) : resolve())
+            ),
+            timeout(2000, 'fault fixture listener teardown')
         ]);
+        assert.equal(sockets.size, 0, 'all synthetic server peer sockets must close');
+        assert.equal(disconnectError, undefined,
+            'the public endpoint disconnect must settle after server-initiated COTP abort');
     }
 });
