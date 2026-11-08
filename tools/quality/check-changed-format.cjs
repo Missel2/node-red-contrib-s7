@@ -40,7 +40,7 @@ async function main() {
     if (!fs.existsSync(fullPath)) continue;
     const current = fs.readFileSync(fullPath, "utf8");
     const previous = readOriginal(mergeBase, file);
-    const opts = { filepath: fullPath };
+    const opts = { filepath: fullPath, endOfLine: "auto" };
 
     if (previous !== null && !(await prettier.check(previous, opts))) {
       debt++;

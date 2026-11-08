@@ -1,0 +1,35 @@
+name: Temporary Prettier baseline formatter
+
+on:
+  push:
+    branches: [ci/quality-gates-before-runtime]
+
+permissions:
+  contents: read
+
+jobs:
+  print-prettier-baseline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --prefix tools/quality --ignore-scripts --no-audit --no-fund
+      - name: Print only formatting of newly introduced source files
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const prettier = require('./tools/quality/node_modules/prettier');
+          (async () => {
+            for (const name of ['tools/quality/check-changed-format.cjs', 'tools/quality/negative-control.cjs', 'tools/quality/tsconfig.json']) {
+              const src = fs.readFileSync(name, 'utf8');
+              const target = await prettier.format(src, { filepath: name, endOfLine: 'auto' });
+              const b64 = Buffer.from(target).toString('base64');
+              console.log('FMT_START=' + name);
+              for (let i=0; i<b64.length; i+=120) console.log('FMT_PART=' + b64.slice(i,i+120));
+              console.log('FMT_END=' + name);
+            }
+          })().catch(e => { console.error(e); process.exitCode=1; });
+          NODE
