@@ -1,0 +1,41 @@
+name: CI quality toolchain lockfile bootstrap
+
+on:
+  push:
+    branches: [ci/quality-gates-before-runtime]
+
+permissions:
+  contents: read
+
+jobs:
+  generate-quality-lockfile:
+    name: Generate isolated quality lockfile for review
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Resolve pinned static-quality tool dependencies from npm
+        run: npm install --prefix tools/quality --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Emit auditable lockfile in bounded chunks for maintainer commit
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const lock = fs.readFileSync('tools/quality/package-lock.json');
+          const value = lock.toString('base64');
+          console.log('QUALITY_LOCK_BEGIN');
+          for (let n = 0; n < value.length; n += 120) {
+            console.log('QUALITY_LOCK_PART=' + value.slice(n, n + 120));
+          }
+          console.log('QUALITY_LOCK_END');
+          console.log('QUALITY_LOCK_BYTES=' + lock.length);
+          NODE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quality-toolchain-generated-lockfile
+          path: tools/quality/package-lock.json
+          if-no-files-found: error
+          retention-days: 7
