@@ -27,7 +27,12 @@ async function main() {
     ? "origin/" + process.env.GITHUB_BASE_REF
     : process.env.QUALITY_FORMAT_BASE || "HEAD^";
   const mergeBase = git("merge-base", "HEAD", base);
-  const raw = git("diff", "--name-only", "--diff-filter=ACMR", mergeBase + "..HEAD");
+  const raw = git(
+    "diff",
+    "--name-only",
+    "--diff-filter=ACMR",
+    mergeBase + "..HEAD",
+  );
   const files = raw
     .split("\n")
     .filter((file) => file && checkExtensions.has(path.extname(file)));
@@ -44,7 +49,9 @@ async function main() {
 
     if (previous !== null && !(await prettier.check(previous, opts))) {
       debt++;
-      console.log("LEGACY_FORMAT_DEBT: " + file + " (existing unformatted file)");
+      console.log(
+        "LEGACY_FORMAT_DEBT: " + file + " (existing unformatted file)",
+      );
       continue;
     }
     checked++;

@@ -28,11 +28,19 @@ function lint(source) {
 
 async function main() {
   const valid = lint('console.log("valid");\n');
-  assert.equal(valid.status, 0, "valid source failed: " + valid.stdout + valid.stderr);
+  assert.equal(
+    valid.status,
+    0,
+    "valid source failed: " + valid.stdout + valid.stderr,
+  );
 
   const invalid = lint("console.log(undeclaredQualityGateSymbol);\n");
   assert.equal(invalid.status, 1, "an undefined symbol MUST fail ESLint");
-  assert.match(invalid.stdout, /no-undef/, "expected the actual no-undef diagnostic");
+  assert.match(
+    invalid.stdout,
+    /no-undef/,
+    "expected the actual no-undef diagnostic",
+  );
 
   assert.equal(
     await prettier.check("const broken=1\n", { filepath: "fixture.js" }),
@@ -44,7 +52,9 @@ async function main() {
     true,
     "properly formatted source MUST pass Prettier",
   );
-  console.log("Quality negative controls: ESLint red/green and Prettier red/green confirmed");
+  console.log(
+    "Quality negative controls: ESLint red/green and Prettier red/green confirmed",
+  );
 }
 
 main().catch((error) => {
