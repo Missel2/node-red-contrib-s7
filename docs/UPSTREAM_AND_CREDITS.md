@@ -27,6 +27,18 @@ The [nodes7 README](https://github.com/st-one-io/nodes7#readme) says it was rewr
 
 The nodes7 package declares a dependency on the [iso-on-tcp npm package](https://www.npmjs.com/package/iso-on-tcp). That package provides part of the protocol/transport ecosystem; it is an **indirect dependency** of this fork. Its own distribution and licensing information must be verified when regenerating the dependency lockfile.
 
+## CI-only JavaScript quality tools
+
+The isolated private tooling package under `tools/quality/` installs exact-version development dependencies via its own npm lockfile. These are **not** required or bundled by the Node-RED S7 runtime:
+
+- [ESLint](https://github.com/eslint/eslint), version `9.39.1` (MIT), for JavaScript correctness checks.
+- [globals](https://github.com/sindresorhus/globals), version `16.4.0` (MIT), for standard JavaScript/Node runtime globals.
+- [Prettier](https://github.com/prettier/prettier), version `3.6.2` (MIT), for changed-file formatting.
+- [TypeScript](https://github.com/microsoft/TypeScript), version `5.9.3` (Apache-2.0), for advisory JavaScript diagnostics.
+- [@types/node](https://github.com/DefinitelyTyped/DefinitelyTyped), version `22.18.6` (MIT), for Node.js type definitions.
+
+Each is a direct **CI-only development dependency**. The lockfile pins transitive versions and npm integrity hashes. See [quality gates](QUALITY_GATES.md) and [tooling package](../tools/quality/package.json).
+
 ## Node-RED ecosystem
 
 - **Project:** [Node-RED](https://nodered.org/)

@@ -33,11 +33,73 @@ jobs:
       - name: Wrapper baseline plus fixed lifecycle regressions
         run: npm test
 
+  static-quality:
+    name: Static quality (${{ matrix.os }}, Node 22)
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: tools/quality/package-lock.json
+      - name: Install isolated, pinned quality tools
+        run: npm ci --prefix tools/quality --ignore-scripts --no-audit --no-fund
+      - name: ESLint correctness checks
+        run: npm run lint
+      - name: Prettier checks for new and previously formatted changed files
+        run: npm run format:check
+      - name: Prove bad JS/formatting is rejected (negative controls)
+        run: npm run quality:negative-control
+
+  js-types-diagnostics:
+    name: JavaScript type diagnostics (advisory, Ubuntu Node 22)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated quality tools
+        run: npm ci --prefix tools/quality --ignore-scripts --no-audit --no-fund
+      - name: Capture known inherited JavaScript type diagnostics
+        shell: bash
+        run: |
+          mkdir -p test-reports
+          node tools/quality/node_modules/typescript/bin/tsc --project tools/quality/tsconfig.json --pretty false > test-reports/js-type-diagnostics.txt 2>&1 || {
+            echo '::warning::Existing JS typing issues remain advisory, not a passing strict typecheck'
+            cat test-reports/js-type-diagnostics.txt
+          }
+      - name: Preserve type diagnostic output for later triage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-type-diagnostics-ubuntu-node22
+          path: test-reports/js-type-diagnostics.txt
+          if-no-files-found: warn
+          retention-days: 14
   package-smoke:
+    # This job is already required by the protect-master ruleset.
+    # Failure of either OS's static-quality job must block the merge.
+    needs: static-quality
+    if: ${{ always() }}
     name: Package dependency smoke (Ubuntu, Node 22)
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
+      - name: Require both-platform lint and formatting to pass
+        env:
+          QUALITY_RESULT: ${{ needs.static-quality.result }}
+        run: |
+          node -e "if (process.env.QUALITY_RESULT !== 'success') throw Error('static-quality did not pass: ' + process.env.QUALITY_RESULT)"
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
