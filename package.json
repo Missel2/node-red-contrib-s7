@@ -15,6 +15,9 @@
   },
   "scripts": {
     "test": "node --test test/unit/s7-endpoint.baseline.test.js test/regression/s7-endpoint.lifecycle.test.js",
+    "lint": "node tools/quality/node_modules/eslint/bin/eslint.js --config tools/quality/eslint.config.mjs \"red/**/*.js\" \"src/**/*.js\" \"test/**/*.js\" \"scripts/**/*.js\" \"tools/quality/**/*.js\" \"tools/quality/**/*.cjs\" \"tools/quality/**/*.mjs\" --no-error-on-unmatched-pattern",
+    "format:check": "node tools/quality/check-changed-format.cjs",
+    "quality:negative-control": "node tools/quality/negative-control.cjs",
     "test:unit": "node --test test/unit/s7-endpoint.baseline.test.js test/regression/s7-endpoint.lifecycle.test.js",
     "check:syntax": "node --check red/s7.js && node --check src/tools.js && node --check test/unit/s7-endpoint.baseline.test.js && node --check test/regression/s7-endpoint.lifecycle.test.js"
   },
