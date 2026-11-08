@@ -27,6 +27,16 @@ The [nodes7 README](https://github.com/st-one-io/nodes7#readme) says it was rewr
 
 The nodes7 package declares a dependency on the [iso-on-tcp npm package](https://www.npmjs.com/package/iso-on-tcp). That package provides part of the protocol/transport ecosystem; it is an **indirect dependency** of this fork. Its own distribution and licensing information must be verified when regenerating the dependency lockfile.
 
+## Test-only classic S7Comm fixture: python-snap7
+
+- **Source and pinned release:** [gijzelaerr/python-snap7, tag 3.3.1](https://github.com/gijzelaerr/python-snap7/releases/tag/3.3.1).
+- **Package installed by hosted protocol CI:** [python-snap7==3.3.1](https://pypi.org/project/python-snap7/3.3.1/), with source metadata naming Gijs Molenaar as an author.
+- **License:** [MIT](https://github.com/gijzelaerr/python-snap7/blob/3.3.1/LICENSE), verified against the tagged 3.3.1 `pyproject.toml` and LICENSE.
+- **Relationship:** a **direct test-only Python dependency** used to run a disposable classic-S7 TCP server with synthetic DB data on hosted CI. It is **not** a Node.js runtime dependency of this fork, is not vendored into this repository, and is not shipped as a PLC simulator or Siemens firmware.
+- **Evidence:** [Issue #4](https://github.com/Missel2/node-red-contrib-s7/issues/4) and [protocol fixture coverage](PROTOCOL_FIXTURE.md); Windows/Linux loopback results do not establish real Siemens hardware compatibility.
+
+We thank the python-snap7 maintainers and contributors for enabling license-compatible, hardware-free automated protocol testing.
+
 ## Node-RED ecosystem
 
 - **Project:** [Node-RED](https://nodered.org/)
@@ -44,6 +54,6 @@ This fork's change history, PRs, source files, upstream commit history and their
 
 Siemens and SIMATIC/S7 are trademarks of their respective owners; naming products to describe interoperability does not imply endorsement by Siemens AG. This project does not claim industrial safety certification, functional-safety approval or validated compatibility with every PLC.
 
-Any additional code or dependencies must receive a separate license and provenance review before inclusion. **Planned test servers, Siemens simulators or alternative S7 implementations are not described here as current dependencies until actually adopted.**
+Any additional code or dependencies must receive a separate license and provenance review before inclusion. **Other planned test servers, Siemens simulators or alternative S7 implementations are not current dependencies until adopted.** The adopted python-snap7 protocol fixture is identified separately above.
 
 A credit line cannot replace license compliance. Preserve notices, license texts, attribution and corresponding source obligations in any redistributed work.

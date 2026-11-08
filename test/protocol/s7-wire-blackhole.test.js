@@ -36,7 +36,14 @@ function instrumentedClientSocketCount(port) {
     ).length;
 }
 
-async function runBlackholeAttempt(index) {
+async function runBlackholeAttempt(index, recordAttempt) {
+    // Store the live evidence object before any assertion can throw.
+    // The finally block still appends teardown observations on failures.
+    const attempt = {
+        index, listener: '127.0.0.1', scenario: 'TCP accepted; COTP reply blackholed',
+        hardware: false
+    };
+    recordAttempt(attempt);
     const sockets = new Set();
     let accepted = 0;
     let bytesReceived = 0;
@@ -64,10 +71,6 @@ async function runBlackholeAttempt(index) {
     const events = { connects: 0, errors: [] };
     endpoint.on('connect', () => events.connects++);
     endpoint.on('error', error => events.errors.push(String(error)));
-    const attempt = {
-        index, listener: '127.0.0.1', scenario: 'TCP accepted; COTP reply blackholed',
-        hardware: false
-    };
     try {
         const start = Date.now();
         let outcome;
@@ -146,8 +149,8 @@ test('real nodes7 COTP blackhole is bounded across three repeated attempts', { t
         fs.writeFileSync(EVIDENCE_FILE, JSON.stringify(evidence, null, 2) + '\n');
     });
     for (let n = 1; n <= RUNS; n++) {
-        const result = await runBlackholeAttempt(n);
-        evidence.observations.push(result);
+        const result = await runBlackholeAttempt(n,
+            attempt => evidence.observations.push(attempt));
         assert.equal(result.explicitDisconnectResolved, true,
             'nodes7 disconnect must complete even after a failed COTP setup');
         assert.equal(result.fixtureServerClosed, true,
