@@ -151,3 +151,32 @@ jobs:
           path: test-reports/s7-*
           if-no-files-found: warn
           retention-days: 14
+
+  pending-cotp-negative-control:
+    # Expected-red characterization, not a runtime fix.
+    name: Pending COTP disconnect defect characterization (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install actual current S7 dependency
+        run: npm install --no-package-lock --ignore-scripts --no-audit
+      - name: Confirm pending disconnect defect with an expected-red test
+        run: node scripts/verify-pending-cotp-negative-control.js
+      - name: Archive the expected failure and pre-cleanup socket evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pending-cotp-expected-red-${{ matrix.os }}
+          path: |
+            test-reports/pending-cotp-expected-red.tap
+            test-reports/s7-pending-disconnect-evidence.json
+          if-no-files-found: warn
+          retention-days: 14
