@@ -1,6 +1,19 @@
 # Verification ledger
 
-**Updated:** 2026-11-07. A green status check is evidence only for its named assertion and the exact commit tested.
+**Updated:** 2026-11-08. A green status check applies only to its exact SHA and assertion; see current section before historical entries.
+
+## Current P1 quality CI candidate (2026-11-08)
+
+- [PR #14](https://github.com/Missel2/node-red-contrib-s7/pull/14) is **not merged**; its base is the open [PR #12](https://github.com/Missel2/node-red-contrib-s7/pull/12) rather than `master`.
+- Candidate `a8d381e5b506b34e99bb55f2f8b897237369b848`: [Verification 42483462367](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42483462367) **successful**; Ubuntu and Windows Node 22 ESLint, changed-file Prettier, both deliberate red/green controls, the existing four wrapper jobs, negative baseline and protected package-smoke dependency all passed.
+- [NPM lockfile workflow 42483462378](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42483462378) **successful** under both Ubuntu and Windows. The separate quality tools lockfile was generated in [temporary bootstrap 42482743401](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42482743401), inspected and checked in; the bootstrap workflow is removed.
+- JavaScript type diagnostics are **not passing strict typecheck**: the legacy `red/s7.js` Node-RED instance/transport mixin properties produce multiple TS2339 errors. The advisory job writes an artifact but deliberately does not fail the protected gate. No type-safety certification is claimed.
+- CodeQL was **not reverified** on this stacked PR head because its base is not `master`. A new CodeQL run and protected checks are required after PR #12 is merged and PR #14 is retargeted.
+- This section records the named earlier CI head; verify again after any documentation-only commit before requesting merge approval. HIL: **not applicable to static tooling**; all future HIL-S7-001 through HIL-S7-007 remain PENDING_HARDWARE.
+
+### Historical ledger below
+
+The existing rows below contain older dated milestones and some historical PR states. Use the live GitHub PR and CI state, plus the current section above, for continuation decisions.
 
 | Item | Status | Evidence / limitations |
 | --- | --- | --- |

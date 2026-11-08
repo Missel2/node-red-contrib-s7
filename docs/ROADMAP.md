@@ -27,6 +27,8 @@
 
 **Exit evidence:** green CI on a named commit, confirmed read/write and connection recovery behavior against the named fixture; unsupported scenarios documented.
 
+**Static CI preparation (proposed, not merged):** [Issue #7 / PR #14](https://github.com/Missel2/node-red-contrib-s7/pull/14) introduces locked ESLint, changed-file Prettier and negative controls on Ubuntu/Windows. TypeScript findings remain advisory. This PR is stacked on #12; it must pass fresh CI after retargeting to `master`. See [quality gates](QUALITY_GATES.md).
+
 ## P2 — Connection and data-quality behavior
 
 - [ ] Define explicit connection state model, error identifiers and diagnostic schema.

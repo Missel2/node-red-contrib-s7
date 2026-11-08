@@ -1,6 +1,6 @@
 # Work index — S7 reliability fork
 
-**Updated:** 2026-11-07. GitHub Issues are enabled. This file is a navigation index; do not duplicate tracked work.
+**Updated:** 2026-11-08. GitHub Issues are enabled. This file is a navigation index; do not duplicate tracked work.
 
 | ID | Priority | Work | State / next |
 | --- | --- | --- | --- |
@@ -11,6 +11,7 @@
 | WI-005 | P1 | [Issue #5: reproducible npm lockfile](https://github.com/Missel2/node-red-contrib-s7/issues/5) | [Draft PR #12](https://github.com/Missel2/node-red-contrib-s7/pull/12) generated lockfile v3 from hosted npm registry (actual 1.1.2/0.1.0 integrity hashes), replaces package-smoke with npm ci and adds Windows parity. [CI 42416075677](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42416075677) 6/6, [lock matrix 42416075682](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42416075682) 2/2 Ubuntu/Windows, [CodeQL 42416072293](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42416072293) 2/2; final doc-only CI pending. |
 | WI-006 | P2 | Data freshness, diagnostics and uncertain writes | Requirements only; do not implement before reliability baseline |
 | WI-007 | P1 future | [Issue #8: isolated S7-1200 HIL + test-debt tracking](https://github.com/Missel2/node-red-contrib-s7/issues/8) | Hardware absent; `HIL-S7-*` test matrix is pending and required in all new PR descriptions |
+| WI-008 | P1 | [Issue #7 / PR #14: static quality gates](https://github.com/Missel2/node-red-contrib-s7/pull/14) | Draft PR stacked on #12: locked ESLint + Prettier on Linux/Windows, protected package check depends on both; type diagnostics advisory. [Verification 42483462367](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42483462367) green on prior head `a8d381e`; after docs commit recheck exact SHA. No runtime modifications; awaiting #12 merge and retarget. |
 
 ## Continuation rules
 

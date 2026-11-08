@@ -1,6 +1,17 @@
 
 # Development handoff
 
+## Current continuation: 2026-11-08 (PR #14)
+
+- `master` was `c931dbac4232d3f4481812a65597301548f30739` when the scoped CI branch was created. [PR #9](https://github.com/Missel2/node-red-contrib-s7/pull/9) is **merged**; the previous section below is a historical snapshot, not the current PR state.
+- [PR #12](https://github.com/Missel2/node-red-contrib-s7/pull/12), head `b6afbd8a82fa9e5432f899cec9be7672883f4e6a`: open, validated root `npm ci` lockfile on Ubuntu/Windows; awaiting human merge approval.
+- [PR #14](https://github.com/Missel2/node-red-contrib-s7/pull/14): **draft stacked on PR #12**, adding isolated locked ESLint/Prettier tooling, Linux/Windows mandatory quality checks and negative controls. Initial exact-head `a8d381e5b506b34e99bb55f2f8b897237369b848` passed [verification 42483462367](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42483462367) and [lockfile 42483462378](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42483462378). After this documentation commit, verify **new exact-head CI** again.
+- PR #14 has no runtime/protocol changes. Its TypeScript check reports inherited `red/s7.js` Node-RED instance typing problems, explicitly **advisory**. CodeQL must be rerun after retargeting PR #14 from its stacked branch to `master`; CodeQL is not yet a required branch-protection check.
+- [PR #10](https://github.com/Missel2/node-red-contrib-s7/pull/10), head `877eed6cdb835f66bc59bf9348880dfb022d9bdf`: open protocol CI candidate, previous exact-head verification successful. Before integrating it after PR #14, combine the protected `package-smoke` job dependencies for **both** `static-quality` and `wire-protocol` and change protocol package install to locked `npm ci`.
+- [PR #13](https://github.com/Missel2/node-red-contrib-s7/pull/13): draft stacked on PR #10; additional COTP disconnect characterization, not a transport fix. Issue #2 remains a reproduced, unfixed nodes7 socket cleanup problem.
+- Human-approved sequence: #12, then retarget/recheck #14, then reconcile/recheck #10, then advance #13 and independently fix Issue #2. **No automatic merges, npm releases, live PLC tests or deployment.**
+
+
 **Updated:** 2026-11-07. Confirm GitHub branch/CI state before further work.
 
 ## Baseline
