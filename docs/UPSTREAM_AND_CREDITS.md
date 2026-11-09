@@ -14,10 +14,10 @@ We thank ST-One, Guilherme Francescon Cittolin, and everyone who has contributed
 ## Runtime S7 protocol implementation: nodes7
 
 - **Source:** [st-one-io/nodes7](https://github.com/st-one-io/nodes7)
-- **Package used by this fork's current package.json:** [@st-one-io/nodes7](https://www.npmjs.com/package/@st-one-io/nodes7), version **1.1.2**.
+- **On protected master:** [@st-one-io/nodes7](https://www.npmjs.com/package/@st-one-io/nodes7) **1.1.2** from npm registry. **On unmerged draft PR #15 only:** same package key sources separately maintained [Missel2/nodes7](https://github.com/Missel2/nodes7) at full immutable commit `2cf864e38be447c2709348a25eb0524d67f5cf2d`, delivered as a commit-addressed HTTPS tarball with npm SHA-512 integrity. The upstream package name and GPL license remain unchanged.
 - **Author listed in its package metadata:** Guilherme Francescon.
 - **License listed in its package metadata:** GPL-3.0-or-later.
-- **Relationship:** a **separate direct runtime dependency**, not part of this repository's vendored source. This fork has not yet integrated a maintained copy of the protocol implementation.
+- **Relationship:** a **separate direct runtime dependency**, not part of this repository's vendored source. The independent COTP fix in nodes7 PR #13 was human-approved and merged in its own repo; wrapper integration is proposed in PR #15, not vendored or published.
 
 We thank the nodes7 authors and contributors for the protocol implementation on which this Node-RED integration currently depends.
 
@@ -27,17 +27,15 @@ The [nodes7 README](https://github.com/st-one-io/nodes7#readme) says it was rewr
 
 The nodes7 package declares a dependency on the [iso-on-tcp npm package](https://www.npmjs.com/package/iso-on-tcp). That package provides part of the protocol/transport ecosystem; it is an **indirect dependency** of this fork. Its own distribution and licensing information must be verified when regenerating the dependency lockfile.
 
-## CI-only JavaScript quality tools
+## Test-only classic S7Comm fixture: python-snap7
 
-The isolated private tooling package under `tools/quality/` installs exact-version development dependencies via its own npm lockfile. These are **not** required or bundled by the Node-RED S7 runtime:
+- **Source and pinned release:** [gijzelaerr/python-snap7, tag 3.3.1](https://github.com/gijzelaerr/python-snap7/releases/tag/3.3.1).
+- **Package installed by hosted protocol CI:** [python-snap7==3.3.1](https://pypi.org/project/python-snap7/3.3.1/), with source metadata naming Gijs Molenaar as an author.
+- **License:** [MIT](https://github.com/gijzelaerr/python-snap7/blob/3.3.1/LICENSE), verified against the tagged 3.3.1 `pyproject.toml` and LICENSE.
+- **Relationship:** a **direct test-only Python dependency** used to run a disposable classic-S7 TCP server with synthetic DB data on hosted CI. It is **not** a Node.js runtime dependency of this fork, is not vendored into this repository, and is not shipped as a PLC simulator or Siemens firmware.
+- **Evidence:** [Issue #4](https://github.com/Missel2/node-red-contrib-s7/issues/4) and [protocol fixture coverage](PROTOCOL_FIXTURE.md); Windows/Linux loopback results do not establish real Siemens hardware compatibility.
 
-- [ESLint](https://github.com/eslint/eslint), version `9.39.1` (MIT), for JavaScript correctness checks.
-- [globals](https://github.com/sindresorhus/globals), version `16.4.0` (MIT), for standard JavaScript/Node runtime globals.
-- [Prettier](https://github.com/prettier/prettier), version `3.6.2` (MIT), for changed-file formatting.
-- [TypeScript](https://github.com/microsoft/TypeScript), version `5.9.3` (Apache-2.0), for advisory JavaScript diagnostics.
-- [@types/node](https://github.com/DefinitelyTyped/DefinitelyTyped), version `22.18.6` (MIT), for Node.js type definitions.
-
-Each is a direct **CI-only development dependency**. The lockfile pins transitive versions and npm integrity hashes. See [quality gates](QUALITY_GATES.md) and [tooling package](../tools/quality/package.json).
+We thank the python-snap7 maintainers and contributors for enabling license-compatible, hardware-free automated protocol testing.
 
 ## Node-RED ecosystem
 
@@ -56,6 +54,6 @@ This fork's change history, PRs, source files, upstream commit history and their
 
 Siemens and SIMATIC/S7 are trademarks of their respective owners; naming products to describe interoperability does not imply endorsement by Siemens AG. This project does not claim industrial safety certification, functional-safety approval or validated compatibility with every PLC.
 
-Any additional code or dependencies must receive a separate license and provenance review before inclusion. **Planned test servers, Siemens simulators or alternative S7 implementations are not described here as current dependencies until actually adopted.**
+Any additional code or dependencies must receive a separate license and provenance review before inclusion. **Other planned test servers, Siemens simulators or alternative S7 implementations are not current dependencies until adopted.** The adopted python-snap7 protocol fixture is identified separately above.
 
 A credit line cannot replace license compliance. Preserve notices, license texts, attribution and corresponding source obligations in any redistributed work.

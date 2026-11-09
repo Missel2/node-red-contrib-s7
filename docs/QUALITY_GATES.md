@@ -17,9 +17,9 @@ The job `Package dependency smoke (Ubuntu, Node 22)` already belongs to the prot
 
 ## Lockfile and merge sequencing
 
-- This PR is stacked on [PR #12](https://github.com/Missel2/node-red-contrib-s7/pull/12) so the main Node dependencies are installed with `npm ci`.
+- [PR #12](https://github.com/Missel2/node-red-contrib-s7/pull/12) and [PR #15](https://github.com/Missel2/node-red-contrib-s7/pull/15) are explicitly authorized, merged and independently CI-tested on protected master. PR #14 now starts from that **actual** master source, retaining the SHA512-locked nodes7 fork and the original/repaired COTP tests.
 - `tools/quality/package-lock.json` was generated from npm registry data by a disposable GitHub-hosted Node 22 workflow. The bootstrap workflow has been removed after recording it. It is verified by ordinary CI `npm ci` on both OSes.
-- Merge #12 only after explicit maintainer approval, then retarget/revalidate this PR. Follow it with #10 (wire-protocol fixture), reconciling its protected package-smoke dependency with this quality gate.
+- [PR #10](https://github.com/Missel2/node-red-contrib-s7/pull/10) is already merged and supplies native protocol fixtures. The existing protected `Package dependency smoke` now requires `wire-protocol`, `pinned-nodes7-integration`, **and** `static-quality` on both hosted operating systems. Do not merge PR #14 without a new explicit maintainer approval.
 
 ## Boundaries
 

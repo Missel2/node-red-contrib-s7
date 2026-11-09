@@ -9,6 +9,8 @@ export default [
       "red/**/*.js",
       "src/**/*.js",
       "test/**/*.js",
+      "test/**/*.cjs",
+      "scripts/**/*.cjs",
       "scripts/**/*.js",
       "tools/quality/**/*.js",
       "tools/quality/**/*.cjs",

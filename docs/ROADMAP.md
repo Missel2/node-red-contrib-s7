@@ -4,7 +4,7 @@
 
 ## P0 — Reproduce the previously investigated Musashi connection fault
 
-**First technical priority.** Do not start with feature development or a large protocol rewrite. The CI/bootstrap PR #1 has been squash-merged without S7 runtime changes; draft PR #6 now holds expanded **expected-failing characterization tests**, not a runtime patch. [Issue #3](https://github.com/Missel2/node-red-contrib-s7/issues/3) tracks wrapper characterization, and [Issue #2](https://github.com/Missel2/node-red-contrib-s7/issues/2) tracks the separate pending COTP/transport teardown hypothesis. See [Musashi investigation](MUSASHI_CONNECTION_REGRESSION.md) and [evidence ledger](EVIDENCE.md). Apply targeted patches only after reproducing a failure.
+**First technical priority.** Do not start with feature development or a large protocol rewrite. PRs #1 and #6 added governance and defect characterization; **PR #9 has now been squash-merged**, fixing confirmed stale-read/reconnect lifecycle defects in `master`. Separate **draft PR #10** adds genuine classic S7Comm tests against a disposable server on Linux and Windows, including two server restarts. Physical HIL verification is still pending. [Issue #3](https://github.com/Missel2/node-red-contrib-s7/issues/3) tracks wrapper characterization, and [Issue #2](https://github.com/Missel2/node-red-contrib-s7/issues/2) tracks the separate pending COTP/transport teardown hypothesis. See [Musashi investigation](MUSASHI_CONNECTION_REGRESSION.md) and [evidence ledger](EVIDENCE.md). Apply targeted patches only after reproducing a failure.
 
 - [ ] Locate the actual Musashi Node-RED image patch/source, its origin commit and failure evidence.
 - [ ] Separate `@st-one-io/nodes7` / classical S7 code from any independent `s7-plus` changes.
@@ -26,8 +26,6 @@
 - [ ] Record covered protocol operations and fixture limitations.
 
 **Exit evidence:** green CI on a named commit, confirmed read/write and connection recovery behavior against the named fixture; unsupported scenarios documented.
-
-**Static CI preparation (proposed, not merged):** [Issue #7 / PR #14](https://github.com/Missel2/node-red-contrib-s7/pull/14) introduces locked ESLint, changed-file Prettier and negative controls on Ubuntu/Windows. TypeScript findings remain advisory. This PR is stacked on #12; it must pass fresh CI after retargeting to `master`. See [quality gates](QUALITY_GATES.md).
 
 ## P2 — Connection and data-quality behavior
 
@@ -75,3 +73,21 @@ New functionality must not bypass P0/P1 reliability work.
 ## Maintainer continuation rule
 
 Start every development round by checking the current default branch, issues, active PRs and CI. Continue unfinished work before creating overlapping branches. Update this roadmap with actual evidence and outstanding gaps. Never convert a design target into a statement of achieved reliability.
+
+
+## Current milestone — 2026-11-07
+
+- PR #9 was merged as `c931dbac4232d3f4481812a65597301548f30739`; [master CI 42412786650](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42412786650) passed 6/6 mandatory jobs. Preserve original-red/corrected-green lifecycle check.
+- [PR #10](https://github.com/Missel2/node-red-contrib-s7/pull/10) adds actual loopback COTP/S7Comm, read/write, aborted handshake and auto-reconnect across two server restarts; [pre-integration CI 42412099544](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42412099544) passed on Ubuntu/Windows. The conflict resolution joining #9 and #10 requires new exact-head CI before merging PR #10.
+- Outstanding: TCP half-open/blackhole, OS-level socket resource measurements, reproducible `npm ci` (Issue #5), later authorized S7-1200 HIL. No Siemens firmware or production PLC has been tested.
+
+
+## CI sync following separate lockfile PR #12 merge (2026-11-09)
+
+- PR #12 approved and merged to protected master `7bee547d164fd94d3ecec1eee472fb860ba4a31c`. PR #10 is updated with the exact v3 lockfile and `npm ci` for the unchanged synthetic S7Comm fixtures, but is **not** approved for merge. HIL remains pending. 
+
+
+## 2026-11-09: approved S7Comm fixture merge, COTP integration next
+- Wrapper PR #12 (v3 lock) approved/merged `7bee547d`; wrapper PR #10 (five actual synthetic S7Comm and TCP fault tests) separately approved/merged `8e460f1`; maintained nodes7 PR #13 approved/merged `2cf864e38be447c2709348a25eb0524d67f5cf2d`.
+- Wrapper draft PR #15 pins this exact nodes7 SHA using HTTP(S) plus SHA-512 npm integrity. Its native in-tree five-case S7Comm matrix now also checks actual installed-fork Node-RED DB1 read/write/readback, while a second OS matrix checks pending COTP close and late CC callback. Both feed the required package smoke status. PR #15 has **no merge approval** and needs its own final full exact-head CI and CodeQL.
+- No software protocol test establishes Siemens S7-1200 firmware support. HIL-S7-001/-002/-003/-004/-005/-007 remain pending.

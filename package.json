@@ -4,7 +4,7 @@
   "description": "A Node-RED node to interact with Siemens S7 PLCs",
   "main": "index.js",
   "dependencies": {
-    "@st-one-io/nodes7": "1.1.2"
+    "@st-one-io/nodes7": "https://codeload.github.com/Missel2/nodes7/tar.gz/2cf864e38be447c2709348a25eb0524d67f5cf2d"
   },
   "repository": {
     "type": "git",
@@ -15,11 +15,13 @@
   },
   "scripts": {
     "test": "node --test test/unit/s7-endpoint.baseline.test.js test/regression/s7-endpoint.lifecycle.test.js",
-    "lint": "node tools/quality/node_modules/eslint/bin/eslint.js --config tools/quality/eslint.config.mjs \"red/**/*.js\" \"src/**/*.js\" \"test/**/*.js\" \"scripts/**/*.js\" \"tools/quality/**/*.js\" \"tools/quality/**/*.cjs\" \"tools/quality/**/*.mjs\" --no-error-on-unmatched-pattern",
-    "format:check": "node tools/quality/check-changed-format.cjs",
-    "quality:negative-control": "node tools/quality/negative-control.cjs",
     "test:unit": "node --test test/unit/s7-endpoint.baseline.test.js test/regression/s7-endpoint.lifecycle.test.js",
-    "check:syntax": "node --check red/s7.js && node --check src/tools.js && node --check test/unit/s7-endpoint.baseline.test.js && node --check test/regression/s7-endpoint.lifecycle.test.js"
+    "check:syntax": "node --check red/s7.js && node --check src/tools.js && node --check test/unit/s7-endpoint.baseline.test.js && node --check test/regression/s7-endpoint.lifecycle.test.js && node --check test/protocol/s7-wire-faults.test.js && node --check test/protocol/s7-wire-restart.test.js && node --check test/protocol/s7-wire-roundtrip.test.js && node --check test/protocol/s7-wire-blackhole.test.js && node --check test/protocol/s7-wire-rst.test.js && node --check test/integration/nodes7-pinned-fork.test.cjs && node --check test/integration/nodes7-wrapper-s7comm-wire.test.cjs && node --check scripts/ci/verify-s7-wire-replay.cjs",
+    "test:protocol": "node --test test/protocol/*.test.js",
+    "test:integration": "node --test test/integration/nodes7-pinned-fork.test.cjs",
+    "lint": "node tools/quality/node_modules/eslint/bin/eslint.js --config tools/quality/eslint.config.mjs \"red/**/*.js\" \"src/**/*.js\" \"test/**/*.js\" \"test/**/*.cjs\" \"scripts/**/*.js\" \"scripts/**/*.cjs\" \"tools/quality/**/*.js\" \"tools/quality/**/*.cjs\" \"tools/quality/**/*.mjs\" --no-error-on-unmatched-pattern",
+    "format:check": "node tools/quality/check-changed-format.cjs",
+    "quality:negative-control": "node tools/quality/negative-control.cjs"
   },
   "keywords": [
     "hardware",
