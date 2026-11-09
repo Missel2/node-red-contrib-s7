@@ -55,3 +55,21 @@ Expected regression sequence:
 - Before operational use: plant owner approval, network security assessment and read/write risk evaluation.
 
 Windows is useful to check platform compatibility, but a Windows runner is not itself evidence of Siemens PLCSIM compatibility. No trial-license reset, license bypass or assumed “PLCSIM Light” capability is part of the CI architecture.
+
+
+## First actual-wire fixture candidate: python-snap7 3.3.1 (Issue #4)
+
+A separate disposable hosted CI proof of concept runs a **pure-Python S7Comm server** with synthetic DB1 data bound to `127.0.0.1:1102`, and tests the existing `@st-one-io/nodes7@1.1.2` dependency without stubbing S7Endpoint/S7ItemGroup. This covers COTP/ISO-on-TCP setup, S7 read and scratch DB write/readback **only if the dedicated CI test passes**. The fixture does not load Siemens firmware, simulate physical process I/O, or validate Siemens security features. The exact dependency version is pinned and the fixture runs inside an ephemeral GitHub-hosted job, with logs archived.
+
+A second phase must add controlled TCP handshake corruption/drop, blackhole/timeouts and server restart via a bounded fault proxy; a third phase verifies Windows parity. The current upstream `package-lock.json` remains out of sync until Issue #5. Record any interoperability failures rather than silently suppressing them. Physical tests HIL-S7-001/-002/-003 remain pending.
+
+
+The first real-wire Linux roundtrip passed on [PR #10 run 42406148441](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406148441), SHA `88ac3011`. The next candidate adds a loopback TCP server aborting after an RFC1006 TPKT but before COTP confirmation, and Windows hosted-runner parity. **Do not claim those newly added scenarios passed before checking exact-head CI.** This is not the same as validating a real PLC's transport behavior.
+
+
+The stricter false-positive-resistant abort test and an explicit clean disconnect passed on both platforms at [run 42406722052](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42406722052), SHA `1aff199`. **A partial COTP abort takes about 10 seconds to reject** under nodes7's configured transport-setup watchdog. This is an observed limitation, not an industrial recovery guarantee.
+
+
+## Two actual software server restarts (CI verified 2026-11-07)
+
+[PR #10 run 42411812676](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42411812676) passed on Ubuntu and Windows with a *single real S7Endpoint* reused across two killed/recreated `python-snap7==3.3.1` server processes. Each cycle includes an observed TCP disconnect, at least one refused retry while the server is down, successful reconnect and fresh reset DB1 read. These are protocol-level integration results, distinct from hardware HIL or proof of all resource cleanup. The remaining priority for Issue #4 is bounded blackhole/half-open fault injection and explicit client/socket resource measurements.

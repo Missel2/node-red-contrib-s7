@@ -34,17 +34,27 @@ jobs:
         run: npm test
 
   package-smoke:
+    # This job name is already required by protect-master.
+    # Make BOTH hosted S7 wire tests mandatory without relying on adding
+    # unprotected status checks to the ruleset before this PR is merged.
+    needs: wire-protocol
+    if: ${{ always() }}
     name: Package dependency smoke (Ubuntu, Node 22)
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
+      - name: Gate protected package check on both S7 wire-protocol matrix jobs
+        env:
+          S7_WIRE_RESULT: ${{ needs.wire-protocol.result }}
+        run: |
+          node -e "if(process.env.S7_WIRE_RESULT !== 'success') { throw new Error('S7 wire-protocol matrix did not pass: ' + process.env.S7_WIRE_RESULT) }"
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - name: Install exact locked dependencies without executing dependency scripts
         run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Validate genuine nodes7 import and dependency tree
+      - name: Validate exact registry dependency tree
         run: |
           npm ls --all
           node -e "if(typeof require('@st-one-io/nodes7').S7Endpoint!=='function')throw new Error('nodes7 S7Endpoint unavailable')"
@@ -121,5 +131,36 @@ jobs:
         with:
           name: lifecycle-baseline-red-and-fixed-green-ubuntu-node22
           path: test-reports/*.tap
+          if-no-files-found: warn
+          retention-days: 14
+
+  wire-protocol:
+    name: S7 wire tests (${{ matrix.os }}, Node 22)
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned pure-Python fixture and actual nodes7 dependency
+        run: |
+          python -m pip install --disable-pip-version-check python-snap7==3.3.1
+          npm ci --ignore-scripts --no-audit --no-fund
+      - name: Test actual S7Comm and partial COTP failure on loopback
+        run: node --test test/protocol/*.test.js
+      - name: Keep synthetic S7 protocol evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s7-wire-loopback-${{ matrix.os }}-node22
+          path: test-reports/s7-*
           if-no-files-found: warn
           retention-days: 14
