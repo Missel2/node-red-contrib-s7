@@ -17,7 +17,7 @@ We thank ST-One, Guilherme Francescon Cittolin, and everyone who has contributed
 - **Current protected master (after human-approved PR #15):** package key `@st-one-io/nodes7` resolves to independent maintained [Missel2/nodes7](https://github.com/Missel2/nodes7) full commit `2cf864e38be447c2709348a25eb0524d67f5cf2d` as HTTPS source archive with npm SHA-512 integrity. The internal package still reports upstream `1.1.2` and GPL-3.0-or-later; it is **not** a fork-specific published npm release. Original authorship/credits remain. The upstream package name and GPL license remain unchanged.
 - **Author listed in its package metadata:** Guilherme Francescon.
 - **License listed in its package metadata:** GPL-3.0-or-later.
-- **Relationship:** a **separate direct runtime dependency**, not part of this repository's vendored source. The independent COTP fix in nodes7 PR #13 was human-approved and merged in its own repo; wrapper integration is proposed in PR #15, not vendored or published.
+- **Relationship:** a **separate direct runtime dependency**, not vendored into this repository. The independent COTP fix in nodes7 PR #13 was human-approved and merged in its own repo; the wrapper integrated that exact fixed revision in its own separately approved PR #15. This code is used directly from the pinned source archive, not republished under a new npm package identity.
 
 We thank the nodes7 authors and contributors for the protocol implementation on which this Node-RED integration currently depends.
 
