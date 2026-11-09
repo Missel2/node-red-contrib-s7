@@ -61,11 +61,65 @@ jobs:
           retention-days: 14
           if-no-files-found: warn
 
+  static-quality:
+    name: Static quality (${{ matrix.os }}, Node 22)
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: tools/quality/package-lock.json
+      - name: Install standalone pinned static-quality dependencies
+        run: npm ci --prefix tools/quality --ignore-scripts --no-audit --no-fund
+      - name: ESLint correctness checks, including CJS wire integration
+        run: npm run lint
+      - name: Prettier on new and preformatted changed files
+        run: npm run format:check
+      - name: Real ESLint/Prettier failing and passing controls
+        run: npm run quality:negative-control
+
+  js-types-diagnostics:
+    name: JavaScript type diagnostics (advisory, Ubuntu Node 22)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated quality tools
+        run: npm ci --prefix tools/quality --ignore-scripts --no-audit --no-fund
+      - name: Capture inherited JavaScript typing debt without claiming type-safety
+        shell: bash
+        run: |
+          mkdir -p test-reports
+          node tools/quality/node_modules/typescript/bin/tsc --project tools/quality/tsconfig.json --pretty false > test-reports/js-type-diagnostics.txt 2>&1 || {
+            echo '::warning::Legacy JS type diagnostics remain open and are advisory'
+            cat test-reports/js-type-diagnostics.txt
+          }
+      - name: Archive diagnostic output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-type-diagnostics-ubuntu-node22
+          path: test-reports/js-type-diagnostics.txt
+          if-no-files-found: warn
+          retention-days: 14
+
   package-smoke:
     # This job name is already required by protect-master.
     # Make BOTH hosted S7 wire tests mandatory without relying on adding
     # unprotected status checks to the ruleset before this PR is merged.
-    needs: [wire-protocol, pinned-nodes7-integration]
+    needs: [wire-protocol, pinned-nodes7-integration, static-quality]
     if: ${{ always() }}
     name: Package dependency smoke (Ubuntu, Node 22)
     runs-on: ubuntu-24.04
@@ -75,8 +129,9 @@ jobs:
         env:
           S7_WIRE_RESULT: ${{ needs.wire-protocol.result }}
           FORK_RESULT: ${{ needs.pinned-nodes7-integration.result }}
+          QUALITY_RESULT: ${{ needs.static-quality.result }}
         run: |
-          node -e "for (const [kind,state] of [['S7 wire',process.env.S7_WIRE_RESULT],['Pinned fork',process.env.FORK_RESULT]]) if(state!=='success') throw Error(kind+' matrix failed: '+state)"
+          node -e "for (const [kind,state] of [['S7 wire',process.env.S7_WIRE_RESULT],['Pinned fork',process.env.FORK_RESULT],['Static quality',process.env.QUALITY_RESULT]]) if(state!=='success') throw Error(kind+' matrix failed: '+state)"
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
@@ -87,8 +142,11 @@ jobs:
         run: |
           npm ls --all
           node -e "if(typeof require('@st-one-io/nodes7').S7Endpoint!=='function')throw new Error('nodes7 S7Endpoint unavailable')"
-      - name: Inspect package composition
-        run: npm pack --dry-run
+      - name: Verify Node-RED runtime files and exclude CI toolchain from package
+        shell: bash
+        run: |
+          npm pack --dry-run --json > package-composition.json
+          node tools/quality/check-package-files.cjs package-composition.json
 
   baseline-negative-control:
     # Preserve the name required by protect-master. Its meaning is now BOTH
