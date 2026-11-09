@@ -4,7 +4,7 @@
 
 ## P0 — Reproduce the previously investigated Musashi connection fault
 
-**First technical priority.** Do not start with feature development or a large protocol rewrite. The CI/bootstrap PR #1 has been squash-merged without S7 runtime changes; draft PR #6 now holds expanded **expected-failing characterization tests**, not a runtime patch. [Issue #3](https://github.com/Missel2/node-red-contrib-s7/issues/3) tracks wrapper characterization, and [Issue #2](https://github.com/Missel2/node-red-contrib-s7/issues/2) tracks the separate pending COTP/transport teardown hypothesis. See [Musashi investigation](MUSASHI_CONNECTION_REGRESSION.md) and [evidence ledger](EVIDENCE.md). Apply targeted patches only after reproducing a failure.
+**First technical priority.** Do not start with feature development or a large protocol rewrite. PRs #1 and #6 added governance and defect characterization; **PR #9 has now been squash-merged**, fixing confirmed stale-read/reconnect lifecycle defects in `master`. Separate **draft PR #10** adds genuine classic S7Comm tests against a disposable server on Linux and Windows, including two server restarts. Physical HIL verification is still pending. [Issue #3](https://github.com/Missel2/node-red-contrib-s7/issues/3) tracks wrapper characterization, and [Issue #2](https://github.com/Missel2/node-red-contrib-s7/issues/2) tracks the separate pending COTP/transport teardown hypothesis. See [Musashi investigation](MUSASHI_CONNECTION_REGRESSION.md) and [evidence ledger](EVIDENCE.md). Apply targeted patches only after reproducing a failure.
 
 - [ ] Locate the actual Musashi Node-RED image patch/source, its origin commit and failure evidence.
 - [ ] Separate `@st-one-io/nodes7` / classical S7 code from any independent `s7-plus` changes.
@@ -75,35 +75,13 @@ New functionality must not bypass P0/P1 reliability work.
 Start every development round by checking the current default branch, issues, active PRs and CI. Continue unfinished work before creating overlapping branches. Update this roadmap with actual evidence and outstanding gaps. Never convert a design target into a statement of achieved reliability.
 
 
-## Progress 2026-11-09 — fork dependency integration staged (not merged)
+## Current milestone — 2026-11-07
 
-- [nodes7 PR #13](https://github.com/Missel2/nodes7/pull/13) was independently approved and squash-merged: fixes leaking pending ISO-on-TCP/COTP handshake, timeout, manual cancellation and late parsed confirmation callback. **This does not update wrapper/master automatically**.
-- [wrapper draft PR #15](https://github.com/Missel2/node-red-contrib-s7/pull/15) stacks on [unmerged lockfile PR #12](https://github.com/Missel2/node-red-contrib-s7/pull/12) and pins the exact nodes7 merge SHA as an HTTPS/SHA-512-verified source archive. It adds cross-platform actual-installed-fork COTP/Node-RED-close tests through an existing protected status-check aggregate.
-- Initial implementation head `141866b1945139ede258f20bc3dd19f5e207bb18` passed both OS integration tests (3/3 each), wrapper mock contracts, original-red/patch-green stale-read gate and both OS npm lock workflows. Final documentation-only HEAD must be reverified.
-- **No merge of wrapper PRs #10, #11, #12, #14 or #15 is authorized** by the separate nodes7 merge approval. Complete prior PRs in their proper order and reconcile stacked branches; then do a final full synthetic S7Comm/Node-RED integration, code scanning, license+packaging review and explicit human merge decision.
-
-
-### 2026-11-09: synthetic wrapper S7Comm end-to-end stage on PR #15
-
-- [Wrapper PR #15](https://github.com/Missel2/node-red-contrib-s7/pull/15) now checks the real fork dependency against the independent [PR #10](https://github.com/Missel2/node-red-contrib-s7/pull/10) fixture at exact SHA, and adds direct **Node-RED wrapper** synthetic DB1 read/write/readback across Windows/Linux. Both OS succeeded on implementation SHA `60515ee1057d991ff4293da2f2dcce275b700d0d`, [Verification 42571944637](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42571944637) plus [lockfile 42571944644](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42571944644). **No additional merge authorized.**
-- Prerequisites remain separate: PR #12 lockfile into master by **new approval**; PR #10 wire fixture into master by **new approval**; PR #15 restack and rerun CodeQL/security+full CI, then **new approval**. Unknown future hardware (HIL) and full Node-RED runtime compatibility are not claimed.
+- PR #9 was merged as `c931dbac4232d3f4481812a65597301548f30739`; [master CI 42412786650](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42412786650) passed 6/6 mandatory jobs. Preserve original-red/corrected-green lifecycle check.
+- [PR #10](https://github.com/Missel2/node-red-contrib-s7/pull/10) adds actual loopback COTP/S7Comm, read/write, aborted handshake and auto-reconnect across two server restarts; [pre-integration CI 42412099544](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42412099544) passed on Ubuntu/Windows. The conflict resolution joining #9 and #10 requires new exact-head CI before merging PR #10.
+- Outstanding: TCP half-open/blackhole, OS-level socket resource measurements, reproducible `npm ci` (Issue #5), later authorized S7-1200 HIL. No Siemens firmware or production PLC has been tested.
 
 
-### 2026-11-09 — interim security gate for stack PR #15
+## CI sync following separate lockfile PR #12 merge (2026-11-09)
 
-- A temporary advanced CodeQL uploader conflicted with GitHub CodeQL Default Setup (SARIF upload rejected); fixed by **local-only SARIF analysis and high/critical gate**. On implementation commit `7cd62fb615da3d71319fc0169d867865ee0feef8`, CodeQL local scanning, full wrapper + real S7Comm, and lockfile totaled **13/13 green checks**. No false claims of GitHub code-scanning upload success.
-- This documentation commit must re-pass exact-head CI. Before wrapper PR #15 can be merged independently, obtain explicit approvals for PR #12 and PR #10, reconcile PR #11/14 security/static work and restack. Retire the temporary CodeQL uploader in favor of active Default Setup scanning once targeting `master`. HIL and actual Node-RED runtime remain out of scope.
-
-## 2026-11-09 — current state after authorized PR #12 merge and PR #10 sync
-
-- **Lockfile prerequisite completed:** wrapper [PR #12](https://github.com/Missel2/node-red-contrib-s7/pull/12) was expressly approved and squash-merged to protected `master` as `7bee547d164fd94d3ecec1eee472fb860ba4a31c`. The original registry-based npm lockfile and `npm ci` baseline are now on master.
-- **PR #15 is now a DRAFT directly against protected `master`**, not stacked on the obsolete PR #12 branch. Its own `package.json` and `package-lock.json` propose a SHA-512-verified HTTPS tarball of the repaired `nodes7` fork, commit `2cf864e38be447c2709348a25eb0524d67f5cf2d`. This fork change has **not** been merged into the wrapper.
-- **PR #10 remains OPEN and UNMERGED**, but its branch was synchronized with the approved lockfile master; its new head `e5693ec9d4760632047f5c94f8a3556e6ce07e60` passed **13/13 checks** with immutable synthetic S7Comm tests and actual `npm ci` on Windows/Linux. Those tests' blob contents are unchanged. The PR #15 verification workflow now fetches the **new exact fixture SHA** `e5693ec9d4760632047f5c94f8a3556e6ce07e60` and verifies the checkout's SHA before staging only the test sources on disposable runners.
-- The new PR #15 head created by this documentation/workflow change requires a new CI run. No CodeQL or wire evidence from an earlier head substitutes for final exact-head checks. Do not merge PR #10 or PR #15 without new separate explicit approval. No npm publish, OT deployment, or hardware tests. HIL-S7-* remains `PENDING_HARDWARE`.
-
-
-## 2026-11-09 — native GitHub CodeQL Default Setup verified; temporary local scan removed
-
-- After PR #12 was explicitly approved and squash-merged and draft PR #15 was retargeted onto protected `master`, GitHub's existing CodeQL **Default Setup** scanned this *actual* integration PR successfully. Head `dbf4ddfe28cfad8aff4dd517d65bcda8d47a92d4` had **16/16 successful checks**: CodeQL `Analyze (actions)`, `Analyze (javascript-typescript)`, CodeQL PR security result, temporary local SARIF job, two Windows/Linux real S7Comm replay and real wrapper DB read/write, two earlier COTP integration jobs, four wrapper-contract jobs, lifecycle negative gate, both locked install jobs and protected smoke.
-- The temporary `.github/workflows/codeql-pinned-integration.yml` and `scripts/ci/check-local-codeql-sarif.cjs` are now **removed** from the draft PR to prevent maintaining duplicate static-analysis configurations. This removal does **not** disable GitHub Default Setup. The historical local scan and its previous SARIF upload conflict remain documented above for auditability; do not misrepresent an earlier failed advanced upload as a security finding.
-- **This cleanup changes the PR head.** Rerun all current required Windows/Linux, npm lockfile and GitHub Default Setup CodeQL checks on its new exact SHA. Do not merge PR #15 automatically; it is still DRAFT. PR #10 remains OPEN, unmerged; future changes to its test source require updating the immutable pin and retesting the integration. Physical HIL remains PENDING_HARDWARE.
+- PR #12 approved and merged to protected master `7bee547d164fd94d3ecec1eee472fb860ba4a31c`. PR #10 is updated with the exact v3 lockfile and `npm ci` for the unchanged synthetic S7Comm fixtures, but is **not** approved for merge. HIL remains pending. 

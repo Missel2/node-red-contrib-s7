@@ -46,98 +46,42 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install locked GitHub SHA-512 snapshot without lifecycle scripts
+      - name: Install immutable SHA512-pinned corrected nodes7
         run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Assert real Node-RED close and decoded COTP CC race with installed fork
+      - name: Verify actual installed fork, early Node-RED close and parsed late COTP CC
         run: npm run test:integration
-      - name: Preserve immutable dependency and TCP cleanup observations
+      - name: Save real TCP observations
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: nodes7-pinned-integration-${{ matrix.os }}-node22
+          name: pinned-nodes7-integration-${{ matrix.os }}-node22
           path: test-reports/nodes7-pinned-*.json
           retention-days: 14
           if-no-files-found: warn
 
-  pinned-nodes7-wire-replay:
-    name: Pinned nodes7 synthetic S7Comm replay (${{ matrix.os }}, Node 22)
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 14
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-24.04, windows-2025]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Fetch independently reviewed S7Comm test fixtures at immutable PR #10 SHA
-        uses: actions/checkout@v4
-        with:
-          repository: Missel2/node-red-contrib-s7
-          ref: e5693ec9d4760632047f5c94f8a3556e6ce07e60
-          path: .wire-fixture
-          persist-credentials: false
-      - name: Verify pinned test provenance and stage ONLY test sources in runner
-        shell: bash
-        run: |
-          set -euo pipefail
-          actual="$(git -C .wire-fixture rev-parse HEAD)"
-          test "$actual" = e5693ec9d4760632047f5c94f8a3556e6ce07e60
-          mkdir -p test/protocol
-          cp .wire-fixture/test/protocol/fixture_server.py test/protocol/
-          for f in .wire-fixture/test/protocol/*.test.js; do
-            cp "$f" test/protocol/
-          done
-          test "$(find test/protocol -maxdepth 1 -name '*.test.js' | wc -l)" -eq 5
-          echo "S7_FIXTURE_COMMIT=$actual" >> "$GITHUB_ENV"
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Install snap7 3.3.1 synthetic protocol server and SHA-pinned fork
-        run: |
-          python -m pip install --disable-pip-version-check python-snap7==3.3.1
-          npm ci --ignore-scripts --no-audit --no-fund
-      - name: Run five independent real S7Comm and TCP fault tests
-        run: node --test test/protocol/*.test.js
-      - name: Verify full Node-RED S7 wrapper read/write/readback using same synthetic server
-        run: node --test test/integration/nodes7-wrapper-s7comm-wire.test.cjs
-      - name: Confirm synthetic-only protocol evidence and no orphan COTP peers
-        run: node scripts/ci/verify-s7-wire-replay.cjs
-      - name: Preserve pinned synthetic S7Comm evidence (no hardware)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: nodes7-fork-wire-replay-${{ matrix.os }}-node22
-          path: |
-            test-reports/s7-*
-            test-reports/nodes7-*
-
-          retention-days: 14
-          if-no-files-found: warn
-
   package-smoke:
+    # This job name is already required by protect-master.
+    # Make BOTH hosted S7 wire tests mandatory without relying on adding
+    # unprotected status checks to the ruleset before this PR is merged.
+    needs: [wire-protocol, pinned-nodes7-integration]
+    if: ${{ always() }}
     name: Package dependency smoke (Ubuntu, Node 22)
-    needs: [pinned-nodes7-integration, pinned-nodes7-wire-replay]
-    if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
+      - name: Require real wire and actual pinned fork integration on both hosts
+        env:
+          S7_WIRE_RESULT: ${{ needs.wire-protocol.result }}
+          FORK_RESULT: ${{ needs.pinned-nodes7-integration.result }}
+        run: |
+          node -e "for (const [kind,state] of [['S7 wire',process.env.S7_WIRE_RESULT],['Pinned fork',process.env.FORK_RESULT]]) if(state!=='success') throw Error(kind+' matrix failed: '+state)"
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Require both OS actual-fork integration checks before package smoke
-        env:
-          INTEGRATION_RESULT: ${{ needs.pinned-nodes7-integration.result }}
-          WIRE_RESULT: ${{ needs.pinned-nodes7-wire-replay.result }}
-        run: |
-          test "$INTEGRATION_RESULT" = success
-          test "$WIRE_RESULT" = success
       - name: Install exact locked dependencies without executing dependency scripts
         run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Validate genuine nodes7 import and dependency tree
+      - name: Validate exact registry dependency tree
         run: |
           npm ls --all
           node -e "if(typeof require('@st-one-io/nodes7').S7Endpoint!=='function')throw new Error('nodes7 S7Endpoint unavailable')"
@@ -214,5 +158,40 @@ jobs:
         with:
           name: lifecycle-baseline-red-and-fixed-green-ubuntu-node22
           path: test-reports/*.tap
+          if-no-files-found: warn
+          retention-days: 14
+
+  wire-protocol:
+    name: S7 wire tests (${{ matrix.os }}, Node 22)
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned pure-Python fixture and actual nodes7 dependency
+        run: |
+          python -m pip install --disable-pip-version-check python-snap7==3.3.1
+          npm ci --ignore-scripts --no-audit --no-fund
+      - name: Test actual S7Comm and partial COTP failure on loopback
+        run: node --test test/protocol/*.test.js
+      - name: Real Node-RED S7Comm DB1 synthetic read/write/readback against pinned fork
+        run: node --test test/integration/nodes7-wrapper-s7comm-wire.test.cjs
+      - name: Assert five real fault records and no orphan COTP peers
+        run: node scripts/ci/verify-s7-wire-replay.cjs
+      - name: Keep synthetic S7 protocol evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s7-wire-loopback-${{ matrix.os }}-node22
+          path: test-reports/s7-*
           if-no-files-found: warn
           retention-days: 14
