@@ -101,6 +101,8 @@ jobs:
           npm ci --ignore-scripts --no-audit --no-fund
       - name: Run five independent real S7Comm and TCP fault tests
         run: node --test test/protocol/*.test.js
+      - name: Verify full Node-RED S7 wrapper read/write/readback using same synthetic server
+        run: node --test test/integration/nodes7-wrapper-s7comm-wire.test.cjs
       - name: Confirm synthetic-only protocol evidence and no orphan COTP peers
         run: node scripts/ci/verify-s7-wire-replay.cjs
       - name: Preserve pinned synthetic S7Comm evidence (no hardware)
@@ -108,7 +110,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: nodes7-fork-wire-replay-${{ matrix.os }}-node22
-          path: test-reports/s7-*
+          path: |
+            test-reports/s7-*
+            test-reports/nodes7-*
+
           retention-days: 14
           if-no-files-found: warn
 
