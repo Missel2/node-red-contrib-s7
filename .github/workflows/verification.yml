@@ -49,7 +49,7 @@ jobs:
       - name: Install locked GitHub SHA-512 snapshot without lifecycle scripts
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Assert real Node-RED close and decoded COTP CC race with installed fork
-        run: node --test test/integration/nodes7-pinned-fork.test.cjs
+        run: npm run test:integration
       - name: Preserve immutable dependency and TCP cleanup observations
         if: always()
         uses: actions/upload-artifact@v4

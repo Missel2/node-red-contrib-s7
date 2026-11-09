@@ -14,10 +14,10 @@ We thank ST-One, Guilherme Francescon Cittolin, and everyone who has contributed
 ## Runtime S7 protocol implementation: nodes7
 
 - **Source:** [st-one-io/nodes7](https://github.com/st-one-io/nodes7)
-- **Package used by this fork's current package.json:** [@st-one-io/nodes7](https://www.npmjs.com/package/@st-one-io/nodes7), version **1.1.2**.
+- **In stacked draft PR #15 only:** the `@st-one-io/nodes7` dependency key points to a fixed, SHA-512-lockfile-verified HTTPS source archive of independent [Missel2/nodes7](https://github.com/Missel2/nodes7), commit `2cf864e38be447c2709348a25eb0524d67f5cf2d`, retaining the package's existing declared version **1.1.2**. On the still-protected `master`, the public [@st-one-io/nodes7 npm release 1.1.2](https://www.npmjs.com/package/@st-one-io/nodes7) remains the direct dependency.
 - **Author listed in its package metadata:** Guilherme Francescon.
 - **License listed in its package metadata:** GPL-3.0-or-later.
-- **Relationship:** a **separate direct runtime dependency**, not part of this repository's vendored source. This fork has not yet integrated a maintained copy of the protocol implementation.
+- **Relationship:** a **separate direct runtime dependency**, not vendored into this repository. The maintained nodes7 source was independently developed and human-merged in its own GPL fork. Wrapper integration is proposed in an unmerged dependent PR, not a published new package or an assertion of upstream endorsement.
 
 We thank the nodes7 authors and contributors for the protocol implementation on which this Node-RED integration currently depends.
 

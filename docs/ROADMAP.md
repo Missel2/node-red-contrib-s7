@@ -73,3 +73,11 @@ New functionality must not bypass P0/P1 reliability work.
 ## Maintainer continuation rule
 
 Start every development round by checking the current default branch, issues, active PRs and CI. Continue unfinished work before creating overlapping branches. Update this roadmap with actual evidence and outstanding gaps. Never convert a design target into a statement of achieved reliability.
+
+
+## Progress 2026-11-09 — fork dependency integration staged (not merged)
+
+- [nodes7 PR #13](https://github.com/Missel2/nodes7/pull/13) was independently approved and squash-merged: fixes leaking pending ISO-on-TCP/COTP handshake, timeout, manual cancellation and late parsed confirmation callback. **This does not update wrapper/master automatically**.
+- [wrapper draft PR #15](https://github.com/Missel2/node-red-contrib-s7/pull/15) stacks on [unmerged lockfile PR #12](https://github.com/Missel2/node-red-contrib-s7/pull/12) and pins the exact nodes7 merge SHA as an HTTPS/SHA-512-verified source archive. It adds cross-platform actual-installed-fork COTP/Node-RED-close tests through an existing protected status-check aggregate.
+- Initial implementation head `141866b1945139ede258f20bc3dd19f5e207bb18` passed both OS integration tests (3/3 each), wrapper mock contracts, original-red/patch-green stale-read gate and both OS npm lock workflows. Final documentation-only HEAD must be reverified.
+- **No merge of wrapper PRs #10, #11, #12, #14 or #15 is authorized** by the separate nodes7 merge approval. Complete prior PRs in their proper order and reconcile stacked branches; then do a final full synthetic S7Comm/Node-RED integration, code scanning, license+packaging review and explicit human merge decision.

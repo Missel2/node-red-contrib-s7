@@ -55,3 +55,12 @@ Expected regression sequence:
 - Before operational use: plant owner approval, network security assessment and read/write risk evaluation.
 
 Windows is useful to check platform compatibility, but a Windows runner is not itself evidence of Siemens PLCSIM compatibility. No trial-license reset, license bypass or assumed “PLCSIM Light” capability is part of the CI architecture.
+
+
+## Pinned COTP fork integration contract (draft PR #15)
+
+- A GitHub-hosted Ubuntu/Windows Node 22 matrix installs the committed v3 lock using `npm ci --ignore-scripts --no-audit --no-fund`. Source is a GitHub HTTPS archive addressed by the full **nodes7 merge commit SHA** and protected by npm SHA-512 integrity, not a mutable branch or npm registry alias.
+- Test `test/integration/nodes7-pinned-fork.test.cjs` imports **the installed package** `@st-one-io/nodes7` to prove fork implementation, and instantiates the real `red/s7.js` Node-RED config node using a minimal API harness (not a full Node-RED runtime). Against disposable loopback TCP it verifies pending COTP shutdown during Node-RED close with no false online state, errors, retries or unclosed sockets.
+- A separate real TPDU CC test waits until the installed ISO-on-TCP parser decodes a full COTP confirmation, cancels the endpoint before the client's queued native connect callback, and verifies that callback is ignored and no sessions are revived. JSON evidence is captured **before** fixture socket teardown on both OSes.
+- Two job results are prerequisites of existing protected `Package dependency smoke (Ubuntu, Node 22)` status check. A green mock test alone cannot satisfy that aggregate.
+- The [wire-protocol PR #10](https://github.com/Missel2/node-red-contrib-s7/pull/10) remains unmerged and is not silently imported into this stacked branch. No claim of production OT, actual CPU/HIL or full Node-RED simulator compatibility; hardware test debt `HIL-S7-001/002/003/004/005/007` remains pending.
