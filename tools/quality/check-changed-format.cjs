@@ -23,15 +23,41 @@ function readOriginal(ref, file) {
 }
 
 async function main() {
-  const base = process.env.GITHUB_BASE_REF
-    ? "origin/" + process.env.GITHUB_BASE_REF
-    : process.env.QUALITY_FORMAT_BASE || "HEAD^";
-  const mergeBase = git("merge-base", "HEAD", base);
+  // The PR's explicitly reported protected-base SHA is authoritative. On
+  // multi-parent development branches, merge-base against a moving local
+  // origin/<branch> may select an older common ancestor and incorrectly
+  // demand formatting of entirely unchanged historic protocol tests.
+  let eventBase = null;
+  if (process.env.GITHUB_EVENT_PATH) {
+    const event = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, "utf8"));
+    if (event.pull_request?.base?.sha) {
+      eventBase = event.pull_request.base.sha;
+      if (!/^[0-9a-f]{40}$/.test(eventBase)) {
+        throw new Error("Invalid immutable pull request base SHA");
+      }
+    }
+  }
+  const base =
+    eventBase ||
+    process.env.QUALITY_FORMAT_BASE ||
+    (process.env.GITHUB_BASE_REF
+      ? "origin/" + process.env.GITHUB_BASE_REF
+      : "HEAD^");
+  const mergeBase = git("rev-parse", base + "^{commit}");
+  // Never silently fall back to an old ancestor if the base commit is absent.
+  if (execFileSync("git", ["merge-base", "--is-ancestor", mergeBase, "HEAD"], {
+    cwd: root, stdio: "ignore",
+  }).length !== 0) {
+    throw new Error("Unexpected result from ancestry verification");
+  }
+  console.log("FORMAT_BASE_SHA=" + mergeBase);
   const raw = git(
     "diff",
     "--name-only",
     "--diff-filter=ACMR",
-    mergeBase + "..HEAD",
+    mergeBase,
+    "HEAD",
+    "--",
   );
   const files = raw
     .split("\n")
