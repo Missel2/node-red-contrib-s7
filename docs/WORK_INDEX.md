@@ -10,10 +10,12 @@
 | WI-004 | Completed / HIL pending | [Issue #4 / PR #10](https://github.com/Missel2/node-red-contrib-s7/pull/10) | **Squash-merged with explicit human approval** as `8e460f1136319567ac6d0646d467c74af9c70e16`, 13/13 exact-head checks including CodeQL; five synthetic loopback S7Comm, reconnect, RST and blackhole cases now native in `master`. HIL pending. |
 | WI-005 | Completed | [Issue #5 / PR #12](https://github.com/Missel2/node-red-contrib-s7/pull/12) | Reproducible npm v3 lockfile merged as `7bee547d`; corrected nodes7 fork archive/SHA-512 SRI merged separately via PR #15. |
 | WI-006 | P2 | Data freshness, diagnostics and uncertain writes | Requirements only; do not implement before reliability baseline |
-| WI-008 | P1 active | [Issue #7 / draft PR #14](https://github.com/Missel2/node-red-contrib-s7/pull/14) | Locked ESLint/Prettier on both hosted OS, exact-master-base format control, negative tests, advisory TS; reconciled to approved PR #17 master `cedbd85a`. Implementation `c220d902` passed 19/19 source-commit checks, including CodeQL. Docs update needs new exact-head CI. **DRAFT, no merge approval**. |
+| WI-008 | Completed | [Issue #7 / PR #14](https://github.com/Missel2/node-red-contrib-s7/pull/14) | Explicitly approved and squash-merged to protected master `7ef9ef5bbb8827fd56bcddad7260232f9bfbc9aa`; 18/18 post-merge checks green, including CodeQL. Static-quality Ubuntu/Windows now mandatory via protected package smoke; type diagnostics remain advisory. |
 | WI-007 | P1 future | [Issue #8: isolated S7-1200 HIL + test-debt tracking](https://github.com/Missel2/node-red-contrib-s7/issues/8) | Hardware absent; `HIL-S7-*` test matrix is pending and required in all new PR descriptions |
 
 | WI-009 | Completed (software CI) | [Issue #16 / PR #17](https://github.com/Missel2/node-red-contrib-s7/pull/17) | Explicitly approved squash-merge `cedbd85a38b26437160788f9dc17c352b645de03`; integration harness handshake polling deadline owns timers and four regression cases pass on Ubuntu/Windows Node 22/24. Issue #16 closed. HIL not applicable to test harness. |
+
+| WI-010 | P1 in progress | [PR #11 — Security policy and Dependabot](https://github.com/Missel2/node-red-contrib-s7/pull/11) | Synchronized to protected `7ef9ef5b`, weekly separate root npm/CI-tool npm/Actions groups and CI YAML/policy negative controls; source `2f437f4f` passed 17/17 checks. **UNMERGED**; documentation commit requires fresh checks. Actual GitHub security toggles unverified. |
 
 ## Continuation rules
 
