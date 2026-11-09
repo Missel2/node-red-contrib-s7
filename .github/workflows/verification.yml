@@ -129,6 +129,11 @@ jobs:
         with:
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Materialize the tracked files without runner line ending conversion
+        run: |
+          git config --local core.autocrlf false
+          git checkout-index --force --all
+          git diff --exit-code
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ matrix.node }}

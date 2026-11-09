@@ -74,6 +74,8 @@ resolved dependencies, scenarios and peer observations. The runner also
 requires the Node-RED test process to exit on its own within the deadline.
 CI attaches each matrix report to its job. The existing required package
 check depends on all four installed-runtime jobs.
+Hosted packaging materializes the Git index with runner line ending
+conversion disabled and rejects a dirty checkout before building the tarball.
 
 The current pin produces characterized-with-known-failure when the precise
 post-removal retry defect reproduces. That result means the test detected

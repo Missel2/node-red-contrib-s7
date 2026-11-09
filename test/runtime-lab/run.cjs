@@ -259,6 +259,13 @@ async function main() {
       productionLockSha256: digest(path.join(root, "package-lock.json")),
       runtimeToolLockSha256: digest(path.join(__dirname, "package-lock.json")),
     };
+    if (process.env.GITHUB_ACTIONS === "true") {
+      assert.equal(
+        status.stdout.trim(),
+        "",
+        "Hosted packaging requires a clean checkout",
+      );
+    }
     report.npm = (await npm(["--version"], root)).stdout.trim();
     report.nodeRed = require("node-red/package.json").version;
     assert.equal(
