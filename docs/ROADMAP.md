@@ -85,3 +85,9 @@ Start every development round by checking the current default branch, issues, ac
 ## CI sync following separate lockfile PR #12 merge (2026-11-09)
 
 - PR #12 approved and merged to protected master `7bee547d164fd94d3ecec1eee472fb860ba4a31c`. PR #10 is updated with the exact v3 lockfile and `npm ci` for the unchanged synthetic S7Comm fixtures, but is **not** approved for merge. HIL remains pending. 
+
+
+## 2026-11-09: approved S7Comm fixture merge, COTP integration next
+- Wrapper PR #12 (v3 lock) approved/merged `7bee547d`; wrapper PR #10 (five actual synthetic S7Comm and TCP fault tests) separately approved/merged `8e460f1`; maintained nodes7 PR #13 approved/merged `2cf864e38be447c2709348a25eb0524d67f5cf2d`.
+- Wrapper draft PR #15 pins this exact nodes7 SHA using HTTP(S) plus SHA-512 npm integrity. Its native in-tree five-case S7Comm matrix now also checks actual installed-fork Node-RED DB1 read/write/readback, while a second OS matrix checks pending COTP close and late CC callback. Both feed the required package smoke status. PR #15 has **no merge approval** and needs its own final full exact-head CI and CodeQL.
+- No software protocol test establishes Siemens S7-1200 firmware support. HIL-S7-001/-002/-003/-004/-005/-007 remain pending.

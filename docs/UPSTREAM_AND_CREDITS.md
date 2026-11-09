@@ -14,10 +14,10 @@ We thank ST-One, Guilherme Francescon Cittolin, and everyone who has contributed
 ## Runtime S7 protocol implementation: nodes7
 
 - **Source:** [st-one-io/nodes7](https://github.com/st-one-io/nodes7)
-- **Package used by this fork's current package.json:** [@st-one-io/nodes7](https://www.npmjs.com/package/@st-one-io/nodes7), version **1.1.2**.
+- **On protected master:** [@st-one-io/nodes7](https://www.npmjs.com/package/@st-one-io/nodes7) **1.1.2** from npm registry. **On unmerged draft PR #15 only:** same package key sources separately maintained [Missel2/nodes7](https://github.com/Missel2/nodes7) at full immutable commit `2cf864e38be447c2709348a25eb0524d67f5cf2d`, delivered as a commit-addressed HTTPS tarball with npm SHA-512 integrity. The upstream package name and GPL license remain unchanged.
 - **Author listed in its package metadata:** Guilherme Francescon.
 - **License listed in its package metadata:** GPL-3.0-or-later.
-- **Relationship:** a **separate direct runtime dependency**, not part of this repository's vendored source. This fork has not yet integrated a maintained copy of the protocol implementation.
+- **Relationship:** a **separate direct runtime dependency**, not part of this repository's vendored source. The independent COTP fix in nodes7 PR #13 was human-approved and merged in its own repo; wrapper integration is proposed in PR #15, not vendored or published.
 
 We thank the nodes7 authors and contributors for the protocol implementation on which this Node-RED integration currently depends.
 

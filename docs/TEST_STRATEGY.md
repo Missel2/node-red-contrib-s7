@@ -73,3 +73,10 @@ The stricter false-positive-resistant abort test and an explicit clean disconnec
 ## Two actual software server restarts (CI verified 2026-11-07)
 
 [PR #10 run 42411812676](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42411812676) passed on Ubuntu and Windows with a *single real S7Endpoint* reused across two killed/recreated `python-snap7==3.3.1` server processes. Each cycle includes an observed TCP disconnect, at least one refused retry while the server is down, successful reconnect and fresh reset DB1 read. These are protocol-level integration results, distinct from hardware HIL or proof of all resource cleanup. The remaining priority for Issue #4 is bounded blackhole/half-open fault injection and explicit client/socket resource measurements.
+
+
+## Maintained nodes7 fork integration — PR #15 unmerged
+- With PR #10 approved and on protected master, **run `test/protocol/*.test.js` directly from this repository**. Do not fetch a second checkout of PR #10 or copy fixtures from an unmerged branch.
+- Hosted `S7 wire tests` on Ubuntu/Windows Node 22 use `python-snap7==3.3.1`, the fixed SHA512-locked fork and additionally execute `test/integration/nodes7-wrapper-s7comm-wire.test.cjs` and `scripts/ci/verify-s7-wire-replay.cjs`. All write tests use synthetic DB1 in a disposable software server. No hardware writes.
+- Hosted `Pinned nodes7 integration` on both OSes executes `npm run test:integration`, with actual installed library, TCP early close in minimal Node-RED harness and a genuinely parsed late CC callback. Both OS matrices are upstream gates for protected `Package dependency smoke (Ubuntu, Node 22)`. CI cannot silently succeed from an expected-red test or skipped protocol job.
+- HIL-S7-001/-002/-003/-004/-005/-007 PENDING_HARDWARE; software server does not represent Siemens firmware or full Node-RED runtime compatibility.
