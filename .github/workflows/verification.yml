@@ -80,8 +80,6 @@ jobs:
           cache-dependency-path: tools/quality/package-lock.json
       - name: Install standalone pinned static-quality dependencies
         run: npm ci --prefix tools/quality --ignore-scripts --no-audit --no-fund
-      - name: Print exact Prettier output for new security verifier (diagnostic only)
-        run: node tools/quality/node_modules/prettier/bin/prettier.cjs tools/quality/verify-security-maintenance.cjs
       - name: ESLint correctness checks, including CJS wire integration
         run: npm run lint
       - name: Prettier on new and preformatted changed files

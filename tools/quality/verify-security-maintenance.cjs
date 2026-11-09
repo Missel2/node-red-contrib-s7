@@ -22,7 +22,10 @@ function assertScopes(yaml) {
     "Expected three independent Dependabot configurations",
   );
   const actual = sections.map((section) => {
-    const ecosystem = section.split("\n")[0].trim().replace(/^["']|["']$/g, "");
+    const ecosystem = section
+      .split("\n")[0]
+      .trim()
+      .replace(/^["']|["']$/g, "");
     const directory = section.match(/^    directory: "([^"]+)"$/m)?.[1];
     assert.ok(directory, "Missing manifest directory");
     assert.match(section, /^    schedule:\s*$/m);
@@ -61,8 +64,13 @@ async function main() {
   const policyPath = path.resolve(__dirname, "../../SECURITY.md");
   const security = fs.readFileSync(policyPath, "utf8");
   assert.match(security, /cannot verify that private reporting is enabled/i);
-  assert.match(security, /never test vulnerabilities against a production PLC/i);
-  console.log("SECURITY_CONFIG_PASS: YAML, independent scopes, negative controls");
+  assert.match(
+    security,
+    /never test vulnerabilities against a production PLC/i,
+  );
+  console.log(
+    "SECURITY_CONFIG_PASS: YAML, independent scopes, negative controls",
+  );
 }
 
 main().catch((error) => {
