@@ -44,3 +44,10 @@ No unattended merge, npm release, productive OT deployment, or real-device acces
 ## 2026-11-09 — PR #10 CI synchronization
 
 Lockfile PR #12 was explicitly approved and squash-merged to protected master at `7bee547d164fd94d3ecec1eee472fb860ba4a31c`. PR #10 now uses the genuine v3 npm registry lock and `npm ci` on both hosted systems. Its synthetic-only protocol fixtures remain unchanged. Separate PR #15 validates the maintained `nodes7` fork with a full S7Comm wrapper loopback read/write test. No merge authorization for PR #10 or PR #15. HIL pending.
+
+
+## Immediate continuation: draft PR #15
+- Work branch `feat/pinned-nodes7-cotp-integration-20261109`; base is protected `master` `8e460f1136319567ac6d0646d467c74af9c70e16`. It merges the approved test-only master into its history, keeping all five in-tree `test/protocol/*.test.js` cases without copying from another PR.
+- CI: `S7 wire tests` must pass five original protocol fixtures, a real installed maintained nodes7 fork S7Comm DB1 wrapper read/write/readback, and `verify-s7-wire-replay.cjs` strict failure/socket assertions. `Pinned nodes7 integration` independently checks Node-RED early close and true parsed COTP CC after cancel. The six pre-existing required protected checks remain; specifically `Package dependency smoke` gates *both* Windows/Linux job matrices.
+- Compare exact SHA to CI and CodeQL, verify npm lockfile HTTPS/SHA512 source pin against `2cf864e38be447c2709348a25eb0524d67f5cf2d`, check same checked-in test sources and full PR diff. Update evidence links **only after final head checks conclude**. A green check on an older head never authorizes merge.
+- PR #15 must remain DRAFT, not merged automatically. It still needs a separate explicit user merge approval, even when CI passes. Hardware and Siemens simulator tests remain `PENDING_HARDWARE`; no npm publish, cluster sync or real PLC traffic.
