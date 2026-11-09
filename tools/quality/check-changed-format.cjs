@@ -29,7 +29,9 @@ async function main() {
   // demand formatting of entirely unchanged historic protocol tests.
   let eventBase = null;
   if (process.env.GITHUB_EVENT_PATH) {
-    const event = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, "utf8"));
+    const event = JSON.parse(
+      fs.readFileSync(process.env.GITHUB_EVENT_PATH, "utf8"),
+    );
     if (event.pull_request?.base?.sha) {
       eventBase = event.pull_request.base.sha;
       if (!/^[0-9a-f]{40}$/.test(eventBase)) {
@@ -47,7 +49,8 @@ async function main() {
   // Never silently fall back to an old ancestor if the base commit is absent.
   // A nonzero Git exit throws; with stdio:"ignore" success returns null.
   execFileSync("git", ["merge-base", "--is-ancestor", mergeBase, "HEAD"], {
-    cwd: root, stdio: "ignore",
+    cwd: root,
+    stdio: "ignore",
   });
   console.log("FORMAT_BASE_SHA=" + mergeBase);
   const raw = git(
