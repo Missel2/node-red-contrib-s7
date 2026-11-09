@@ -536,23 +536,20 @@ module.exports = function (RED) {
             if (Array.isArray(writeObj.name)) {
 
                 if (!Array.isArray(writeObj.val) || writeObj.val.length !== writeObj.name.length) {
-                    node.error(RED._("s7.error.valmismatch"));
                     node.status(generateStatus('badvalues', statusVal));
-                    return;
+                    return done(RED._("s7.error.valmismatch"));
                 }
 
                 for (const elm of writeObj.name) {
                     if (!node.endpoint._vars[elm]) {
-                        node.error(RED._("s7.error.varunknown", { var: elm }));
                         node.status(generateStatus('badvalues', statusVal));
-                        return;
+                        return done(RED._("s7.error.varunknown", { var: elm }));
                     }
                 }
 
             } else if (!node.endpoint._vars[writeObj.name]) {
-                node.error(RED._("s7.error.varunknown", { var: writeObj.name }));
                 node.status(generateStatus('badvalues', statusVal));
-                return;
+                return done(RED._("s7.error.varunknown", { var: writeObj.name }));
             }
 
             statusVal = writeObj.val;
