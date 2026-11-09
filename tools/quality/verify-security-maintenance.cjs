@@ -16,10 +16,14 @@ const expected = [
 
 function assertScopes(yaml) {
   const sections = yaml.split(/^  - package-ecosystem:\s*/m).slice(1);
-  assert.equal(sections.length, 3, "Expected three independent Dependabot configurations");
+  assert.equal(
+    sections.length,
+    3,
+    "Expected three independent Dependabot configurations",
+  );
   const actual = sections.map((section) => {
     const ecosystem = section.split("\n")[0].trim().replace(/^["']|["']$/g, "");
-    const directory = section.match(/^    directory:\s*["']?([^"'\r\n]+)["']?\s*$/m)?.[1];
+    const directory = section.match(/^    directory: "([^"]+)"$/m)?.[1];
     assert.ok(directory, "Missing manifest directory");
     assert.match(section, /^    schedule:\s*$/m);
     assert.match(section, /^      interval:\s*["']?weekly["']?\s*$/m);
@@ -33,23 +37,32 @@ function assertScopes(yaml) {
     assert.match(section, /^          - ["']?patch["']?\s*$/m);
     return [ecosystem, directory];
   });
-  assert.deepEqual(actual, expected, "The quality-tool npm lock must be independent");
-  assert.doesNotMatch(yaml, /^\s*(?:target-branch|insecure-external-code-execution):/m);
+  assert.deepEqual(
+    actual,
+    expected,
+    "The quality-tool npm lock must be independent",
+  );
+  assert.doesNotMatch(
+    yaml,
+    /^\s*(?:target-branch|insecure-external-code-execution):/m,
+  );
 }
 
 async function main() {
   const yaml = fs.readFileSync(configPath, "utf8");
   await prettier.format(yaml, { parser: "yaml" });
   assertScopes(yaml);
-  assert.throws(
-    () => assertScopes(yaml.replace('directory: "/tools/quality"', 'directory: "/missing-ci-tools"')),
-    /independent/,
+  const invalidScope = yaml.replace(
+    'directory: "/tools/quality"',
+    'directory: "/missing-ci-tools"',
   );
+  assert.throws(() => assertScopes(invalidScope), /independent/);
   await assert.rejects(prettier.format("version: [\n", { parser: "yaml" }));
-  const security = fs.readFileSync(path.resolve(__dirname, "../../SECURITY.md"), "utf8");
+  const policyPath = path.resolve(__dirname, "../../SECURITY.md");
+  const security = fs.readFileSync(policyPath, "utf8");
   assert.match(security, /cannot verify that private reporting is enabled/i);
   assert.match(security, /never test vulnerabilities against a production PLC/i);
-  console.log("SECURITY_CONFIG_PASS: valid YAML, independent scopes, policy negative controls");
+  console.log("SECURITY_CONFIG_PASS: YAML, independent scopes, negative controls");
 }
 
 main().catch((error) => {
