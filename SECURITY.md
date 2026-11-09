@@ -23,9 +23,12 @@ There is currently **no guaranteed response time, remediation deadline or securi
 
 **Do not publish security vulnerabilities, credentials, plant addresses, exploit details or production logs in public Issues, Pull Requests or Discussions.**
 
-Use the fork's GitHub private vulnerability reporting feature:
-
-[Report a vulnerability privately](https://github.com/Missel2/node-red-contrib-s7/security/advisories/new)
+If **Private vulnerability reporting** is enabled on this fork, use its
+[private vulnerability reporting form](https://github.com/Missel2/node-red-contrib-s7/security/advisories/new).
+**This policy cannot verify that private reporting is enabled.** The repository
+maintainer must check the GitHub repository Security settings. If unavailable,
+establish a verified private channel with the maintainer before reporting sensitive
+details. Do not post exploit details, credentials or production traces publicly.
 
 Please include the affected branch/version and commit, observed impact, controlled reproduction steps, a minimal proof of concept where safe, and any proposed mitigation. Remove passwords, PLC credentials, real internal addresses and sensitive industrial data.
 
@@ -51,7 +54,23 @@ This package can communicate with real industrial controllers.
 
 ## Development safeguards
 
-The fork uses protected branches, required CI, regression tests, dependency alerting and security-analysis tools as configured in GitHub. Additional checks and real-hardware testing are introduced when validated; a security feature shown in GitHub settings is not evidence that all relevant tests have run.
+The fork has protected-master checks, protocol regression tests,
+hosted ESLint/Prettier checks and CodeQL as verified on the main-branch
+commit `7ef9ef5bbb8827fd56bcddad7260232f9bfbc9aa`.
+**This does not prove GitHub private vulnerability reporting, Dependabot alerts
+and security updates, secret scanning or push protection are enabled.**
+Those features must be checked separately in repository settings.
+
+The proposed Dependabot configuration opens reviewable version-update PRs
+separately for npm at the repository root, isolated CI-only npm dependencies
+at `/tools/quality`, and GitHub Actions. It takes effect only after the
+configuration reaches the default branch and GitHub processes it.
+There is no automatic merge.
+
+The runtime `@st-one-io/nodes7` dependency points to an **immutable GitHub
+codeload commit** in `Missel2/nodes7`, pinned by SHA-512 lock integrity.
+Routine registry version updates are not a substitute for a separately reviewed
+fork-commit update and protocol/lifecycle regression tests. Additional checks and real-hardware testing are introduced when validated; a security feature shown in GitHub settings is not evidence that all relevant tests have run.
 
 AI-assisted code and tests require the same reproducible evidence and human approval as other contributions. Changes are proposed through reviewable PRs. **No automatic merge, npm publication, physical-PLC interaction or production deployment is implied by this policy.**
 

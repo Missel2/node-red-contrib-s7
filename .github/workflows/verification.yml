@@ -86,6 +86,8 @@ jobs:
         run: npm run format:check
       - name: Real ESLint/Prettier failing and passing controls
         run: npm run quality:negative-control
+      - name: Validate Dependabot YAML syntax, independent scopes and policy
+        run: node tools/quality/verify-security-maintenance.cjs
 
   js-types-diagnostics:
     name: JavaScript type diagnostics (advisory, Ubuntu Node 22)

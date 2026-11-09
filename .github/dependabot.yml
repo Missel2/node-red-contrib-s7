@@ -1,6 +1,6 @@
-# Automated dependency-maintenance pull requests in the downstream fork.
-# Alerts and automatic security PRs are controlled separately in GitHub Settings.
-# All changes remain subject to the same protected-master CI and human approval.
+# Downstream fork: dependency update PRs require protected CI and human review.
+# The exact SHA512-locked nodes7 codeload commit is NOT automatically certified
+# or automatically upgraded by routine registry version-update PRs.
 version: 2
 updates:
   - package-ecosystem: "npm"
@@ -12,7 +12,26 @@ updates:
       timezone: "Europe/Berlin"
     open-pull-requests-limit: 5
     groups:
-      routine-npm:
+      routine-runtime-npm:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # Isolated private CI tooling from merged PR #14. Do not mix with runtime.
+  - package-ecosystem: "npm"
+    directory: "/tools/quality"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:30"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 5
+    groups:
+      routine-ci-quality-npm:
+        patterns:
+          - "*"
         update-types:
           - "minor"
           - "patch"
@@ -27,6 +46,8 @@ updates:
     open-pull-requests-limit: 5
     groups:
       routine-github-actions:
+        patterns:
+          - "*"
         update-types:
           - "minor"
           - "patch"
