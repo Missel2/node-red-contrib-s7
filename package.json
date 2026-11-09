@@ -16,7 +16,7 @@
   "scripts": {
     "test": "node --test test/unit/s7-endpoint.baseline.test.js test/regression/s7-endpoint.lifecycle.test.js",
     "test:unit": "node --test test/unit/s7-endpoint.baseline.test.js test/regression/s7-endpoint.lifecycle.test.js",
-    "check:syntax": "node --check red/s7.js && node --check src/tools.js && node --check test/unit/s7-endpoint.baseline.test.js && node --check test/regression/s7-endpoint.lifecycle.test.js && node --check test/integration/nodes7-pinned-fork.test.cjs && node --check test/integration/nodes7-wrapper-s7comm-wire.test.cjs && node --check scripts/ci/verify-s7-wire-replay.cjs && node --check scripts/ci/check-local-codeql-sarif.cjs",
+    "check:syntax": "node --check red/s7.js && node --check src/tools.js && node --check test/unit/s7-endpoint.baseline.test.js && node --check test/regression/s7-endpoint.lifecycle.test.js && node --check test/integration/nodes7-pinned-fork.test.cjs && node --check test/integration/nodes7-wrapper-s7comm-wire.test.cjs && node --check scripts/ci/verify-s7-wire-replay.cjs",
     "test:integration": "node --test test/integration/nodes7-pinned-fork.test.cjs"
   },
   "keywords": [
