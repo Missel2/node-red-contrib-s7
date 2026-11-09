@@ -1,0 +1,3 @@
+# Keep the isolated dev-only ESLint/Prettier/TypeScript toolchain out of
+# any future Node-RED palette/npm package. The tooling stays in Git and CI.
+tools/quality/

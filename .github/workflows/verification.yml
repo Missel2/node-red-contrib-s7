@@ -32,9 +32,63 @@ jobs:
         run: npm run check:syntax
       - name: Wrapper baseline plus fixed lifecycle regressions
         run: npm test
+      - name: Verify S7 wire harness deadline owns its polling task
+        run: node --test test/integration/wait-for-status.test.cjs
 
-  package-smoke:
-    name: Package dependency smoke (Ubuntu, Node 22)
+  pinned-nodes7-integration:
+    name: Pinned nodes7 integration (${{ matrix.os }}, Node 22)
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install immutable SHA512-pinned corrected nodes7
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Verify actual installed fork, early Node-RED close and parsed late COTP CC
+        run: npm run test:integration
+      - name: Save real TCP observations
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pinned-nodes7-integration-${{ matrix.os }}-node22
+          path: test-reports/nodes7-pinned-*.json
+          retention-days: 14
+          if-no-files-found: warn
+
+  static-quality:
+    name: Static quality (${{ matrix.os }}, Node 22)
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: tools/quality/package-lock.json
+      - name: Install standalone pinned static-quality dependencies
+        run: npm ci --prefix tools/quality --ignore-scripts --no-audit --no-fund
+      - name: ESLint correctness checks, including CJS wire integration
+        run: npm run lint
+      - name: Prettier on new and preformatted changed files
+        run: npm run format:check
+      - name: Real ESLint/Prettier failing and passing controls
+        run: npm run quality:negative-control
+
+  js-types-diagnostics:
+    name: JavaScript type diagnostics (advisory, Ubuntu Node 22)
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -42,11 +96,57 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      # Inherited package-lock.json is stale; this is not reproducible installation.
-      - name: Install current declared dependencies without using stale lock
-        run: npm install --no-package-lock --ignore-scripts --no-audit
-      - name: Inspect package composition
-        run: npm pack --dry-run
+      - name: Install isolated quality tools
+        run: npm ci --prefix tools/quality --ignore-scripts --no-audit --no-fund
+      - name: Capture inherited JavaScript typing debt without claiming type-safety
+        shell: bash
+        run: |
+          mkdir -p test-reports
+          node tools/quality/node_modules/typescript/bin/tsc --project tools/quality/tsconfig.json --pretty false > test-reports/js-type-diagnostics.txt 2>&1 || {
+            echo '::warning::Legacy JS type diagnostics remain open and are advisory'
+            cat test-reports/js-type-diagnostics.txt
+          }
+      - name: Archive diagnostic output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-type-diagnostics-ubuntu-node22
+          path: test-reports/js-type-diagnostics.txt
+          if-no-files-found: warn
+          retention-days: 14
+
+  package-smoke:
+    # This job name is already required by protect-master.
+    # Make BOTH hosted S7 wire tests mandatory without relying on adding
+    # unprotected status checks to the ruleset before this PR is merged.
+    needs: [wire-protocol, pinned-nodes7-integration, static-quality]
+    if: ${{ always() }}
+    name: Package dependency smoke (Ubuntu, Node 22)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Require real wire and actual pinned fork integration on both hosts
+        env:
+          S7_WIRE_RESULT: ${{ needs.wire-protocol.result }}
+          FORK_RESULT: ${{ needs.pinned-nodes7-integration.result }}
+          QUALITY_RESULT: ${{ needs.static-quality.result }}
+        run: |
+          node -e "for (const [kind,state] of [['S7 wire',process.env.S7_WIRE_RESULT],['Pinned fork',process.env.FORK_RESULT],['Static quality',process.env.QUALITY_RESULT]]) if(state!=='success') throw Error(kind+' matrix failed: '+state)"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install exact locked dependencies without executing dependency scripts
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Validate exact registry dependency tree
+        run: |
+          npm ls --all
+          node -e "if(typeof require('@st-one-io/nodes7').S7Endpoint!=='function')throw new Error('nodes7 S7Endpoint unavailable')"
+      - name: Verify Node-RED runtime files and exclude CI toolchain from package
+        shell: bash
+        run: |
+          npm pack --dry-run --json > package-composition.json
+          node tools/quality/check-package-files.cjs package-composition.json
 
   baseline-negative-control:
     # Preserve the name required by protect-master. Its meaning is now BOTH
@@ -118,5 +218,40 @@ jobs:
         with:
           name: lifecycle-baseline-red-and-fixed-green-ubuntu-node22
           path: test-reports/*.tap
+          if-no-files-found: warn
+          retention-days: 14
+
+  wire-protocol:
+    name: S7 wire tests (${{ matrix.os }}, Node 22)
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned pure-Python fixture and actual nodes7 dependency
+        run: |
+          python -m pip install --disable-pip-version-check python-snap7==3.3.1
+          npm ci --ignore-scripts --no-audit --no-fund
+      - name: Test actual S7Comm and partial COTP failure on loopback
+        run: node --test test/protocol/*.test.js
+      - name: Real Node-RED S7Comm DB1 synthetic read/write/readback against pinned fork
+        run: node --test test/integration/nodes7-wrapper-s7comm-wire.test.cjs
+      - name: Assert five real fault records and no orphan COTP peers
+        run: node scripts/ci/verify-s7-wire-replay.cjs
+      - name: Keep synthetic S7 protocol evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s7-wire-loopback-${{ matrix.os }}-node22
+          path: test-reports/s7-*
           if-no-files-found: warn
           retention-days: 14
