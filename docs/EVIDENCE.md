@@ -1,5 +1,18 @@
 # Verification ledger
 
+## Latest verified product / CI baseline (2026-11-09)
+
+- Protected `master` `e4f9f6d154c059986517bcfa35ef34d81bcd6c92` contains independently approved and squash-merged PRs #9 (stale-read), #12 (v3 immutable npm lock), #10 (actual S7Comm/TCP software fixtures) and #15 (fixed nodes7 transport). **15/15 post-merge checks successful**, including native CodeQL. The wrapper now uses the fixed immutable GitHub archive `2cf864e38be447c2709348a25eb0524d67f5cf2d` with SHA-512 SRI. [COTP issue #2](https://github.com/Missel2/node-red-contrib-s7/issues/2) was closed **only for the verified software leak defect**. HIL-S7-001…007 remain PENDING_HARDWARE. No publish or plant deploy.
+- **New static-quality draft [PR #14](https://github.com/Missel2/node-red-contrib-s7/pull/14)** was independently rebased by merging current protected master into the PR branch and retargeting to master, without changing runtime `red/s7.js`, `src/tools.js`, the fixed dependency or protocol-fixture test sources. Implementation head `294943df5717adac05cab540bf6d092eb83fb712`: hosted [Verification 42612030118](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42612030118) and [npm lockfile 42612029945](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42612029945) passed; **19/19 GitHub check runs green**, including code scanning in JS/TS, Python, Actions, both Ubuntu/Windows Node 22 ESLint+Prettier+negative controls and all existing protocol/lock/Node-RED contracts. Protected `Package dependency smoke` now strictly requires `wire-protocol`, `pinned-nodes7-integration` **and** `static-quality` matrices, without changing the six existing required check names.
+- **Tested defect in new tooling:** the initial quality run incorrectly compared multi-parent PR head to an older inferred Git merge-base and reported eight unchanged S7Comm test files as new formatting failures. Corrected checker to use the **exact `pull_request.base.sha` provided by GitHub**; it now asserts ancestry and checks only files truly changed relative to protected master. A subsequent code-only formatting failure inside this new script was fixed. The successful final code head reports the expected file selection with no mass reformat and passes strict negative controls. Earlier failed CI runs are not hidden or waived.
+- **Type checking is advisory only:** `tsc --checkJs` reports inherited Node-RED mixin/property typing debt; the job stores real diagnostics but does not claim strict type checking passed. CodeQL is independent. Hosted software protocol tests are not Siemens firmware/PLCSIM/HIL.
+- **This evidence update creates a new draft PR head; re-run exact-head CI before requesting a separate explicit approval.** No auto-merge.
+
+---
+
+Historical entries below record prior states of unmerged PRs at their original dates; they are not current status.
+
+
 **Updated:** 2026-11-07. A green status check is evidence only for its named assertion and the exact commit tested.
 
 | Item | Status | Evidence / limitations |

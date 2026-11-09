@@ -1,5 +1,18 @@
 # Development handoff — node-red-contrib-s7
 
+## Continuation — 2026-11-09 (latest)
+
+- Protected `master` `e4f9f6d154c059986517bcfa35ef34d81bcd6c92` includes human-approved PR #9, #12, #10 and #15. The issue #2 COTP pending-socket leak is **fixed on master** by the exact `2cf864e38be447c2709348a25eb0524d67f5cf2d` dependency archive, COTP/real-CC regression tests and software S7Comm fixtures; issue #2 closed. Master checked **15/15 successful post-merge checks**, including CodeQL.
+- **Active separate work:** [draft PR #14](https://github.com/Missel2/node-red-contrib-s7/pull/14), branch `ci/quality-gates-before-runtime`, based on current master. Adds *only* isolated `tools/quality` locked ESLint/Prettier/TS toolchain, repository scripts, both-host CI and docs. No runtime S7 code edits or dependency substitutions. Protected package smoke now aggregates native S7 wire + repaired nodes7 COTP + static quality OS matrices.
+- Earlier PR #14 was stacked on old PR #12 branch, so the multi-parent-merge format baseline initially selected unrelated old S7Comm files. New `tools/quality/check-changed-format.cjs` anchors the compare to GitHub event `pull_request.base.sha` and refuses missing/non-ancestor bases; no mass formatting of inherited test code. Two observed initial quality failures were corrected. **Implementation SHA `294943df5717adac05cab540bf6d092eb83fb712` has 19/19 green check runs** (Verification 42612030118, lock 42612029945); this documentation commit must receive new exact-head CI before further decisions.
+- TypeScript `checkJs` artifacts are **advisory with outstanding historic property errors**, not strict-green type safety. Python-snap7 S7Comm fixtures are *software-only*; HIL-S7-001…007 remain `PENDING_HARDWARE`, including any real scratch DB writes. No release, productive installation, hardware connection or unapproved merge.
+- **Required next action:** recheck final PR #14 exact SHA, full required ruleset, 19 checks/CodeQL, current master and changed files; then request separate explicit human permission before any PR #14 merge. Do not merge PR #11/#13/#14 automatically; Issue #7 remains active for later safety/security gaps.
+
+---
+
+Historical notes below are preserved for auditability, not current GitHub state.
+
+
 **Updated:** 2026-11-07. Always re-check live GitHub heads and CI.
 
 ## Merged master baseline

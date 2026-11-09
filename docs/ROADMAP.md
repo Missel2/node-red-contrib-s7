@@ -91,3 +91,8 @@ Start every development round by checking the current default branch, issues, ac
 - Wrapper PR #12 (v3 lock) approved/merged `7bee547d`; wrapper PR #10 (five actual synthetic S7Comm and TCP fault tests) separately approved/merged `8e460f1`; maintained nodes7 PR #13 approved/merged `2cf864e38be447c2709348a25eb0524d67f5cf2d`.
 - Wrapper draft PR #15 pins this exact nodes7 SHA using HTTP(S) plus SHA-512 npm integrity. Its native in-tree five-case S7Comm matrix now also checks actual installed-fork Node-RED DB1 read/write/readback, while a second OS matrix checks pending COTP close and late CC callback. Both feed the required package smoke status. PR #15 has **no merge approval** and needs its own final full exact-head CI and CodeQL.
 - No software protocol test establishes Siemens S7-1200 firmware support. HIL-S7-001/-002/-003/-004/-005/-007 remain pending.
+
+## 2026-11-09 — latest integrated software baseline and P1 quality gate
+
+- Human-approved PR #15 squash-merged to protected master `e4f9f6d154c059986517bcfa35ef34d81bcd6c92` with the fixed SHA512-locked maintained nodes7 COTP stream. Issue #2 software leak is closed with Windows/Linux genuine TCP/COTP and S7Comm regression evidence. Hardware HIL and releases remain gated separately.
+- Active [draft PR #14](https://github.com/Missel2/node-red-contrib-s7/pull/14) is independently reconciled with this master, adding isolated pinned ESLint/Prettier on hosted Windows/Linux, deliberate failing quality controls, advisory TS diagnostic artifacts, and a protected aggregate dependent on all three wire/COTP/quality matrices. Source head `294943df` has 19/19 green CI checks; docs-only follow-up requires new exact-head CI. PR #14 still needs explicit human merge permission.

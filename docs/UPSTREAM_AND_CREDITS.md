@@ -14,7 +14,7 @@ We thank ST-One, Guilherme Francescon Cittolin, and everyone who has contributed
 ## Runtime S7 protocol implementation: nodes7
 
 - **Source:** [st-one-io/nodes7](https://github.com/st-one-io/nodes7)
-- **On protected master:** [@st-one-io/nodes7](https://www.npmjs.com/package/@st-one-io/nodes7) **1.1.2** from npm registry. **On unmerged draft PR #15 only:** same package key sources separately maintained [Missel2/nodes7](https://github.com/Missel2/nodes7) at full immutable commit `2cf864e38be447c2709348a25eb0524d67f5cf2d`, delivered as a commit-addressed HTTPS tarball with npm SHA-512 integrity. The upstream package name and GPL license remain unchanged.
+- **Current protected master (after human-approved PR #15):** package key `@st-one-io/nodes7` resolves to independent maintained [Missel2/nodes7](https://github.com/Missel2/nodes7) full commit `2cf864e38be447c2709348a25eb0524d67f5cf2d` as HTTPS source archive with npm SHA-512 integrity. The internal package still reports upstream `1.1.2` and GPL-3.0-or-later; it is **not** a fork-specific published npm release. Original authorship/credits remain. The upstream package name and GPL license remain unchanged.
 - **Author listed in its package metadata:** Guilherme Francescon.
 - **License listed in its package metadata:** GPL-3.0-or-later.
 - **Relationship:** a **separate direct runtime dependency**, not part of this repository's vendored source. The independent COTP fix in nodes7 PR #13 was human-approved and merged in its own repo; wrapper integration is proposed in PR #15, not vendored or published.
@@ -57,3 +57,7 @@ Siemens and SIMATIC/S7 are trademarks of their respective owners; naming product
 Any additional code or dependencies must receive a separate license and provenance review before inclusion. **Other planned test servers, Siemens simulators or alternative S7 implementations are not current dependencies until adopted.** The adopted python-snap7 protocol fixture is identified separately above.
 
 A credit line cannot replace license compliance. Preserve notices, license texts, attribution and corresponding source obligations in any redistributed work.
+
+## CI-only static-analysis toolchain (unmerged PR #14)
+
+Draft PR #14 adds an isolated private `tools/quality` package with exact-version, lockfile-pinned development-only ESLint, Prettier, TypeScript, globals and Node type declarations. These are **not** shipped as S7 runtime dependencies and do not replace or relicense the original upstream source. Their individual license terms remain those of their respective distributions. The quality workflow runs hosted Ubuntu and Windows only; no Siemens/production integration or certification is implied.
