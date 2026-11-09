@@ -87,3 +87,9 @@ Start every development round by checking the current default branch, issues, ac
 
 - [Wrapper PR #15](https://github.com/Missel2/node-red-contrib-s7/pull/15) now checks the real fork dependency against the independent [PR #10](https://github.com/Missel2/node-red-contrib-s7/pull/10) fixture at exact SHA, and adds direct **Node-RED wrapper** synthetic DB1 read/write/readback across Windows/Linux. Both OS succeeded on implementation SHA `60515ee1057d991ff4293da2f2dcce275b700d0d`, [Verification 42571944637](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42571944637) plus [lockfile 42571944644](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42571944644). **No additional merge authorized.**
 - Prerequisites remain separate: PR #12 lockfile into master by **new approval**; PR #10 wire fixture into master by **new approval**; PR #15 restack and rerun CodeQL/security+full CI, then **new approval**. Unknown future hardware (HIL) and full Node-RED runtime compatibility are not claimed.
+
+
+### 2026-11-09 — interim security gate for stack PR #15
+
+- A temporary advanced CodeQL uploader conflicted with GitHub CodeQL Default Setup (SARIF upload rejected); fixed by **local-only SARIF analysis and high/critical gate**. On implementation commit `7cd62fb615da3d71319fc0169d867865ee0feef8`, CodeQL local scanning, full wrapper + real S7Comm, and lockfile totaled **13/13 green checks**. No false claims of GitHub code-scanning upload success.
+- This documentation commit must re-pass exact-head CI. Before wrapper PR #15 can be merged independently, obtain explicit approvals for PR #12 and PR #10, reconcile PR #11/14 security/static work and restack. Retire the temporary CodeQL uploader in favor of active Default Setup scanning once targeting `master`. HIL and actual Node-RED runtime remain out of scope.
