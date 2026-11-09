@@ -32,6 +32,8 @@ jobs:
         run: npm run check:syntax
       - name: Wrapper baseline plus fixed lifecycle regressions
         run: npm test
+      - name: Verify S7 wire harness deadline owns its polling task
+        run: node --test test/integration/wait-for-status.test.cjs
 
   pinned-nodes7-integration:
     name: Pinned nodes7 integration (${{ matrix.os }}, Node 22)

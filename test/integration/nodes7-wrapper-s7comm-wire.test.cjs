@@ -15,6 +15,7 @@ const EVIDENCE = path.join(ROOT,'test-reports','s7-wrapper-real-wire-evidence.js
 const FIXTURE_FILE = path.join(ROOT,'test','protocol','fixture_server.py');
 const PORT = 1102;
 const sleep = ms => new Promise(resolve=>setTimeout(resolve,ms));
+const waitForStatus = require('./wait-for-status.cjs');
 
 function bounded(promise,ms,label){
     let timer;
@@ -105,9 +106,7 @@ test('Node-RED S7 config node reads and writes synthetic DB1 over real installed
 
         // Poll the wrapper's public status. It may connect before a listener
         // subscribes, so an event-only wait would introduce a timing race.
-        await bounded((async()=>{
-            while(node.getStatus()!=='online')await sleep(25);
-        })(),9000,'real wrapper S7 handshake');
+        await waitForStatus(()=>node.getStatus(),'online',9000,25);
         assert.equal(node.endpoint.isConnected,true);
         report.steps.push('real COTP and S7 connection established by wrapper');
 
