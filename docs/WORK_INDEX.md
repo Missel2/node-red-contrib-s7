@@ -12,6 +12,8 @@
 | WI-006 | P2 | Data freshness, diagnostics and uncertain writes | Requirements only; do not implement before reliability baseline |
 | WI-007 | P1 future | [Issue #8: isolated S7-1200 HIL + test-debt tracking](https://github.com/Missel2/node-red-contrib-s7/issues/8) | Hardware absent; `HIL-S7-*` test matrix is pending and required in all new PR descriptions |
 
+| WI-008 | P1 draft | [Issue #16 / PR #17](https://github.com/Missel2/node-red-contrib-s7/pull/17) | Post-merge PR #15 review: test harness Promise.race leaves orphan handshake polling on timeout. Deadline-owned helper and no-poll-after-timeout regression staged, **not merged**. HIL not applicable to harness scheduling. |
+
 ## Continuation rules
 
 Review open PRs, CI and issues before starting new work. Test one defect before patching it. Preserve the historic required check name `Baseline must fail stale-read regression`; it now validates ten original-baseline-red **and** current-runtime-green lifecycle controls after merged PR #9. Confirm the actual job semantics for each exact commit. Passing mock checks do not establish real S7 compatibility.
