@@ -73,7 +73,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Missel2/node-red-contrib-s7
-          ref: 877eed6cdb835f66bc59bf9348880dfb022d9bdf
+          ref: e5693ec9d4760632047f5c94f8a3556e6ce07e60
           path: .wire-fixture
           persist-credentials: false
       - name: Verify pinned test provenance and stage ONLY test sources in runner
@@ -81,7 +81,7 @@ jobs:
         run: |
           set -euo pipefail
           actual="$(git -C .wire-fixture rev-parse HEAD)"
-          test "$actual" = 877eed6cdb835f66bc59bf9348880dfb022d9bdf
+          test "$actual" = e5693ec9d4760632047f5c94f8a3556e6ce07e60
           mkdir -p test/protocol
           cp .wire-fixture/test/protocol/fixture_server.py test/protocol/
           for f in .wire-fixture/test/protocol/*.test.js; do

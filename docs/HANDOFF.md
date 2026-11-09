@@ -1,6 +1,9 @@
 
 # Development handoff
 
+> **Current status, 2026-11-09:** PR #12 was explicitly approved and merged at `7bee547d164fd94d3ecec1eee472fb860ba4a31c`; PR #10 is still unmerged (new CI-verified branch head `e5693ec9d4760632047f5c94f8a3556e6ce07e60`); draft PR #15 now targets protected `master` directly and pins the fixed nodes7 fork. The subsequent historical notes below record earlier stages when PR #12 was still open. No additional merge permission.
+
+
 **Updated:** 2026-11-07. Confirm GitHub branch/CI state before further work.
 
 ## Baseline
@@ -63,3 +66,10 @@ Do not auto-merge, publish to npm, deploy to production OT or use real PLCs with
 - The repository has CodeQL **Default Setup**. A temporary advanced-mode SARIF uploader failed with a configuration conflict on integration head `5053c81` (not a vulnerability verdict). Corrected by running a **local-only SARIF analysis** (no server-side upload) with a CI gate that requires actual CodeQL 2.1 SARIF and rejects high/critical findings. Implementation head `7cd62fb615da3d71319fc0169d867865ee0feef8` passed [local CodeQL 42573154401](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42573154401): 1 SARIF file, **0 findings**, 0 high/critical. Verification `42573154194` and Lockfile `42573154419` also green: 13/13 check-runs.
 - `docs/EVIDENCE.md` contains exact implementation head, security conflict cause, fix and protocol tests. The documentation head resulting from this update **must still pass its own complete checks** before being called merge-review-ready.
 - For final restack on `master`, coordinate with the separately owned PR #11 security changes and let **Default Setup** scan the resulting PR. Remove/retire this temporary local CodeQL workflow when verified scanning on target master is available. Never enable parallel SARIF upload with active Default Setup. PR #15 and prerequisite PR #12/#10 **remain unmerged and individually approval-gated**.
+
+## 2026-11-09 — current state after authorized PR #12 merge and PR #10 sync
+
+- **Lockfile prerequisite completed:** wrapper [PR #12](https://github.com/Missel2/node-red-contrib-s7/pull/12) was expressly approved and squash-merged to protected `master` as `7bee547d164fd94d3ecec1eee472fb860ba4a31c`. The original registry-based npm lockfile and `npm ci` baseline are now on master.
+- **PR #15 is now a DRAFT directly against protected `master`**, not stacked on the obsolete PR #12 branch. Its own `package.json` and `package-lock.json` propose a SHA-512-verified HTTPS tarball of the repaired `nodes7` fork, commit `2cf864e38be447c2709348a25eb0524d67f5cf2d`. This fork change has **not** been merged into the wrapper.
+- **PR #10 remains OPEN and UNMERGED**, but its branch was synchronized with the approved lockfile master; its new head `e5693ec9d4760632047f5c94f8a3556e6ce07e60` passed **13/13 checks** with immutable synthetic S7Comm tests and actual `npm ci` on Windows/Linux. Those tests' blob contents are unchanged. The PR #15 verification workflow now fetches the **new exact fixture SHA** `e5693ec9d4760632047f5c94f8a3556e6ce07e60` and verifies the checkout's SHA before staging only the test sources on disposable runners.
+- The new PR #15 head created by this documentation/workflow change requires a new CI run. No CodeQL or wire evidence from an earlier head substitutes for final exact-head checks. Do not merge PR #10 or PR #15 without new separate explicit approval. No npm publish, OT deployment, or hardware tests. HIL-S7-* remains `PENDING_HARDWARE`.
