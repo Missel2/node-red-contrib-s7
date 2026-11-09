@@ -1,3 +1,10 @@
+**Verified repository snapshot: 2026-11-09; baseline `7ef9ef5bbb8827fd56bcddad7260232f9bfbc9aa`.** PR #14 (static quality), #17 (test-harness deadline), #15 (fixed nodes7 pin), #10 (wire fixtures), #12 (lockfile) and #9 (stale reads) are merged. Security/Dependabot PR #11 remains open. This is software evidence, not a published fork release or physical Siemens qualification.
+
+Current navigation: [work index](WORK_INDEX.md), [review](PROJECT_REVIEW.md).
+Historical sections below retain the status of their named revision; they do not override this snapshot.
+
+---
+
 # Verification ledger
 
 ## Latest verified product / CI baseline (2026-11-09)

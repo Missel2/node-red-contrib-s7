@@ -6,7 +6,9 @@
 
 This fork is intended to develop the existing Siemens S7 integration for Node-RED with emphasis on **reproducible tests, reliable connection lifecycle management, observable failures, diagnosable data quality and controlled releases**. New features are secondary to establishing evidence that existing behavior remains correct during faults and recovery.
 
-**Current fork status (2026-11-09):** Protected `master` `cedbd85a38b26437160788f9dc17c352b645de03` includes independently approved and merged [PR #9](https://github.com/Missel2/node-red-contrib-s7/pull/9) (stale reads), [PR #12](https://github.com/Missel2/node-red-contrib-s7/pull/12) (npm lockfile), [PR #10](https://github.com/Missel2/node-red-contrib-s7/pull/10) (synthetic S7Comm TCP tests), [PR #15](https://github.com/Missel2/node-red-contrib-s7/pull/15) (pinned fixed nodes7 COTP dependency), and [PR #17](https://github.com/Missel2/node-red-contrib-s7/pull/17) (test-harness handshake timeout). Master has verified post-merge CI and CodeQL; version is still `3.1.3`. [Draft PR #14](https://github.com/Missel2/node-red-contrib-s7/pull/14) proposes *unmerged* standalone ESLint/Prettier and advisory TypeScript checks, not a runtime code change. The `npm install node-red-contrib-s7` instructions **still install the upstream published package, not this independently maintained fork**. No fork-specific npm release, physical S7-1200 HIL, productive installation or industrial certification has occurred.
+**Verified repository snapshot: 2026-11-09; baseline `7ef9ef5bbb8827fd56bcddad7260232f9bfbc9aa`.** PR #14 (static quality), #17 (test-harness deadline), #15 (fixed nodes7 pin), #10 (wire fixtures), #12 (lockfile) and #9 (stale reads) are merged. Security/Dependabot PR #11 remains open. This is software evidence, not a published fork release or physical Siemens qualification.
+
+The upstream npm installation below does not install this fork. See [contributing](CONTRIBUTING.md), [current review](docs/PROJECT_REVIEW.md), and the [shared roadmap](https://github.com/Missel2/node-red-contrib-s7/issues/21).
 
 **Development model:** This fork uses AI assistance for most engineering implementation and investigation. The human maintainer `Missel2` sets priorities, reviews the evidence and makes decisions on merges and releases. AI-generated code has no special exemption from testing or review. See [how the project is maintained](docs/AI_DEVELOPMENT.md).
 
@@ -19,7 +21,7 @@ Start here:
 - [Human-directed, AI-led engineering](docs/AI_DEVELOPMENT.md) — responsibilities, disclosures and boundaries.
 - [Origins and acknowledgements](docs/UPSTREAM_AND_CREDITS.md) — sources, maintainers, licenses and thanks.
 - [Verification ledger](docs/EVIDENCE.md) — observed results versus unverified aims.
-- [Development work index](docs/WORK_INDEX.md) — concrete tasks and priority while issues are unavailable.
+- [Development work index](docs/WORK_INDEX.md) — current tasks, issue links and priority.
 - [Repository administration checklist](docs/REPOSITORY_SETUP.md) — manual GitHub settings required for enforceable checks.
 - [Development handoff](docs/HANDOFF.md) — resuming work from repository state.
 - [Maintainer and agent instructions](AGENTS.md) — repository workflow and limits.
@@ -42,7 +44,7 @@ Alternatively, run the following command in your Node-RED user directory - typic
 
         npm install node-red-contrib-s7
 
-NodeJS version 10 or greater and Node-RED version 1.0 or greater is required.
+The inherited upstream minimums were Node.js 10 and Node-RED 1.0. This fork has not qualified that full range. Selected hosted checks run Node 22/24; full Node-RED version support is tracked in [issue #18](https://github.com/Missel2/node-red-contrib-s7/issues/18).
 
 
 ## Usage
