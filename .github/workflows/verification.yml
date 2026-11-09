@@ -140,8 +140,11 @@ jobs:
         run: |
           npm ls --all
           node -e "if(typeof require('@st-one-io/nodes7').S7Endpoint!=='function')throw new Error('nodes7 S7Endpoint unavailable')"
-      - name: Inspect package composition
-        run: npm pack --dry-run
+      - name: Verify Node-RED runtime files and exclude CI toolchain from package
+        shell: bash
+        run: |
+          npm pack --dry-run --json > package-composition.json
+          node tools/quality/check-package-files.cjs package-composition.json
 
   baseline-negative-control:
     # Preserve the name required by protect-master. Its meaning is now BOTH
