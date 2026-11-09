@@ -96,3 +96,7 @@ Start every development round by checking the current default branch, issues, ac
 
 - Human-approved PR #15 squash-merged to protected master `e4f9f6d154c059986517bcfa35ef34d81bcd6c92` with the fixed SHA512-locked maintained nodes7 COTP stream. Issue #2 software leak is closed with Windows/Linux genuine TCP/COTP and S7Comm regression evidence. Hardware HIL and releases remain gated separately.
 - Active [draft PR #14](https://github.com/Missel2/node-red-contrib-s7/pull/14) is independently reconciled with this master, adding isolated pinned ESLint/Prettier on hosted Windows/Linux, deliberate failing quality controls, advisory TS diagnostic artifacts, and a protected aggregate dependent on all three wire/COTP/quality matrices. Source head `294943df` has 19/19 green CI checks; docs-only follow-up requires new exact-head CI. PR #14 still needs explicit human merge permission.
+
+### Quality and future packaging safety boundary
+
+Draft PR #14 now verifies (a) ESLint/Prettier correctness with deliberate failing cases on Windows/Linux, (b) protected package-smoke dependency on actual wire/COTP/quality matrices, and (c) that `npm pack --dry-run` contains Node-RED runtime resources but not the isolated CI-only `tools/quality/` lock and scripts. Source `cfa1eae` had 19/19 checks green. Future *release-readiness* work should separately review whether historically bundled docs/tests/CI metadata also belong in a published Node-RED palette tarball. Do not publish or access Siemens hardware without separate authorization.
