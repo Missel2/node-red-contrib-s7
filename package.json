@@ -4,7 +4,7 @@
   "description": "A Node-RED node to interact with Siemens S7 PLCs",
   "main": "index.js",
   "dependencies": {
-    "@st-one-io/nodes7": "git+https://github.com/Missel2/nodes7.git#2cf864e38be447c2709348a25eb0524d67f5cf2d"
+    "@st-one-io/nodes7": "https://codeload.github.com/Missel2/nodes7/tar.gz/2cf864e38be447c2709348a25eb0524d67f5cf2d"
   },
   "repository": {
     "type": "git",

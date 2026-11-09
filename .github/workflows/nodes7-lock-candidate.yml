@@ -29,14 +29,15 @@ jobs:
           const p=require('./package.json');
           const l=require('./package-lock.json');
           const sha='2cf864e38be447c2709348a25eb0524d67f5cf2d';
-          const spec='git+https://github.com/Missel2/nodes7.git#'+sha;
+          const spec='https://codeload.github.com/Missel2/nodes7/tar.gz/'+sha;
           assert.equal(p.dependencies['@st-one-io/nodes7'], spec);
           assert.equal(l.lockfileVersion,3);
           assert.equal(l.packages[''].dependencies['@st-one-io/nodes7'],spec);
           const dep=l.packages['node_modules/@st-one-io/nodes7'];
           assert.ok(dep,'missing pinned fork package in lockfile');
           assert.ok((dep.resolved||'').includes(sha), 'fork commit is not the locked resolution: '+JSON.stringify(dep));
-          assert.ok(dep.resolved.startsWith('git+https://github.com/Missel2/nodes7.git#'),'unexpected/non-HTTPS source '+dep.resolved);
+          assert.equal(dep.resolved,spec,'wrong locked HTTPS archive source');
+          assert.match(dep.integrity,/^sha512-[A-Za-z0-9+/]+={0,2}$/,'archive must have SHA-512 package integrity');
           assert.equal(dep.version,'1.1.2','fork retains upstream package version');
           assert.ok(l.packages['node_modules/iso-on-tcp'],'ISO-on-TCP must remain locked');
           console.log('LOCK_DEPENDENCY_ENTRY='+JSON.stringify(dep));
