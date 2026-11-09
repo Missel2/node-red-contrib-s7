@@ -52,9 +52,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      # Inherited package-lock.json is stale; this is not reproducible installation.
-      - name: Install current declared dependencies without using stale lock
-        run: npm install --no-package-lock --ignore-scripts --no-audit
+      - name: Install exact locked dependencies without executing dependency scripts
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Validate exact registry dependency tree
+        run: |
+          npm ls --all
+          node -e "if(typeof require('@st-one-io/nodes7').S7Endpoint!=='function')throw new Error('nodes7 S7Endpoint unavailable')"
       - name: Inspect package composition
         run: npm pack --dry-run
 
@@ -150,7 +153,7 @@ jobs:
       - name: Install pinned pure-Python fixture and actual nodes7 dependency
         run: |
           python -m pip install --disable-pip-version-check python-snap7==3.3.1
-          npm install --no-package-lock --ignore-scripts --no-audit
+          npm ci --ignore-scripts --no-audit --no-fund
       - name: Test actual S7Comm and partial COTP failure on loopback
         run: node --test test/protocol/*.test.js
       - name: Keep synthetic S7 protocol evidence

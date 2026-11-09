@@ -33,3 +33,14 @@ No unattended merge, npm release, productive OT deployment, or real-device acces
 
 
 - Confirmed Issue #2: On [PR #10 run 42415198163](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42415198163), real nodes7 under a blackholed COTP handshake leaves **one TCP peer Socket and one active client Socket open after `endpoint.disconnect()` returns**, on all 3 Ubuntu and 3 Windows trials (200ms after public disconnect). This is not leak-free: fixture finally forcibly destroys socket. [Issue #2 evidence](https://github.com/Missel2/node-red-contrib-s7/issues/2#issuecomment-6713161172). Next: create test-first transport bug fix in a **separate dependency/wrapper-scoped PR** with red-old/green-new, not silent changes to PR #10. Current docs/test guard addition must get fresh head CI.
+
+
+- Issue #5: [draft PR #12](https://github.com/Missel2/node-red-contrib-s7/pull/12) regenerates inherited stale npm lockfile v1 (package 3.0.0) via GitHub Actions artifact `npm-lockfile-node22` [run 42415922024](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42415922024) into a real `lockfileVersion: 3` for package 3.1.3. The first run intentionally failed `git diff --exit-code` because the lockfile was not yet committed, while npm-ci and dependency import steps passed; the artifact contains exact registry integrity metadata for `@st-one-io/nodes7@1.1.2` and `iso-on-tcp@0.1.0`. Final PR adds this lock, upgrades the existing required package-smoke job to `npm ci`, and runs lock regeneration/clean install on Ubuntu and Windows. Verify exact-head CI before claiming reproducibility or merging. No npm publish.
+
+
+- Issue #5 exact dependency-tree evidence: [PR #12](https://github.com/Missel2/node-red-contrib-s7/pull/12) code `b646572` passed [CI 42416075677](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42416075677) (6/6), [Ubuntu/Windows lock and npm-ci matrix 42416075682](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42416075682) (2/2) and [CodeQL 42416072293](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42416072293) (2/2). Real lockfile v3 with registry SHA512 integrity metadata; `@st-one-io/nodes7@1.1.2`, `iso-on-tcp@0.1.0`. Npm audit inventories showed zero current known vulnerabilities on both OSes; scan remains informational. Docs-only head update requires new CI. No merge or release performed.
+
+
+## 2026-11-09 — PR #10 CI synchronization
+
+Lockfile PR #12 was explicitly approved and squash-merged to protected master at `7bee547d164fd94d3ecec1eee472fb860ba4a31c`. PR #10 now uses the genuine v3 npm registry lock and `npm ci` on both hosted systems. Its synthetic-only protocol fixtures remain unchanged. Separate PR #15 validates the maintained `nodes7` fork with a full S7Comm wrapper loopback read/write test. No merge authorization for PR #10 or PR #15. HIL pending.

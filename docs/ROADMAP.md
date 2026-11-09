@@ -80,3 +80,8 @@ Start every development round by checking the current default branch, issues, ac
 - PR #9 was merged as `c931dbac4232d3f4481812a65597301548f30739`; [master CI 42412786650](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42412786650) passed 6/6 mandatory jobs. Preserve original-red/corrected-green lifecycle check.
 - [PR #10](https://github.com/Missel2/node-red-contrib-s7/pull/10) adds actual loopback COTP/S7Comm, read/write, aborted handshake and auto-reconnect across two server restarts; [pre-integration CI 42412099544](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42412099544) passed on Ubuntu/Windows. The conflict resolution joining #9 and #10 requires new exact-head CI before merging PR #10.
 - Outstanding: TCP half-open/blackhole, OS-level socket resource measurements, reproducible `npm ci` (Issue #5), later authorized S7-1200 HIL. No Siemens firmware or production PLC has been tested.
+
+
+## CI sync following separate lockfile PR #12 merge (2026-11-09)
+
+- PR #12 approved and merged to protected master `7bee547d164fd94d3ecec1eee472fb860ba4a31c`. PR #10 is updated with the exact v3 lockfile and `npm ci` for the unchanged synthetic S7Comm fixtures, but is **not** approved for merge. HIL remains pending. 

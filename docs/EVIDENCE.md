@@ -70,3 +70,27 @@ A new genuine `nodes7` test accepts TCP but suppresses COTP response in **three 
 - **All six software-only trials (3 per OS):** a genuine 22-byte RFC1006/COTP request to a nonresponding TCP listener; `nodes7` reports `ERR_TIMEOUT` after 10.001–10.011s; no false connect; **one peer socket and one client Socket remain open immediately afterward**; `endpoint.disconnect()` resolves but **one peer socket and one client Socket remain open 200ms later**. Hosted CI artifacts include `s7-blackhole-evidence.json`; `process._getActiveHandles()` is an internal diagnostic, not an OS-level general-purpose leak counter.
 - The test then forcibly closes the synthetic server-side connection to avoid leaking CI processes. **This means cleanup is not validated.** Issue #2 now has direct real-TCP evidence; fix remains pending; no permanent process-handle growth rate or hardware effect has been measured.
 - The next commit makes successful public `disconnect()` a positive test assertion and needs exact-head CI. HIL-S7-001/-005 remain pending.
+
+
+### Issue #5 npm lockfile source and proposed reproducibility gate (2026-11-07)
+
+- Baseline mismatch: inherited `package-lock.json` was v1 and described `node-red-contrib-s7@3.0.0`, while package manifest is `3.1.3` with exact `@st-one-io/nodes7@1.1.2`. The normal CI used `npm install --no-package-lock`, not reproducible `npm ci`.
+- [GitHub runner 42415922024](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42415922024) on the #12 generator commit ran `npm install --package-lock-only --ignore-scripts`, `npm ci --ignore-scripts`, `npm ls --all`, nodes7 import and `npm pack --dry-run` successfully; it then **intentionally failed `git diff --exit-code`** because a newly generated lock was not yet committed. A real `package-lock.json` from the artifact is now proposed, with npm-provided SHA512 hashes for nodes7 1.1.2 and iso-on-tcp 0.1.0. No hashes were invented or manually substituted.
+- New exact-head CI must prove the unchanged generated lock resolves **deterministically on both Ubuntu and Windows**, and six required checks (especially the renamed semantics of `Baseline must fail stale-read regression`) remain green. The added npm audit step is informational until findings are triaged; this is **not a security release claim**.
+
+
+### Issue #5 reproducible dependency tree, validated on both platforms (2026-11-07)
+
+[PR #12 code commit `b646572748f1d451ff1221eb0165c2bb7cecbeb3`](https://github.com/Missel2/node-red-contrib-s7/pull/12) passed the exact commit's [six protected CI jobs 42416075677](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42416075677), [two npm lockfile jobs 42416075682](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42416075682) (Ubuntu 24.04 and Windows 2025, Node 22), and [both CodeQL jobs 42416072293](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42416072293).
+
+- Real registry-created npm lockfile v3 for `node-red-contrib-s7@3.1.3`, `@st-one-io/nodes7@1.1.2` and `iso-on-tcp@0.1.0`. SHA512 integrity fields are from npm registry resolution, **not manually invented**.
+- Both OS jobs ran `npm install --package-lock-only` without changing the committed lock (`git diff --exit-code` succeeded), `npm ci --ignore-scripts`, `npm ls --all`, import of `S7Endpoint`, and `npm pack --dry-run`.
+- Artifacts: Linux lockfile SHA256 `13a543f3260cffca1a1d0113bd991e9a1bbf30eb84defe7796c9d10dafd0ce88` (LF, 949 bytes). Windows artifact was equivalent JSON with CRLF (979 bytes); normalization yields byte-identical content. No divergent dependency resolution.
+- Both npm audit inventories returned `total: 0` known advisories (0 info/low/moderate/high/critical). The audit is **currently informational** (`continue-on-error`), not a mandatory vulnerability-free security gate. Zero findings are time-specific and do not establish complete security.
+- `Package dependency smoke (Ubuntu, Node 22)` keeps its required check name but now runs real `npm ci` instead of `npm install --no-package-lock`.
+- Documentation-only follow-up commit requires its own exact-head CI. No automatic merge, npm publication, live PLC tests, simulator or K8s deployment. HIL not applicable to this dependency-metadata change.
+
+
+## 2026-11-09: PR #10 branch synchronized after authorized lockfile PR #12 merge
+
+PR #12 was independently approved and squash-merged to protected master as `7bee547d164fd94d3ecec1eee472fb860ba4a31c`. The v3 npm lockfile and Windows/Linux `npm ci` checks are retained. PR #10's five synthetic S7Comm tests remain unchanged and still target original registry-stock `nodes7@1.1.2`; the corrected fork is tested separately in draft PR #15. This PR is unmerged and requires separate approval. No Siemens hardware/OT used.
