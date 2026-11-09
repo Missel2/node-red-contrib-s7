@@ -33,8 +33,36 @@ jobs:
       - name: Wrapper baseline plus fixed lifecycle regressions
         run: npm test
 
+  pinned-nodes7-integration:
+    name: Pinned nodes7 integration (${{ matrix.os }}, Node 22)
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install locked GitHub SHA-512 snapshot without lifecycle scripts
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Assert real Node-RED close and decoded COTP CC race with installed fork
+        run: node --test test/integration/nodes7-pinned-fork.test.cjs
+      - name: Preserve immutable dependency and TCP cleanup observations
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nodes7-pinned-integration-${{ matrix.os }}-node22
+          path: test-reports/nodes7-pinned-*.json
+          retention-days: 14
+          if-no-files-found: warn
+
   package-smoke:
     name: Package dependency smoke (Ubuntu, Node 22)
+    needs: [pinned-nodes7-integration]
+    if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -42,6 +70,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Require both OS actual-fork integration checks before package smoke
+        env:
+          INTEGRATION_RESULT: ${{ needs.pinned-nodes7-integration.result }}
+        run: test "$INTEGRATION_RESULT" = success
       - name: Install exact locked dependencies without executing dependency scripts
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Validate genuine nodes7 import and dependency tree
