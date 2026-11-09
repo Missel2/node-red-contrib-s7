@@ -1,0 +1,78 @@
+name: Temporary pinned nodes7 lockfile provenance generator
+
+on:
+  pull_request:
+    paths:
+      - package.json
+      - .github/workflows/nodes7-lock-candidate.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lock-candidate:
+    name: Pinned nodes7 Git lock candidate (Ubuntu, Node 22)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Regenerate genuine GitHub commit-pinned resolution
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Validate source, dependency and commit before artifact capture
+        run: |
+          node - <<'NODE'
+          const assert=require('node:assert/strict');
+          const p=require('./package.json');
+          const l=require('./package-lock.json');
+          const sha='2cf864e38be447c2709348a25eb0524d67f5cf2d';
+          const spec='github:Missel2/nodes7#'+sha;
+          assert.equal(p.dependencies['@st-one-io/nodes7'], spec);
+          assert.equal(l.lockfileVersion,3);
+          assert.equal(l.packages[''].dependencies['@st-one-io/nodes7'],spec);
+          const dep=l.packages['node_modules/@st-one-io/nodes7'];
+          assert.ok(dep,'missing pinned fork package in lockfile');
+          assert.ok((dep.resolved||'').includes(sha), 'fork commit is not the locked resolution: '+JSON.stringify(dep));
+          assert.ok(/github\.com[/:]Missel2\/nodes7/i.test(dep.resolved),'unexpected source '+dep.resolved);
+          assert.equal(dep.version,'1.1.2','fork retains upstream package version');
+          assert.ok(l.packages['node_modules/iso-on-tcp'],'ISO-on-TCP must remain locked');
+          console.log('LOCK_DEPENDENCY_ENTRY='+JSON.stringify(dep));
+          NODE
+      - name: Verify clean pinned installation and real package implementation
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm ls --all
+          node - <<'NODE'
+          const assert=require('node:assert/strict');
+          const fs=require('node:fs');
+          const path=require('node:path');
+          const root=require.resolve('@st-one-io/nodes7');
+          const source=fs.readFileSync(path.join(path.dirname(root),'s7endpoint.js'),'utf8');
+          assert.match(source,/this\._pendingTransport = stream/);
+          assert.match(source,/this\._connectGeneration/);
+          assert.equal(typeof require('@st-one-io/nodes7').S7Endpoint,'function');
+          console.log('NODES7_ACTUAL_FORK_IMPLEMENTATION_CONFIRMED');
+          NODE
+      - name: Output exact generated lockfile bytes and SHA-256
+        run: |
+          node - <<'NODE'
+          const fs=require('node:fs'),crypto=require('node:crypto');
+          const content=fs.readFileSync('package-lock.json');
+          console.log('N7_WRAPPER_LOCK_SHA256='+crypto.createHash('sha256').update(content).digest('hex'));
+          const encoded=content.toString('base64');
+          console.log('N7_WRAPPER_LOCK_CHUNKS='+Math.ceil(encoded.length/1500));
+          for(let i=0;i<encoded.length;i+=1500)
+            console.log('N7_WRAPPER_LOCK_CHUNK_'+(i/1500)+'='+encoded.slice(i,i+1500));
+          console.log('N7_WRAPPER_LOCK_END');
+          NODE
+      - name: Preserve exact provenance artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: n7-pinned-lock-candidate
+          path: package-lock.json
+          retention-days: 14
+          if-no-files-found: error
