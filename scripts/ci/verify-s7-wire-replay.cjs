@@ -32,6 +32,15 @@ for (const [i,cycle] of blackhole.observations.entries()) {
     assert.equal(cycle.connectedEvents,0);
     assert.equal(cycle.failure?.resolved,false);
     assert.equal(cycle.failure?.fromHarness,false,'harness timeout is NOT valid failure');
+    assert.equal(cycle.failure?.clientErrorCode,'ERR_TIMEOUT',
+        'native 10-second transport watchdog must reject with ERR_TIMEOUT');
+    assert.ok(cycle.durationMs>=9000&&cycle.durationMs<14500,
+        'blackholed setup must end on the genuine client watchdog, not premature test teardown');
+    if(cycle.visibleClientSocketsAfterClientFailure !== null)
+        assert.equal(cycle.visibleClientSocketsAfterClientFailure,0,
+            'native watchdog must destroy client TCP socket even before explicit disconnect');
+    // The peer-side close event can be delivered a later event-loop turn:
+    // do not infer a persistent leak solely from an immediate post-rejection count.
     assert.equal(cycle.explicitDisconnectResolved,true);
     assert.equal(cycle.fixtureServerClosed,true);
     assert.equal(cycle.peerSocketsStillOpenAfterExplicitDisconnect,0,
