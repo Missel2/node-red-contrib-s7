@@ -45,11 +45,10 @@ async function main() {
       : "HEAD^");
   const mergeBase = git("rev-parse", base + "^{commit}");
   // Never silently fall back to an old ancestor if the base commit is absent.
-  if (execFileSync("git", ["merge-base", "--is-ancestor", mergeBase, "HEAD"], {
+  // A nonzero Git exit throws; with stdio:"ignore" success returns null.
+  execFileSync("git", ["merge-base", "--is-ancestor", mergeBase, "HEAD"], {
     cwd: root, stdio: "ignore",
-  }).length !== 0) {
-    throw new Error("Unexpected result from ancestry verification");
-  }
+  });
   console.log("FORMAT_BASE_SHA=" + mergeBase);
   const raw = git(
     "diff",
