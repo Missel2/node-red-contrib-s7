@@ -1,0 +1,30 @@
+# Temporary integrity measurement. Remove before final PR review.
+name: Immutable nodes7 archive integrity probe
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/nodes7-integrity-probe.yml
+
+permissions:
+  contents: read
+
+jobs:
+  archive-integrity:
+    name: Hash immutable nodes7 codeload archive
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Measure exact archive bytes without executing them
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://codeload.github.com/Missel2/nodes7/tar.gz/95d5c511b2073b9d306ffe47fef186a7738f2254"
+          archive="${RUNNER_TEMP}/nodes7-95d5c511.tar.gz"
+          curl --fail --location --silent --show-error --retry 4 --connect-timeout 20 --max-time 120 --output "$archive" "$url"
+          test -s "$archive"
+          tar -tzf "$archive" | grep -m 1 'nodes7-95d5c511'
+          printf 'NODES7_ARCHIVE_SHA256='
+          sha256sum "$archive" | cut -d' ' -f1
+          sri="$(openssl dgst -sha512 -binary "$archive" | base64 -w0)"
+          printf 'NODES7_ARCHIVE_SRI=sha512-%s\\n' "$sri"
