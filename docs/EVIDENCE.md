@@ -7,6 +7,14 @@ Historical sections below retain the status of their named revision; they do not
 
 # Verification ledger
 
+## Security-policy PR #11 reconciliation — 2026-11-10
+
+- Exact protected wrapper `master` before security PR: `2735621f217ae6372ed689d9a8943cd85c7bed00`. Its approved installed Node-RED lab #24 software matrix and all **nine required** status contexts passed after squash merge.
+- [Dependabot security-update run 42871743289](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42871743289) failed independently on that SHA. The job reported `security_update_not_possible` for transitive `minimatch`, `multer` and `undici` in the private Node-RED 5.0.9 **test-only** lock; its attempted fix path would downgrade Node-RED to 4.1.8. This is **23/24** overall checks, not all green. No security resolution or production code change was applied.
+- Existing security-policy/Dependabot PR #11 is reconciled with protected master on its original branch, preserving the approved runtime and CodeQL checks. Proposed config now includes separately scheduled root npm, CI-quality npm, **installed runtime-lab npm** and GitHub Actions scopes. The CI-only verifier checks all four scopes, locked manifests, independent schedules and negative cases. Dependabot's server-side scheduling/security-update behavior and repository Security settings are **not** certified by this parser.
+- All new branch commits and associated hosted checks require exact-HEAD verification independently; old green CI at `bb60667211c01308096a1ac74e06c06fa94f88bd` is historical. No merge, npm publication, OT deployment, or HIL hardware use is authorized in this round.
+
+
 ## Latest verified product / CI baseline (2026-11-09)
 
 - Protected `master` `e4f9f6d154c059986517bcfa35ef34d81bcd6c92` contains independently approved and squash-merged PRs #9 (stale-read), #12 (v3 immutable npm lock), #10 (actual S7Comm/TCP software fixtures) and #15 (fixed nodes7 transport). **15/15 post-merge checks successful**, including native CodeQL. The wrapper now uses the fixed immutable GitHub archive `2cf864e38be447c2709348a25eb0524d67f5cf2d` with SHA-512 SRI. [COTP issue #2](https://github.com/Missel2/node-red-contrib-s7/issues/2) was closed **only for the verified software leak defect**. HIL-S7-001…007 remain PENDING_HARDWARE. No publish or plant deploy.

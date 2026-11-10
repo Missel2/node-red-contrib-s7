@@ -13,6 +13,7 @@ The upstream npm installation below does not install this fork. See [contributin
 **Development model:** This fork uses AI assistance for most engineering implementation and investigation. The human maintainer `Missel2` sets priorities, reviews the evidence and makes decisions on merges and releases. AI-generated code has no special exemption from testing or review. See [how the project is maintained](docs/AI_DEVELOPMENT.md).
 
 Start here:
+- [Security policy](SECURITY.md) and [security operations](docs/SECURITY_OPERATIONS.md) — confidential reporting and independently reviewed dependency maintenance.
 - [Scope and boundaries](docs/PROJECT_SCOPE.md) — what the fork does and does not attempt.
 - [Engineering and quality policy](docs/QUALITY_POLICY.md) — required behavior and evidence for changes.
 - [Test strategy](docs/TEST_STRATEGY.md) — protocol test doubles, fault injection and release validation.
