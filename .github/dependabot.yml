@@ -51,3 +51,21 @@ updates:
         update-types:
           - "minor"
           - "patch"
+
+  # Isolated installed Node-RED software test lab (not the runtime dependency tree).
+  # Review the complete lockfile and hosted CI before accepting any update.
+  - package-ecosystem: "npm"
+    directory: "/test/runtime-lab"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:45"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 5
+    groups:
+      routine-ci-runtime-lab:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
