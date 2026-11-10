@@ -1,0 +1,1 @@
+python-snap7==3.3.1 --hash=sha256:b6133aa7f713ffda5adf28ffa40febb937ec1c73ea03f8d72e4ca206b082fb96

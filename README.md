@@ -6,21 +6,22 @@
 
 This fork is intended to develop the existing Siemens S7 integration for Node-RED with emphasis on **reproducible tests, reliable connection lifecycle management, observable failures, diagnosable data quality and controlled releases**. New features are secondary to establishing evidence that existing behavior remains correct during faults and recovery.
 
-**Current fork status (2026-11-09):** Protected `master` `7ef9ef5bbb8827fd56bcddad7260232f9bfbc9aa` contains the human-approved S7 runtime and fixture changes through PRs #9, #10, #12, #15, #17, plus [PR #14](https://github.com/Missel2/node-red-contrib-s7/pull/14) (isolated ESLint/Prettier quality gates). Master post-merge CI, npm lockfile and CodeQL passed. Fork package version remains inherited `3.1.3`. [PR #11](https://github.com/Missel2/node-red-contrib-s7/pull/11) proposes a security policy and reviewable weekly Dependabot updates for root npm, isolated CI-only npm tools and GitHub Actions; **not merged or active on master**. The `npm install node-red-contrib-s7` command still refers to the upstream published package, not this fork. There has been no fork npm release, production installation, actual S7-1200 HIL run or industrial certification.
+**Verified repository snapshot: 2026-11-09; baseline `7ef9ef5bbb8827fd56bcddad7260232f9bfbc9aa`.** PR #14 (static quality), #17 (test-harness deadline), #15 (fixed nodes7 pin), #10 (wire fixtures), #12 (lockfile) and #9 (stale reads) are merged. Security/Dependabot PR #11 remains open. This is software evidence, not a published fork release or physical Siemens qualification.
+
+The upstream npm installation below does not install this fork. See [contributing](CONTRIBUTING.md), [current review](docs/PROJECT_REVIEW.md), and the [shared roadmap](https://github.com/Missel2/node-red-contrib-s7/issues/21).
 
 **Development model:** This fork uses AI assistance for most engineering implementation and investigation. The human maintainer `Missel2` sets priorities, reviews the evidence and makes decisions on merges and releases. AI-generated code has no special exemption from testing or review. See [how the project is maintained](docs/AI_DEVELOPMENT.md).
 
 Start here:
 - [Scope and boundaries](docs/PROJECT_SCOPE.md) — what the fork does and does not attempt.
 - [Engineering and quality policy](docs/QUALITY_POLICY.md) — required behavior and evidence for changes.
-- [Security policy](SECURITY.md) and [security operations](docs/SECURITY_OPERATIONS.md) — disclosure boundaries, dependency reviews and GitHub settings checklist.
 - [Test strategy](docs/TEST_STRATEGY.md) — protocol test doubles, fault injection and release validation.
 - [Future S7-1200 HIL matrix](docs/HIL_TEST_MATRIX.md) — named physical-CPU test cases, pending status, safety gates and test-debt tracking.
 - [Roadmap](docs/ROADMAP.md) — ordered work, starting with the previously investigated connection-lifecycle defect.
 - [Human-directed, AI-led engineering](docs/AI_DEVELOPMENT.md) — responsibilities, disclosures and boundaries.
 - [Origins and acknowledgements](docs/UPSTREAM_AND_CREDITS.md) — sources, maintainers, licenses and thanks.
 - [Verification ledger](docs/EVIDENCE.md) — observed results versus unverified aims.
-- [Development work index](docs/WORK_INDEX.md) — concrete tasks and priority while issues are unavailable.
+- [Development work index](docs/WORK_INDEX.md) — current tasks, issue links and priority.
 - [Repository administration checklist](docs/REPOSITORY_SETUP.md) — manual GitHub settings required for enforceable checks.
 - [Development handoff](docs/HANDOFF.md) — resuming work from repository state.
 - [Maintainer and agent instructions](AGENTS.md) — repository workflow and limits.
@@ -43,7 +44,7 @@ Alternatively, run the following command in your Node-RED user directory - typic
 
         npm install node-red-contrib-s7
 
-NodeJS version 10 or greater and Node-RED version 1.0 or greater is required.
+The inherited upstream minimums were Node.js 10 and Node-RED 1.0. This fork has not qualified that full range. Selected hosted checks run Node 22/24; full Node-RED version support is tracked in [issue #18](https://github.com/Missel2/node-red-contrib-s7/issues/18).
 
 
 ## Usage

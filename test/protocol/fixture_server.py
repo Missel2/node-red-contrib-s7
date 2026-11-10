@@ -4,13 +4,14 @@ import os
 import signal
 import struct
 import threading
+from importlib.metadata import version
 
 from snap7.server import Server
 from snap7.type import SrvArea
 
 LISTEN_ADDRESS = "127.0.0.1"
 LISTEN_PORT = int(os.environ.get("S7_FIXTURE_PORT", "1102"))
-if not 1024 <= LISTEN_PORT <= 65535:
+if LISTEN_PORT != 0 and not 1024 <= LISTEN_PORT <= 65535:
     raise ValueError("S7 test port must be unprivileged")
 stop_requested = threading.Event()
 
@@ -33,7 +34,8 @@ def main():
     signal.signal(signal.SIGINT, request_stop)
     try:
         server.start_to(LISTEN_ADDRESS, LISTEN_PORT)
-        print("S7_WIRE_FIXTURE_READY", flush=True)
+        bound_port = server.server_socket.getsockname()[1]
+        print(f"S7_WIRE_FIXTURE_READY {bound_port} {version('python-snap7')}", flush=True)
         while not stop_requested.wait(0.2):
             pass
     finally:

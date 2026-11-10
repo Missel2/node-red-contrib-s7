@@ -1,15 +1,11 @@
+**Verified repository snapshot: 2026-11-09; baseline `7ef9ef5bbb8827fd56bcddad7260232f9bfbc9aa`.** PR #14 (static quality), #17 (test-harness deadline), #15 (fixed nodes7 pin), #10 (wire fixtures), #12 (lockfile) and #9 (stale reads) are merged. Security/Dependabot PR #11 remains open. This is software evidence, not a published fork release or physical Siemens qualification.
+
+Current navigation: [work index](WORK_INDEX.md), [review](PROJECT_REVIEW.md).
+Historical sections below retain the status of their named revision; they do not override this snapshot.
+
+---
+
 # Verification ledger
-
-## Continuation — verified PR #11 security baseline (2026-11-09)
-
-- Current protected `master` `7ef9ef5bbb8827fd56bcddad7260232f9bfbc9aa`: independently approved PR #14 merged; [Verification 42682412330](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42682412330), [npm-lock 42682412627](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42682412627) and [CodeQL 42682413062](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42682413062) were successful on that commit (**18/18 checks**). Older mentions of PR #14 as draft are historical.
-- Existing [PR #11](https://github.com/Missel2/node-red-contrib-s7/pull/11) branch `docs/security-policy-and-dependabot-20261107` was synchronized using a merge commit from old head `4803991f04446fafeb6112417d2253f4f9bb610f` with protected master as its second parent, preserving the full source and CI test baseline. Its actual diff is security policy, scoped Dependabot configuration, one CI-only parser/check script, CI integration and documents; **no runtime S7 code or dependency edits**.
-- Dependabot configuration now covers `npm /` (Monday 07:00 Europe/Berlin), `github-actions /` (Monday 07:15) and isolated `npm /tools/quality` (Monday 07:30) as separate grouped minor/patch update scopes, max five open update PRs per configured ecosystem entry. No auto merge. The immutable `Missel2/nodes7` codeload SHA is **not assumed to be automatically upgraded or security-audited by ordinary npm version updates**.
-- `SECURITY.md` specifies confidential reporting **conditionally on repository setting being enabled**, safe PLC/OT handling, best-effort response and no fork-specific supported release. GitHub Security settings for private reporting, alerts, security updates, secret scanning and push protection are **NOT verified by this repository file**, and require manual owner inspection. See [Security operations](SECURITY_OPERATIONS.md).
-- New CI-only `tools/quality/verify-security-maintenance.cjs` uses **existing locked Prettier YAML parser** to catch invalid YAML and checks all three independent scopes, weekly schedule, limits and deliberate broken-config/policy negative controls. Both Ubuntu/Windows static-quality jobs run it and are prerequisites to protected package smoke. This is **local syntax/policy validation, not evidence of the Dependabot scheduler running or GitHub server-side acceptance**.
-- **Implementation source SHA `2f437f4f7d34824619d17ffbc65dec58c85cca4b`**: [Verification 42685891575](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42685891575) **SUCCESS, 17/17 commit checks green**, including CodeQL JS/TS, Actions, Python; both static-quality jobs logged `SECURITY_CONFIG_PASS`; native wire/COTP/Node-RED wrapper checks passed. No separate npm-lock workflow was triggered because neither root nor quality lockfile changed. The docs-only follow-up commit must be checked on its own SHA.
-- **HIL: not applicable to documentation, dependency update configuration and hosted CI parser.** HIL-S7-001…007 remain PENDING_HARDWARE. **PR #11 is OPEN, UNMERGED, and has NO approval for a squash merge.** No npm publication, productive installation, real CPU, OT/PLC network access or release.
-
 
 ## Latest verified product / CI baseline (2026-11-09)
 

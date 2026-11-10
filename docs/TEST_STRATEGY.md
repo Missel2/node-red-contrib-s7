@@ -1,6 +1,25 @@
+**Verified repository snapshot: 2026-11-09; baseline `7ef9ef5bbb8827fd56bcddad7260232f9bfbc9aa`.** PR #14 (static quality), #17 (test-harness deadline), #15 (fixed nodes7 pin), #10 (wire fixtures), #12 (lockfile) and #9 (stale reads) are merged. Security/Dependabot PR #11 remains open. This is software evidence, not a published fork release or physical Siemens qualification.
+
+Current navigation: [work index](WORK_INDEX.md), [review](PROJECT_REVIEW.md).
+Historical sections below retain the status of their named revision; they do not override this snapshot.
+
+---
+
 # Test strategy
 
 **Goal:** test the Node-RED S7 integration's protocol and connection behavior without requiring a complete PLC process simulation on each change.
+
+## Required state-transition and command-versus-state regression standard
+
+For changes affecting connection, retry, timeout, S7 I/O, node lifecycle, flow deploy/close or queue ownership, require a **public-API behavioral contract with positive and negative tests**, not solely a method-level or mock assertion:
+
+1. **Explicit command:** `disconnect()`/Node-RED flow removal stops new TCP/S7 attempts regardless of the configured `autoReconnect`. After an intentional new connect/deploy, the same client must resume a real synthetic S7Comm operation when relevant.
+2. **External condition:** without a public user disconnect/reconnect command, drop the local peer/network. With retry configured, assert bounded reconnect and a fresh synthetic DB read after recovery; with retry disabled, assert no self-initiated reconnect. A reported disconnect *event* is not a user stop command.
+3. **Bug detectability:** for a defect use a named original baseline SHA, an intentional *same-test* failed behavioral assertion (red), and a passing candidate SHA (green). Harness timeout, skipped tests, a known-failure allowance, or a mock-only pass must not be presented as fixed behavior.
+4. **End-to-end evidence:** test the actual installed package inside disposable Node-RED where changes cross the wrapper boundary; otherwise real loopback TCP/COTP/S7Comm suffices for transport behavior. Capture emitted errors/status/Complete/Catch, real requests, fresh values, timers/peers before forced fixture cleanup, and redacted machine-readable logs. Bound all waits; ambiguous writes must never be silently replayed.
+5. **Merge review:** every relevant PR identifies covered command/external-state/configuration combinations, exact-head Windows/Linux CI, meaningful negative controls, known gaps and `HIL-S7-*` debt. Documentation-only or independent tooling PRs may mark cases N/A with clear technical justification.
+
+**Reference:** [nodes7 PR #21](https://github.com/Missel2/nodes7/pull/21), whose real COTP/S7Comm test proves stop → deliberate reconnect → external failure → *automatic* recovery → stop, plus original-red/candidate-green. The wrapper must additionally retest this **through its installed Node-RED tarball** after the library change is approved and repinned; merely passing the dependency's CI is not sufficient.
 
 ## Layers and confidence
 
@@ -86,3 +105,12 @@ The stricter false-positive-resistant abort test and an explicit clean disconnec
 - Dev-only, independent locked `tools/quality` dependencies are installed with `npm ci --prefix tools/quality` under Ubuntu and Windows Node 22. ESLint checks correctness rules, including CJS integration and wire verification scripts; the genuine negative control fails on `no-undef` and on invalid Prettier formatting while accepting known-good controls.
 - Prettier checks newly introduced files and previously formatted changed files using GitHub's exact PR base SHA. Existing unformatted legacy files are explicitly reported as debt, not rewritten in a bulk change or excused from ESLint. A wrong merge-base previously flagged eight unrelated protocol files and was corrected with verified source and CI evidence.
 - Advisory `tsc --checkJs` captures inherited Node-RED property typing warnings, **not** a strict type-pass. No source code safety or hardware approval follows from passing static tools; HIL-S7-001…007 pending. Protected package smoke must require native protocol, pinned nodes7 COTP and static-quality OS matrices together.
+
+## Installed package and real runtime
+
+[The installed Node-RED runtime lab](RUNTIME_LAB.md) exercises both a
+lock-equivalent install and a consumer install of the exact same tarball.
+The report separates verified runtime scenarios, historical negative evidence
+from the previously affected nodes7 pin, and the current strict teardown
+contract (zero extra retries and zero live peers before fixture cleanup).
+Hardware HIL-S7-001 through HIL-S7-007 remains pending.
