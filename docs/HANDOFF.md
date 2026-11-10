@@ -1,5 +1,14 @@
 # Development handoff — node-red-contrib-s7
 
+## Verified post-merge continuation — 2026-11-10
+
+- **Live GitHub state overrides historical entries below.** PR #14 was **already explicitly human-approved and squash-merged** on 2026-11-09 at 19:20:31 UTC; protected `master` commit `7ef9ef5bbb8827fd56bcddad7260232f9bfbc9aa`. Do not attempt another PR #14 merge or rebase its closed branch.
+- **Post-merge CI on exact `master` SHA:** [Verification 42682412330](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42682412330), [NPM lockfile reproducibility 42682412627](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42682412627), and [Push on master 42682413062](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42682413062) all completed **success**; GitHub reports **18/18 successful check runs**, including CodeQL, Ubuntu/Windows quality, wire, pinned nodes7 and wrapper tests. Pre-merge PR #14 head `adeca30db79e84b96d62bafa143be001ef5d3e51` passed 19/19 checks.
+- Scope: locked isolated ESLint/Prettier toolchain, negative controls, changed-file format policy, advisory TypeScript diagnostics and CI-only packaging checks. No S7 runtime changes in PR #14; no publication, deployment, live PLC, HIL or hardware writes.
+- **Open follow-up:** PR #11 (security policy/Dependabot) and Issue #7 (broader contracts and security) remain separate. HIL planning Issue #8 and HIL-S7-001…007 remain **PENDING_HARDWARE**. Do not automatically merge PR #11 or start hardware tests. This documentation correction is proposed in a **separate draft PR** and is not itself merged.
+
+---
+
 ## Continuation — 2026-11-09 (latest)
 
 - Protected `master` `e4f9f6d154c059986517bcfa35ef34d81bcd6c92` includes human-approved PR #9, #12, #10 and #15. The issue #2 COTP pending-socket leak is **fixed on master** by the exact `2cf864e38be447c2709348a25eb0524d67f5cf2d` dependency archive, COTP/real-CC regression tests and software S7Comm fixtures; issue #2 closed. Master checked **15/15 successful post-merge checks**, including CodeQL.
