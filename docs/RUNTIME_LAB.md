@@ -98,8 +98,13 @@ were inspected. Both install modes in each report showed
 and `replayedWrites=0` after a dropped ACK. All four archived identical npm
 package SHA-256
 `1cc8bc93d71a6ed699415675aa00dc9a6d276dc276980e961f679055f6a674bb`.
-**These reports precede this unconditional strictness change; its new
-exact-head CI must pass separately.** HIL remains PENDING_HARDWARE.
+These reports are historical and refer to a previously unmerged candidate.
+The later unmerged strict test head `8f16910fd23f410ae851040e4220264a4cdf1813`
+was independently verified with 23/23 checks and strict assertions in all eight
+locked/consumer observations. The corresponding exact run IDs and artifacts
+are recorded in PR #24. After the approved source-pin PR #26 was squash-merged,
+reconciling this lab branch to the protected `master` requires **fresh**
+exact-head CI and artifact inspection. HIL remains PENDING_HARDWARE.
 
 The fixture uses one synthetic DB and a bounded observation window.
 The test covers the admin/editor HTTP responses and runtime lifecycle.

@@ -110,5 +110,7 @@ The stricter false-positive-resistant abort test and an explicit clean disconnec
 
 [The installed Node-RED runtime lab](RUNTIME_LAB.md) exercises both a
 lock-equivalent install and a consumer install of the exact same tarball.
-The report separates passing lifecycle observations, the recorded known
-post-removal retry failure, and hardware test debt.
+The report separates verified runtime scenarios, historical negative evidence
+from the previously affected nodes7 pin, and the current strict teardown
+contract (zero extra retries and zero live peers before fixture cleanup).
+Hardware HIL-S7-001 through HIL-S7-007 remains pending.
