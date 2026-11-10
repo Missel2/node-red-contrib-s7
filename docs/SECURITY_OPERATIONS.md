@@ -1,6 +1,6 @@
 # Security operations and Dependabot verification (PR #11)
 
-**Candidate updated 2026-11-10:** proposed on [PR #11](https://github.com/Missel2/node-red-contrib-s7/pull/11), not active on protected `master` until independently approved and merged. Protected baseline `2735621f217ae6372ed689d9a8943cd85c7bed00`. This is an operations checklist, not evidence of enabled repository Security settings.
+**Verified 2026-11-10:** [PR #11](https://github.com/Missel2/node-red-contrib-s7/pull/11) was approved and squash-merged to protected `master` `f1679ba0670a0511bf0689f917cfd9cc3f307c25`; the four weekly review-only Dependabot scopes have been discovered by GitHub. All 26/26 GitHub post-merge checks were successful, but the security-update solver still reported unresolved vulnerabilities. This is an operations checklist, not proof that private vulnerability reporting, secret scanning or other repository settings are enabled.
 
 ## Version-update scopes
 
@@ -18,6 +18,8 @@ Up to five open version-update PRs per configured entry. Actual execution may be
 After an authorized merge, the repository owner should inspect **Settings → Advanced Security** (navigation labels may vary) and record the actual status of private vulnerability reporting, Dependabot alerts, Dependabot security-update PRs, secret scanning and push protection. A policy file and an update schedule do **not** establish that those settings are enabled. If private vulnerability reporting is unavailable, select and publish a verified confidential contact channel before inviting sensitive submissions; never invent an email address or post exploit details publicly.
 
 Inspect the GitHub **Security → Dependency graph/Dependabot** view after the first scheduled run, verifying which manifests are actually discovered, any update errors, grouping, labels and review policies. Validate root npm, CI quality tools, the installed runtime lab and Actions independently. In particular, check the fixed GitHub-archive nodes7 source manually.
+
+For the measured partial remediation candidate, its real dependency graph, two npm audit baselines, still-vulnerable bundled `minimatch` and exact Windows/Linux acceptance criteria, see [installed runtime-lab security evidence](RUNTIME_LAB_SECURITY.md) and [Issue #27](https://github.com/Missel2/node-red-contrib-s7/issues/27).
 
 ## Known test-only dependency security-update blocker (2026-11-10)
 
