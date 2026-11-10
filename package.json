@@ -19,6 +19,7 @@
     "check:syntax": "node --check red/s7.js && node --check src/tools.js && node --check test/unit/s7-endpoint.baseline.test.js && node --check test/regression/s7-endpoint.lifecycle.test.js && node --check test/protocol/s7-wire-faults.test.js && node --check test/protocol/s7-wire-restart.test.js && node --check test/protocol/s7-wire-roundtrip.test.js && node --check test/protocol/s7-wire-blackhole.test.js && node --check test/protocol/s7-wire-rst.test.js && node --check test/integration/nodes7-pinned-fork.test.cjs && node --check test/integration/nodes7-wrapper-s7comm-wire.test.cjs && node --check scripts/ci/verify-s7-wire-replay.cjs",
     "test:protocol": "node --test test/protocol/*.test.js",
     "test:integration": "node --test test/integration/nodes7-pinned-fork.test.cjs",
+    "test:runtime-lab": "node test/runtime-lab/run.cjs",
     "lint": "node tools/quality/node_modules/eslint/bin/eslint.js --config tools/quality/eslint.config.mjs \"red/**/*.js\" \"src/**/*.js\" \"test/**/*.js\" \"test/**/*.cjs\" \"scripts/**/*.js\" \"scripts/**/*.cjs\" \"tools/quality/**/*.js\" \"tools/quality/**/*.cjs\" \"tools/quality/**/*.mjs\" --no-error-on-unmatched-pattern",
     "format:check": "node tools/quality/check-changed-format.cjs",
     "quality:negative-control": "node tools/quality/negative-control.cjs"
