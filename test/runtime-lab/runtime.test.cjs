@@ -381,8 +381,7 @@ test(
       const invalidWrite = await waitEvent(
         invalidOffset,
         "catch",
-        (event) =>
-          event.tag === "write-unknown" && event.source === outputId,
+        (event) => event.tag === "write-unknown" && event.source === outputId,
         "originating invalid write scoped Catch",
       );
       assert.equal(invalidWrite.source, outputId);
