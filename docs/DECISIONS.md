@@ -70,3 +70,14 @@ Dates describe the time a direction was documented. An accepted direction is not
 **Transport errors:** An `error` alone need not be a `disconnect`. Preserve polling after a transient error and allow a follow-up read, while discarding old read results. Explicit `disconnect`, `connecting` or close stops polling. This retains the established ability to recover from errors without a new `connect` event.
 
 **Hardware:** HIL-S7-004/-005/-007 all pending. No automatic merge, package publication or real PLC operation.
+
+
+## D-012 — Shared qualification sequence (2026-11-09)
+
+The maintained nodes7 source archive and python-snap7 software fixture are already
+selected and integrated; earlier open questions about those baseline choices are
+historical. Keep exact library pin updates separate from library merges. Use shared
+issue #21 for ordering and evidence gates; wrapper #18 qualifies the actual Node-RED
+runtime, #19 specifies write outcomes and #20 proposes opt-in freshness. Default
+payload/topic compatibility stays intact. Independent npm identity, supported
+Node-RED versions and hardware qualification remain open release decisions.

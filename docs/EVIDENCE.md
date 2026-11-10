@@ -1,4 +1,19 @@
+**Verified repository snapshot: 2026-11-09; baseline `7ef9ef5bbb8827fd56bcddad7260232f9bfbc9aa`.** PR #14 (static quality), #17 (test-harness deadline), #15 (fixed nodes7 pin), #10 (wire fixtures), #12 (lockfile) and #9 (stale reads) are merged. Security/Dependabot PR #11 remains open. This is software evidence, not a published fork release or physical Siemens qualification.
+
+Current navigation: [work index](WORK_INDEX.md), [review](PROJECT_REVIEW.md).
+Historical sections below retain the status of their named revision; they do not override this snapshot.
+
+---
+
 # Verification ledger
+
+## Security-policy PR #11 reconciliation — 2026-11-10
+
+- Exact protected wrapper `master` before security PR: `2735621f217ae6372ed689d9a8943cd85c7bed00`. Its approved installed Node-RED lab #24 software matrix and all **nine required** status contexts passed after squash merge.
+- [Dependabot security-update run 42871743289](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42871743289) failed independently on that SHA. The job reported `security_update_not_possible` for transitive `minimatch`, `multer` and `undici` in the private Node-RED 5.0.9 **test-only** lock; its attempted fix path would downgrade Node-RED to 4.1.8. This is **23/24** overall checks, not all green. No security resolution or production code change was applied.
+- Existing security-policy/Dependabot PR #11 is reconciled with protected master on its original branch, preserving the approved runtime and CodeQL checks. Proposed config now includes separately scheduled root npm, CI-quality npm, **installed runtime-lab npm** and GitHub Actions scopes. The CI-only verifier checks all four scopes, locked manifests, independent schedules and negative cases. Dependabot's server-side scheduling/security-update behavior and repository Security settings are **not** certified by this parser.
+- All new branch commits and associated hosted checks require exact-HEAD verification independently; old green CI at `bb60667211c01308096a1ac74e06c06fa94f88bd` is historical. No merge, npm publication, OT deployment, or HIL hardware use is authorized in this round.
+
 
 ## Latest verified product / CI baseline (2026-11-09)
 

@@ -14,10 +14,11 @@ We thank ST-One, Guilherme Francescon Cittolin, and everyone who has contributed
 ## Runtime S7 protocol implementation: nodes7
 
 - **Source:** [st-one-io/nodes7](https://github.com/st-one-io/nodes7)
-- **Current protected master (after human-approved PR #15):** package key `@st-one-io/nodes7` resolves to independent maintained [Missel2/nodes7](https://github.com/Missel2/nodes7) full commit `2cf864e38be447c2709348a25eb0524d67f5cf2d` as HTTPS source archive with npm SHA-512 integrity. The internal package still reports upstream `1.1.2` and GPL-3.0-or-later; it is **not** a fork-specific published npm release. Original authorship/credits remain. The upstream package name and GPL license remain unchanged.
+- **Selected source archive in this revision:** package key `@st-one-io/nodes7` resolves to the independent maintained [Missel2/nodes7](https://github.com/Missel2/nodes7) squash-merged full commit [`95d5c511b2073b9d306ffe47fef186a7738f2254`](https://github.com/Missel2/nodes7/commit/95d5c511b2073b9d306ffe47fef186a7738f2254) as an immutable HTTPS source archive, with SHA-512 integrity pinned in the wrapper npm lockfile. The underlying package still reports upstream version `1.1.2` and GPL-3.0-or-later; this is **not** an independent npm publication, vendor redistribution or Siemens-certified release. Original authorship, credits, package name and GPL license remain unchanged.
+- **Prior wrapper revision (historical):** approved wrapper PR #15 selected nodes7 `2cf864e38be447c2709348a25eb0524d67f5cf2d`, containing the earlier pending-COTP transport cancellation fix. That is not the archive selected by this revision.
 - **Author listed in its package metadata:** Guilherme Francescon.
 - **License listed in its package metadata:** GPL-3.0-or-later.
-- **Relationship:** a **separate direct runtime dependency**, not vendored into this repository. The independent COTP fix in nodes7 PR #13 was human-approved and merged in its own repo; the wrapper integrated that exact fixed revision in its own separately approved PR #15. This code is used directly from the pinned source archive, not republished under a new npm package identity.
+- **Relationship:** a **separate direct runtime dependency**, not vendored into this repository. nodes7 PR #13 fixed pending COTP transport ownership; the later human-approved squash merges [nodes7 PR #21](https://github.com/Missel2/nodes7/pull/21) stopped unintended retries after explicit disconnect, and [nodes7 PR #18](https://github.com/Missel2/nodes7/pull/18) prevented post-destroy rejected requests entering the queue. The wrapper's independent PR #15 adopted the earlier revision; this newer source pin includes **all three approved library changes** by exact commit identity. It is still distributed as a source archive dependency, not republished under a new npm identity. Its dependency `iso-on-tcp` remains `^0.1.0`; the wrapper's production lock resolves `0.1.0` while consumer installations can resolve `0.1.1`, requiring separate tests and release qualification.
 
 We thank the nodes7 authors and contributors for the protocol implementation on which this Node-RED integration currently depends.
 
@@ -58,6 +59,6 @@ Any additional code or dependencies must receive a separate license and provenan
 
 A credit line cannot replace license compliance. Preserve notices, license texts, attribution and corresponding source obligations in any redistributed work.
 
-## CI-only static-analysis toolchain (unmerged PR #14)
+## CI-only static-analysis toolchain (merged PR #14)
 
-Draft PR #14 adds an isolated private `tools/quality` package with exact-version, lockfile-pinned development-only ESLint, Prettier, TypeScript, globals and Node type declarations. These are **not** shipped as S7 runtime dependencies and do not replace or relicense the original upstream source. Their individual license terms remain those of their respective distributions. The quality workflow runs hosted Ubuntu and Windows only; no Siemens/production integration or certification is implied.
+Merged PR #14 added an isolated private `tools/quality` package with exact-version, lockfile-pinned development-only ESLint, Prettier, TypeScript, globals and Node type declarations. These are **not** shipped as S7 runtime dependencies and do not replace or relicense the original upstream source. Their individual license terms remain those of their respective distributions. The quality workflow runs hosted Ubuntu and Windows only; no Siemens/production integration or certification is implied.

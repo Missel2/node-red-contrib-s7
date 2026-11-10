@@ -86,6 +86,8 @@ jobs:
         run: npm run format:check
       - name: Real ESLint/Prettier failing and passing controls
         run: npm run quality:negative-control
+      - name: Verify Dependabot YAML, four scopes and failing controls
+        run: node tools/quality/verify-security-maintenance.cjs
 
   js-types-diagnostics:
     name: JavaScript type diagnostics (advisory, Ubuntu Node 22)
@@ -115,23 +117,61 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+  installed-runtime:
+    name: Installed Node-RED runtime (${{ matrix.os }}, Node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: test/runtime-lab/package-lock.json
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Install locked test-only Node-RED and hashed S7 fixture
+        run: |
+          npm ci --prefix test/runtime-lab --ignore-scripts --no-audit --no-fund
+          python -m pip install --disable-pip-version-check --only-binary=:all: --require-hashes -r test/runtime-lab/requirements.txt
+      - name: Test the exact tarball in both installed runtime environments
+        run: npm run test:runtime-lab
+      - name: Preserve package digest and observed runtime outcomes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: installed-node-red-runtime-${{ matrix.os }}-node${{ matrix.node }}
+          path: test-reports/s7-runtime-lab.json
+          retention-days: 14
+          if-no-files-found: warn
+
   package-smoke:
     # This job name is already required by protect-master.
     # Make BOTH hosted S7 wire tests mandatory without relying on adding
     # unprotected status checks to the ruleset before this PR is merged.
-    needs: [wire-protocol, pinned-nodes7-integration, static-quality]
+    needs: [wire-protocol, pinned-nodes7-integration, static-quality, installed-runtime]
     if: ${{ always() }}
     name: Package dependency smoke (Ubuntu, Node 22)
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - name: Require real wire and actual pinned fork integration on both hosts
+      - name: Require wire, pinned fork, static and installed runtime matrices
         env:
           S7_WIRE_RESULT: ${{ needs.wire-protocol.result }}
           FORK_RESULT: ${{ needs.pinned-nodes7-integration.result }}
           QUALITY_RESULT: ${{ needs.static-quality.result }}
+          RUNTIME_RESULT: ${{ needs.installed-runtime.result }}
         run: |
-          node -e "for (const [kind,state] of [['S7 wire',process.env.S7_WIRE_RESULT],['Pinned fork',process.env.FORK_RESULT],['Static quality',process.env.QUALITY_RESULT]]) if(state!=='success') throw Error(kind+' matrix failed: '+state)"
+          node -e "for (const [kind,state] of [['S7 wire',process.env.S7_WIRE_RESULT],['Pinned fork',process.env.FORK_RESULT],['Static quality',process.env.QUALITY_RESULT],['Installed runtime',process.env.RUNTIME_RESULT]]) if(state!=='success') throw Error(kind+' matrix failed: '+state)"
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:

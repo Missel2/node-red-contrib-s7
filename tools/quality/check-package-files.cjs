@@ -9,8 +9,10 @@ const required = [
   "red/s7.js",
   "red/s7.html",
   "red/locales/en-US/s7.json",
+  "red/locales/de/s7.json",
   "src/tools.js",
 ];
+const excluded = ["tools/quality/", "test/runtime-lab/", "test-reports/"];
 
 function assertPackageFiles(files) {
   const paths = files.map((item) => item.path);
@@ -18,10 +20,12 @@ function assertPackageFiles(files) {
   for (const file of required) {
     assert.ok(included.has(file), "Missing Node-RED runtime file: " + file);
   }
-  assert.ok(
-    paths.every((name) => !name.startsWith("tools/quality/")),
-    "CI-only quality tools must not ship in the npm tarball",
-  );
+  for (const prefix of excluded) {
+    assert.ok(
+      paths.every((name) => !name.startsWith(prefix)),
+      "Test-only package content: " + prefix,
+    );
+  }
 }
 
 const file = process.argv[2];
@@ -30,16 +34,24 @@ const packs = JSON.parse(fs.readFileSync(file, "utf8"));
 assert.equal(packs.length, 1, "npm pack must describe exactly one package");
 assertPackageFiles(packs[0].files);
 
+for (const prefix of excluded) {
+  assert.throws(
+    () =>
+      assertPackageFiles([
+        ...packs[0].files,
+        { path: prefix + "example.json" },
+      ]),
+    /Test-only package content/,
+  );
+}
 assert.throws(
   () =>
-    assertPackageFiles([
-      ...packs[0].files,
-      { path: "tools/quality/package-lock.json" },
-    ]),
-  /CI-only quality tools/,
-  "Negative control must reject accidentally shipping quality-tool lockfiles",
+    assertPackageFiles(
+      packs[0].files.filter(({ path }) => path !== "red/locales/de/s7.json"),
+    ),
+  /Missing Node-RED runtime file/,
 );
 
 console.log(
-  "PACKAGE_MANIFEST_PASS: Node-RED runtime present, CI quality tools excluded, negative control red",
+  "PACKAGE_MANIFEST_PASS: Node-RED runtime and locales present, test tools and reports excluded",
 );
