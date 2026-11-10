@@ -67,11 +67,32 @@ async function exportSource(commit, sandbox) {
   const source = path.join(sandbox, "source");
   await run(
     "git",
-    ["archive", "--format=zip", "--output=" + archive, commit],
+    [
+      "-c",
+      "core.autocrlf=false",
+      "-c",
+      "core.eol=lf",
+      "archive",
+      "--format=zip",
+      "--output=" + archive,
+      commit,
+    ],
     root,
     10000,
   );
   await run(python, ["-m", "zipfile", "-e", archive, source], sandbox, 10000);
+  for (const file of [
+    "package-lock.json",
+    "test/runtime-lab/package-lock.json",
+  ]) {
+    const blob = await run("git", ["show", commit + ":" + file], root, 10000);
+    assert.ok(
+      fs
+        .readFileSync(path.join(source, file))
+        .equals(Buffer.from(blob.stdout, "utf8")),
+      "Archived lock bytes differ from the Git blob: " + file,
+    );
+  }
   return source;
 }
 
