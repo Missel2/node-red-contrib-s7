@@ -10,6 +10,15 @@ Change to runtime/protocol, tests, CI, docs:
 - [ ] Negative control: expected failure before fix and positive verification afterward (or reason N/A)
 - [ ] Security/compatibility risks, rollback and unverified scenarios documented
 
+## Command/state behavioral contract (required for applicable changes)
+
+- User command vs externally induced state, configuration and forbidden behavior:
+- Same-client lifecycle (explicit disconnect → deliberate connect → peer loss → conditional automatic recovery → final explicit disconnect), or reason N/A:
+- Auto-reconnect enabled/disabled cases and observable negative controls:
+- Original-red / same-test candidate-green evidence for confirmed defects (or reason N/A):
+- Installed Node-RED tarball and real TCP/S7Comm effects, public Catch/Complete/status, fresh values, socket/timer state before fixture cleanup (or reason N/A):
+- Exact-head Ubuntu/Windows results, bounded waits, archived artifact URLs and unverified HIL IDs:
+
 ## Future physical S7-1200 hardware test applicability (mandatory)
 
 Refer to [HIL_TEST_MATRIX.md](../docs/HIL_TEST_MATRIX.md) and [Issue #8](https://github.com/Missel2/node-red-contrib-s7/issues/8).

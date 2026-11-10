@@ -22,7 +22,7 @@ runtime, long-duration load and every parser branch were not executed in this re
 | Writes | `writeVar` forwards promise results; success roundtrip exists | Unknown acknowledgement, admission bounds and completion contracts in wrapper #19; no duplicate-write defect asserted |
 | Encoding and dates | Parser/item suites and fixed UTC-03 fixture convention exist | Independent boundary vectors in nodes7 #16; explicit DT/DTL contract in #17 |
 | Supply chain | Both locks are v3; nodes7 retains old dev tooling; existing Dependabot PRs #2–#9 | nodes7 #15, existing wrapper PR #11; no sweeping update |
-| CI/protection | Active `protect-master`; nodes7 8 required contexts, wrapper 6; protected aggregate gates wire/static matrices | Wrapper CodeQL is observed successful but not named as a required context in the inspected ruleset; align enforcement in #7 |
+| CI/protection (2026-11-09 snapshot) | Active `protect-master`; nodes7 8 required contexts, wrapper 6; protected aggregate gates wire/static matrices | Historical state only; the 2026-11-10 governance update below supersedes this row |
 | Distribution | Inherited upstream package names/versions; wrapper pins a source archive | Distinct release identity and actual tarball install in shared #21; no publication |
 | Community entry | Contradictory unmerged status, missing contributor entry, duplicate wrapper PR templates | This documentation PR refreshes entry points, quickstart and template |
 | Hardware | No named CPU/firmware results | Shared #8; all HIL cases pending |
@@ -52,3 +52,38 @@ must attach an evidence manifest tying **both** source SHAs to package digests,
 lock hashes, precise test environments, known advisory decisions and hardware state.
 An expiring Actions artifact is not permanent proof; retain a concise verified
 summary and hashes with release evidence. Avoid new dashboards duplicating this index.
+
+## Governance update — 2026-11-10
+
+GitHub settings were checked again after the maintainer's manual changes. The wrapper's
+active `protect-master` ruleset (ID `26751662`) now enforces **nine** required
+GitHub Actions contexts: four Windows/Linux Node 22/24 wrapper contracts,
+`Baseline must fail stale-read regression`, `Package dependency smoke (Ubuntu, Node 22)`,
+and three CodeQL analyses: `Analyze (javascript-typescript)`, `Analyze (python)`
+and `Analyze (actions)`. The ruleset requires up-to-date checks, resolved review
+threads, linear history and squash-only PR merges; no bypass actor is configured.
+The repository disables merge-commit/rebase/auto-merge and enables squash merging.
+The nodes7 repository retains eight required contexts. These are independently
+verified configuration facts, not evidence that a deliberately failed required
+check has been blocked.
+
+The unchanged wrapper `master` SHA `7ef9ef5bbb8827fd56bcddad7260232f9bfbc9aa`
+had 18/18 successful check runs, including all nine required contexts. For the
+separate documentation PR #22, earlier head `e0f33001d372edea93773f76cf2dc581bf56ec95`
+passed 17/17, including the three required CodeQL analyses, before this
+review follow-up. A newly updated head must earn fresh exact-head CI.
+
+## Installed runtime qualification in progress — 2026-11-10
+
+[Wrapper PR #24](https://github.com/Missel2/node-red-contrib-s7/pull/24)
+implements the installed Node-RED 5.0.9 / packed-tarball lab for issue #18.
+Its head `7f3895aec2ef9a941a01c979e1b2d9b0e31ce506` passed 23/23
+checks on hosted Ubuntu/Windows Node 22/24, but the existing immutable nodes7
+pin still exhibits an unwanted COTP retry and one live peer after a flow stop.
+That is an explicitly **characterized known failure**, not a strict positive
+teardown pass. nodes7 PR #21 is merged but not yet repinned downstream; nodes7
+PR #18 remains an independent unmerged queue fix. After PR #22 is approved and
+squash-merged, PR #24 must be reconciled to the new `master`, repinned only
+through a separately reviewed dependency change, and retested with strict
+post-stop zero-retry/zero-peer assertions. Hardware test cases remain
+`PENDING_HARDWARE`.

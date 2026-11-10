@@ -21,6 +21,12 @@ PR #1 is only a documentation and CI bootstrap plus tests against the **unmodifi
 3. Improve safe recovery, explicit data freshness and compatibility.
 4. Add features only with an explicit use case, tests and documented behavior.
 
+## Mandatory behavior-and-recovery tests (shared across both S7 forks)
+
+For each runtime behavior PR, test the complete **public command → external state → recovery** sequence where applicable, using one actual client and the real Node-RED/installed `nodes7` package when the behavior crosses that boundary. Distinguish explicit `disconnect()` / flow removal from a disconnect *event* caused by PLC/network loss. State configuration separately: `autoReconnect` enabled means retry after accidental connection loss, **never** after explicit stop; disabled means no spontaneous retries. Verify a new explicit connect is allowed, and that recovered reads are fresh. Test the forbidden alternative, with bounded TCP/socket checks before fixture cleanup and no ambiguous write replay.
+
+Document same-test original-red/candidate-green evidence for fixes, actual software-loopback/S7Comm and installed Node-RED tests, exact-head Windows/Linux CI, negative controls, and any HIL debt. A green mock-only or expected-red test cannot substitute for an end-to-end pass. For documentation-only changes mark irrelevant cases with specific reasons. Shared protocol principles are in `docs/TEST_STRATEGY.md` and the sibling nodes7 policy.
+
 ## Change procedure
 
 - Work in small, reviewable changes; avoid unrelated refactors, sweeping dependency swaps or simultaneous protocol-backend changes.
