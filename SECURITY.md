@@ -34,6 +34,61 @@ Please include the affected branch/version and commit, observed impact, controll
 
 If private reporting is unavailable, contact the maintainer privately through an appropriate verified channel rather than disclosing the issue publicly. Do not guess or post sensitive reports to an unrelated maintainer.
 
+## Node-RED host versus contrib security
+
+**Required platform:** This S7 node is installed into an independently supplied
+and administered Node-RED runtime. It does **not** ship a private Node-RED
+distribution, install an alternative host runtime, or remediate vulnerabilities
+in the host. Node-RED administrators remain responsible for choosing supported
+versions, applying upstream fixes, configuring access controls and assessing
+their own actual runtime dependency graph. See the
+[Node-RED security policy](https://github.com/node-red/node-red/security/policy)
+and [Securing Node-RED](https://nodered.org/docs/security).
+
+**Explicit maintainer boundary (2026-11-10):** Our installed-runtime CI must
+exercise **unmodified upstream Node-RED**. We must **not** add npm
+`overrides`, patch Node-RED internals or its bundled npm/other indirect
+dependencies, or downgrade the Node-RED test version merely to reduce an
+`npm audit` count. Such changes would mask the security state users might
+encounter when installing the genuine host. We may update the *whole* host
+version to an official upstream release after independent version/compatibility
+testing and maintainer approval; that is not a downstream security patch.
+
+**Observed upstream/test-lab evidence, not a universal exploit claim:** The
+locked, isolated Node-RED 5.0.9 CI toolchain previously reported **41**
+`npm audit` advisories (6 high and 35 moderate) through host-owned
+dependencies such as `@node-red/editor-api`, `@node-red/nodes` and
+`@node-red/registry -> npm`. These findings were not shown to originate
+from the shipped `node-red-contrib-s7` dependency. A disposable override
+experiment reduced the count to 38 in an **artificially modified** lab
+installation, but did **not** resolve all findings and was rejected as
+non-representative: [closed, unmerged PR #38](https://github.com/Missel2/node-red-contrib-s7/pull/38).
+The protected repository master retains the unmodified Node-RED 5.0.9
+manifest and lock. Audit counts reflect the exact examined lock and date,
+not a claim about all versions or a proof of exploitable attack paths.
+
+**Ownership of reports:**
+
+- Vulnerabilities in the S7 node, wrapper code, or our directly maintained
+  `nodes7` fork: triage and remediate through our own coordinated security
+  process and exact-head CI.
+- Vulnerabilities originating in Node-RED core, its npm dependency tree, or
+  other independent host packages: record evidence and affected versions,
+  refer or privately report to the appropriate upstream owners, and disclose
+  the dependency limitation without modifying the upstream host locally.
+  Node-RED publishes its [reporting policy](https://github.com/node-red/node-red/security/policy);
+  contact information and escalation rules belong to that policy.
+- A dependency vulnerability is **not proof every installation is
+  exploitable**. Risk requires the exact installed versions, advisory
+  conditions, reachable functionality and deployment exposure to be assessed.
+
+For traceable historical findings and the maintainers' decision to leave
+host remediation to upstream, see
+[Issue #27](https://github.com/Missel2/node-red-contrib-s7/issues/27).
+Keep these findings visible; do not suppress audits, mark upstream advisories
+fixed or claim the host is secure because our module tests pass.
+
+
 ## Vulnerability handling
 
 The maintainer aims to review, reproduce, assess and remediate reports on a **best-effort** basis. Accepted issues may result in isolated tests, a patch, a GitHub Security Advisory and coordinated disclosure. Reports outside this fork or affecting independent dependencies may be referred to the appropriate upstream maintainers. Not every report can be fixed immediately, and no response schedule is promised.
@@ -64,10 +119,10 @@ job failed due to unresolved **test-only transitive dependencies**.
 and security updates, secret scanning or push protection are enabled.**
 Those features must be checked separately in repository settings.
 
-The proposed Dependabot configuration opens reviewable version-update PRs
+The merged Dependabot configuration opens reviewable version-update PRs
 separately for npm at the repository root, isolated CI-only npm dependencies
-at `/tools/quality` and `/test/runtime-lab`, and GitHub Actions. It takes effect only after the
-configuration reaches the default branch and GitHub processes it.
+at `/tools/quality` and `/test/runtime-lab`, and GitHub Actions. It reached protected
+master as PR #11 and GitHub processed all four configured update scopes.
 There is no automatic merge. A version-update schedule does **not** resolve
 security advisories, supersede the tested Node-RED baseline or authorize an
 automatic downgrade.

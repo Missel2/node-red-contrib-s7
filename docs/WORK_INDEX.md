@@ -15,7 +15,7 @@ Shared execution order and release checklist: [ecosystem roadmap issue #21](http
 | WI-011: bounded writes and outcomes | [Issue #19](https://github.com/Missel2/node-red-contrib-s7/issues/19) | Lost acknowledgement: one synthetic write, no replay, bounded completion |
 | WI-006: freshness and diagnostics | [Issue #20](https://github.com/Missel2/node-red-contrib-s7/issues/20) | Opt-in schema, unchanged default payload/topic, no false freshness |
 | WI-007: physical S7-1200 | [Issue #8](https://github.com/Missel2/node-red-contrib-s7/issues/8) | PENDING_HARDWARE |
-| WI-013: dependency security maintenance | [PR #11](https://github.com/Missel2/node-red-contrib-s7/pull/11) | Reconcile four review-only Dependabot scopes and policy/CI negative controls; test-only Node-RED transitive `minimatch`, `multer`, `undici` update failure remains open; settings unverified; no merge authorization |
+| WI-013: upstream Node-RED security boundary | Merged PR #11; [closed-unmerged PR #38](https://github.com/Missel2/node-red-contrib-s7/pull/38); [historical issue #27](https://github.com/Missel2/node-red-contrib-s7/issues/27) | Four review-only Dependabot scopes exist; host advisories disclosed and referred upstream, **no downstream Node-RED overrides**, preserve unmodified host CI; validate our own S7/nodes7 dependencies separately |
 | WI-012: community release qualification | [Shared issue #21](https://github.com/Missel2/node-red-contrib-s7/issues/21) | Identity, compatibility, package evidence and explicit release decision |
 
 ## Continuation
