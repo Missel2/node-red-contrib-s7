@@ -1,0 +1,32 @@
+name: Temporary Prettier diff diagnostic (PR23 only)
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pr23-format-diagnostic.yml
+      - test/runtime-lab/runtime.test.cjs
+
+permissions:
+  contents: read
+
+jobs:
+  diff:
+    name: Print pinned Prettier diff (no write to repo)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned formatting toolchain
+        run: npm ci --prefix tools/quality --ignore-scripts --no-audit --no-fund
+      - name: Show exact formatting difference without publishing
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tools/quality/node_modules/prettier/bin/prettier.cjs --write test/runtime-lab/runtime.test.cjs
+          git --no-pager diff -- test/runtime-lab/runtime.test.cjs
+          echo 'PR23_FORMAT_DIAGNOSTIC_COMPLETE'
