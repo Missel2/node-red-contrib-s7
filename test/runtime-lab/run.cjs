@@ -352,12 +352,15 @@ async function main() {
       console.log("S7 runtime lab: " + mode + " install");
       await exercise(userDir, sandbox, evidence);
     }
-    report.result = Object.values(report.installs).some(
-      (install) =>
-        install.observations.postRemoval.verdict === "known-failure-reproduced",
-    )
-      ? "characterized-with-known-failure"
-      : "passed";
+    assert.equal(Object.keys(report.installs).length, 2);
+    for (const [mode, install] of Object.entries(report.installs)) {
+      assert.equal(
+        install.observations.postRemoval.verdict,
+        "passed",
+        mode + " installation must satisfy strict post-removal teardown",
+      );
+    }
+    report.result = "passed";
   } catch (error) {
     report.failedStage = stage;
     report.error = String(error.message).slice(0, 1200);

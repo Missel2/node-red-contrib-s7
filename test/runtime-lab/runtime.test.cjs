@@ -14,8 +14,7 @@ const red = require("node-red");
 const { createWirePeer, loopback } = require("./wire-peer.cjs");
 
 const [, , userDir, fixturePort, evidenceFile, nodes7Commit] = process.argv;
-// Remove this original-red contract when updating the pin to the fixed source.
-const affectedNodes7Commit = "2cf864e38be447c2709348a25eb0524d67f5cf2d";
+assert.match(nodes7Commit, /^[0-9a-f]{40}$/, "exact nodes7 archive SHA required");
 const packageName = "node-red-contrib-s7";
 const types = ["s7 endpoint", "s7 in", "s7 out", "s7 control"];
 const originalValues = { temperature: 12.5, counter: -123, writable: 3.25 };
@@ -536,7 +535,6 @@ test(
       );
       assert.equal(from(offset, "read").length, 0);
       const cotpSession = [...peer.active][0];
-      const removedEndpoint = red.nodes.getNode(endpointId);
       await admin.deploy([]);
       await waitFor(
         () => peer.closed.includes(cotpSession),
@@ -548,31 +546,15 @@ test(
       const extraRequests = peer.cotpRequests - requestsAfterClose;
       const livePeers = peer.active.size;
       report.postRemoval = { extraRequests, livePeers, observationMs: 5250 };
-      if (nodes7Commit === affectedNodes7Commit) {
-        // This is the exact known-failing observation, recorded before harness cleanup.
-        assert.equal(
-          extraRequests,
-          1,
-          "Expected the one known retry on the affected pin",
-        );
-        assert.equal(livePeers, 1, "Expected the retry to leave one open peer");
-        report.postRemoval.verdict = "known-failure-reproduced";
-        report.postRemoval.issue =
-          "https://github.com/Missel2/nodes7/issues/20";
-        await removedEndpoint.endpoint.disconnect();
-        await waitFor(
-          () => peer.active.size === 0,
-          "cleanup of known retry socket",
-        );
-      } else {
-        assert.equal(extraRequests, 0, "No reconnect after flow removal");
-        assert.equal(
-          livePeers,
-          0,
-          "Peer sockets close while the fixture is still running",
-        );
-        report.postRemoval.verdict = "passed";
-      }
+      // This is a strict negative control for every package pin.
+      // Observe before fixture cleanup; an unexpected reconnect must fail.
+      assert.equal(extraRequests, 0, "No reconnect after flow removal");
+      assert.equal(
+        livePeers,
+        0,
+        "Peer sockets close while the fixture is still running",
+      );
+      report.postRemoval.verdict = "passed";
       assert.equal(
         peer.writes.length,
         2,

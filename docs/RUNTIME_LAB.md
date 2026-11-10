@@ -62,9 +62,10 @@ other releases need their own qualification. See the official
    the new endpoint.
 6. An unanswered COTP request closes on empty deployment. The lab then
    observes a complete retry window while the peer is still available.
-   On the current pin, the expected failure is an extra COTP request and
-   one live peer before harness cleanup. The strict contract for a changed
-   pin requires zero. See [nodes7 #20](https://github.com/Missel2/nodes7/issues/20).
+   On the approved nodes7 source pin the strict requirement is zero extra
+   requests and zero live peers **before fixture cleanup**, for every install
+   mode. No legacy affected-pin exception remains in the test.
+   Historical negative evidence: [nodes7 #20](https://github.com/Missel2/nodes7/issues/20).
 
 ## Read the evidence
 
@@ -79,13 +80,26 @@ package inputs independent of checkout line endings and generated files.
 The report records the checkout state separately from the archive inputs.
 The archive check rejects case-colliding paths before extraction.
 
-The current pin produces characterized-with-known-failure when the precise
-post-removal retry defect reproduces. That result means the test detected
-the tracked defect. It leaves the release teardown requirement open.
-A changed pin must pass the same observation with zero extra requests and
-zero live peers before fixture cleanup. The write experiment shows why a
-timeout leaves the result unknown to the caller. The separate error contract
-work is tracked in [#19](https://github.com/Missel2/node-red-contrib-s7/issues/19).
+The previous nodes7 pin `2cf864e38be447c2709348a25eb0524d67f5cf2d`
+reproduced an extra retry and one live peer before cleanup. Its historical
+`characterized-with-known-failure` result is negative evidence, **not** a
+successful teardown test. The current strict test unconditionally requires zero
+retry and zero live peers before cleanup, independent of the installed source
+SHA. The unknown-write-outcome contract is tracked in
+[#19](https://github.com/Missel2/node-red-contrib-s7/issues/19).
+
+### Verified source candidate (2026-11-10)
+
+On candidate `7f4b629ad9a95c0f14119ba5f45b13845ab68328`,
+[Verification 42858665710](https://github.com/Missel2/node-red-contrib-s7/actions/runs/42858665710)
+passed 23/23 checks. The four hosted Windows/Linux Node 22/24 JSON artifacts
+were inspected. Both install modes in each report showed
+`extraRequests=0`, `livePeers=0`, `observationMs=5250`, `verdict=passed`,
+and `replayedWrites=0` after a dropped ACK. All four archived identical npm
+package SHA-256
+`1cc8bc93d71a6ed699415675aa00dc9a6d276dc276980e961f679055f6a674bb`.
+**These reports precede this unconditional strictness change; its new
+exact-head CI must pass separately.** HIL remains PENDING_HARDWARE.
 
 The fixture uses one synthetic DB and a bounded observation window.
 The test covers the admin/editor HTTP responses and runtime lifecycle.
