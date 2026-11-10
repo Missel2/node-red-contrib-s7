@@ -1,15 +1,104 @@
-name: Runtime-lab security candidate (Issue 27)
+name: Runtime-lab security candidate experiment (Issue 27)
 on:
   pull_request:
     paths:
       - .github/workflows/runtime-lab-security-probe.yml
+      - test/runtime-lab/package.json
+      - test/runtime-lab/package-lock.json
+
 permissions:
   contents: read
+
 jobs:
   probe:
+    name: Test-only security solver (${{ matrix.profile }})
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [compatible-refresh, scoped-override-experiment]
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
-      - run: echo 'Issue 27 isolated probe pending'
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - name: Generate disposable candidate evidence
+        shell: bash
+        env:
+          PROFILE: ${{ matrix.profile }}
+        run: |
+          set -euo pipefail
+          mkdir -p candidate-evidence
+          node --version > candidate-evidence/node-version.txt
+          npm --version > candidate-evidence/npm-version.txt
+          cp test/runtime-lab/package.json candidate-evidence/original-manifest.json
+          cp test/runtime-lab/package-lock.json candidate-evidence/original-lock.json
+
+          if [ "$PROFILE" = "scoped-override-experiment" ]; then
+            # Research only: the upstream Node-RED packages pin older versions.
+            # The candidate is not a recommended or released override.
+            npm pkg set --prefix test/runtime-lab \
+              'overrides.@node-red/editor-api.multer=2.5.0' \
+              'overrides.@node-red/nodes.multer=2.5.0' \
+              'overrides.@node-red/registry.npm=11.21.2' \
+              'overrides.npm.minimatch=11.0.1' \
+              'overrides.npm.undici=6.29.1'
+          fi
+
+          set +e
+          npm install --prefix test/runtime-lab --package-lock-only --ignore-scripts --no-audit --no-fund > candidate-evidence/resolve.log 2>&1
+          resolve_code=$?
+          echo "$resolve_code" > candidate-evidence/resolve.exit
+          if [ "$resolve_code" -eq 0 ]; then
+            npm ci --prefix test/runtime-lab --ignore-scripts --no-audit --no-fund > candidate-evidence/install.log 2>&1
+            install_code=$?
+            echo "$install_code" > candidate-evidence/install.exit
+            if [ "$install_code" -eq 0 ]; then
+              npm audit --prefix test/runtime-lab --json > candidate-evidence/audit.json 2> candidate-evidence/audit.stderr
+              echo "$?" > candidate-evidence/audit.exit
+              node -e 'const p=require("./test/runtime-lab/node_modules/node-red/package.json"); if(p.version!=="5.0.9") process.exit(8);' > candidate-evidence/runtime-version.log 2>&1
+              echo "$?" > candidate-evidence/runtime-version.exit
+            fi
+          fi
+          set -e
+
+          cp test/runtime-lab/package.json candidate-evidence/candidate-manifest.json
+          cp test/runtime-lab/package-lock.json candidate-evidence/candidate-lock.json
+          node - <<'NODE'
+          const fs = require("node:fs");
+          const p = "candidate-evidence/candidate-lock.json";
+          const j = JSON.parse(fs.readFileSync(p, "utf8"));
+          const paths = [
+            "node_modules/node-red",
+            "node_modules/@node-red/registry",
+            "node_modules/@node-red/editor-api",
+            "node_modules/@node-red/nodes",
+            "node_modules/multer",
+            "node_modules/npm",
+            "node_modules/npm/node_modules/minimatch",
+            "node_modules/npm/node_modules/undici",
+          ];
+          const versions = Object.fromEntries(paths.map((x) => [x, j.packages[x]?.version ?? null]));
+          const status = Object.fromEntries(["resolve", "install", "audit", "runtime-version"].map((x) => {
+            const f = "candidate-evidence/" + x + ".exit";
+            return [x, fs.existsSync(f) ? Number(fs.readFileSync(f, "utf8").trim()) : null];
+          }));
+          fs.writeFileSync("candidate-evidence/summary.json", JSON.stringify({
+            profile: process.env.PROFILE,
+            commit: process.env.GITHUB_SHA,
+            versions,
+            exitCodes: status,
+            researchOnly: true,
+          }, null, 2) + "\n");
+          NODE
+      - name: Archive candidate source lock, npm audit and solver output
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: security-candidate-${{ matrix.profile }}
+          path: candidate-evidence/
+          retention-days: 14
+          if-no-files-found: warn
