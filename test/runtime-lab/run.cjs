@@ -13,6 +13,7 @@ const { promisify } = require("node:util");
 const exec = promisify(execFile);
 const root = path.resolve(__dirname, "../..");
 const evidenceFile = path.join(root, "test-reports/s7-runtime-lab.json");
+const python = process.env.S7_FIXTURE_PYTHON || "python";
 
 function readJson(file) {
   return JSON.parse(fs.readFileSync(file, "utf8"));
@@ -49,9 +50,34 @@ function deadline(promise, ms, message) {
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
 
+async function exportSource(commit, sandbox) {
+  const listing = await run(
+    "git",
+    ["ls-tree", "-rz", "--name-only", commit],
+    root,
+    10000,
+  );
+  const files = listing.stdout.split("\0").filter(Boolean);
+  assert.equal(
+    new Set(files.map((file) => file.toLowerCase())).size,
+    files.length,
+    "The Git source contains case-colliding paths",
+  );
+  const archive = path.join(sandbox, "source.zip");
+  const source = path.join(sandbox, "source");
+  await run(
+    "git",
+    ["archive", "--format=zip", "--output=" + archive, commit],
+    root,
+    10000,
+  );
+  await run(python, ["-m", "zipfile", "-e", archive, source], sandbox, 10000);
+  return source;
+}
+
 function startFixture() {
   const child = spawn(
-    process.env.S7_FIXTURE_PYTHON || "python",
+    python,
     ["-u", path.join(root, "test/protocol/fixture_server.py")],
     {
       cwd: root,
@@ -99,10 +125,10 @@ function startFixture() {
   };
 }
 
-async function packArtifact(sandbox, report) {
+async function packArtifact(source, sandbox, report) {
   const packed = await npm(
     ["pack", "--ignore-scripts", "--json", "--pack-destination", sandbox],
-    root,
+    source,
   );
   const packs = JSON.parse(packed.stdout);
   assert.equal(packs.length, 1);
@@ -113,7 +139,7 @@ async function packArtifact(sandbox, report) {
   await run(
     process.execPath,
     ["tools/quality/check-package-files.cjs", packMetadata],
-    root,
+    source,
     10000,
   );
   const tarball = path.join(sandbox, path.basename(pack.filename));
@@ -134,8 +160,15 @@ async function packArtifact(sandbox, report) {
   return tarball;
 }
 
-async function installArtifact(sandbox, tarball, artifact, mode, evidence) {
-  const expected = readJson(path.join(root, "package-lock.json")).packages;
+async function installArtifact(
+  source,
+  sandbox,
+  tarball,
+  artifact,
+  mode,
+  evidence,
+) {
+  const expected = readJson(path.join(source, "package-lock.json")).packages;
   const userDir = path.join(sandbox, mode);
   const manifest = { name: "s7-lab-user-dir", version: "0.0.0", private: true };
   if (mode === "locked") {
@@ -251,21 +284,26 @@ async function main() {
   };
   let stage = "identify source";
   try {
-    const commit = await run("git", ["rev-parse", "HEAD"], root, 10000);
+    const commit = (
+      await run("git", ["rev-parse", "HEAD"], root, 10000)
+    ).stdout.trim();
     const status = await run("git", ["status", "--porcelain"], root, 10000);
+    const hosted = process.env.GITHUB_ACTIONS === "true";
+    const source = hosted ? await exportSource(commit, sandbox) : root;
+    const toolLock = path.join(source, "test/runtime-lab/package-lock.json");
+    assert.deepEqual(
+      readJson(toolLock),
+      readJson(path.join(__dirname, "package-lock.json")),
+      "The installed test toolchain lock must match the packaging source",
+    );
     report.source = {
-      commit: commit.stdout.trim(),
-      dirty: Boolean(status.stdout.trim()),
-      productionLockSha256: digest(path.join(root, "package-lock.json")),
-      runtimeToolLockSha256: digest(path.join(__dirname, "package-lock.json")),
+      commit,
+      packagingInput: hosted ? "git-archive" : "working-tree",
+      dirty: !hosted && Boolean(status.stdout.trim()),
+      checkoutDirty: Boolean(status.stdout.trim()),
+      productionLockSha256: digest(path.join(source, "package-lock.json")),
+      runtimeToolLockSha256: digest(toolLock),
     };
-    if (process.env.GITHUB_ACTIONS === "true") {
-      assert.equal(
-        status.stdout.trim(),
-        "",
-        "Hosted packaging requires a clean checkout",
-      );
-    }
     report.npm = (await npm(["--version"], root)).stdout.trim();
     report.nodeRed = require("node-red/package.json").version;
     assert.equal(
@@ -276,12 +314,13 @@ async function main() {
     );
 
     stage = "pack artifact";
-    const tarball = await packArtifact(sandbox, report);
+    const tarball = await packArtifact(source, sandbox, report);
     for (const mode of ["locked", "consumer"]) {
       const evidence = {};
       report.installs[mode] = evidence;
       stage = "install " + mode;
       const userDir = await installArtifact(
+        source,
         sandbox,
         tarball,
         report.tarball,
