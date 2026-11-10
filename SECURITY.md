@@ -54,18 +54,23 @@ This package can communicate with real industrial controllers.
 
 ## Development safeguards
 
-The fork has protected-master checks, protocol regression tests,
-hosted ESLint/Prettier checks and CodeQL as verified on the main-branch
-commit `7ef9ef5bbb8827fd56bcddad7260232f9bfbc9aa`.
+The fork has protected-master checks, protocol regression tests, installed
+Node-RED 5.0.9 software-loopback CI, hosted ESLint/Prettier and CodeQL as
+verified on the main-branch commit
+`2735621f217ae6372ed689d9a8943cd85c7bed00`. The nine required
+checks passed on this commit, but an independent Dependabot security-update
+job failed due to unresolved **test-only transitive dependencies**.
 **This does not prove GitHub private vulnerability reporting, Dependabot alerts
 and security updates, secret scanning or push protection are enabled.**
 Those features must be checked separately in repository settings.
 
 The proposed Dependabot configuration opens reviewable version-update PRs
 separately for npm at the repository root, isolated CI-only npm dependencies
-at `/tools/quality`, and GitHub Actions. It takes effect only after the
+at `/tools/quality` and `/test/runtime-lab`, and GitHub Actions. It takes effect only after the
 configuration reaches the default branch and GitHub processes it.
-There is no automatic merge.
+There is no automatic merge. A version-update schedule does **not** resolve
+security advisories, supersede the tested Node-RED baseline or authorize an
+automatic downgrade.
 
 The runtime `@st-one-io/nodes7` dependency points to an **immutable GitHub
 codeload commit** in `Missel2/nodes7`, pinned by SHA-512 lock integrity.
