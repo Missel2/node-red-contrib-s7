@@ -39,11 +39,19 @@ function assertPartialSecurityPins(source, installed) {
     const record = installed.packages[name];
     assert.ok(record, "Missing security-reviewed package: " + name);
     assert.equal(record.version, version, "Unexpected resolved " + name);
-    assert.match(
-      record.integrity || "",
-      /^sha512-/,
-      "Missing registry integrity for " + name,
-    );
+    if (record.inBundle) {
+      assert.match(
+        installed.packages["node_modules/npm"].integrity,
+        /^sha512-/,
+        "Bundled package must be covered by the parent npm tarball integrity",
+      );
+    } else {
+      assert.match(
+        record.integrity || "",
+        /^sha512-/,
+        "Missing registry integrity for " + name,
+      );
+    }
   }
   assert.equal(
     installed.packages["node_modules/@node-red/editor-api"].version,
