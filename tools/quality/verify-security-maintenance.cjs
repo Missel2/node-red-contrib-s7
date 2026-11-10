@@ -34,7 +34,11 @@ function assertScopes(yaml) {
     assert.match(section, /^      day:\s*["']?monday["']?\s*$/m);
     assert.match(section, /^      timezone:\s*["']?Europe\/Berlin["']?\s*$/m);
     const time = section.match(/^      time: "([0-9]{2}:[0-9]{2})"\s*$/m)?.[1];
-    assert.equal(time, expected[index][2], "Weekly update windows must remain independent");
+    assert.equal(
+      time,
+      expected[index][2],
+      "Weekly update windows must remain independent",
+    );
     assert.match(section, /^    open-pull-requests-limit:\s*5\s*$/m);
     assert.match(section, /^    groups:\s*$/m);
     assert.match(section, /^        patterns:\s*$/m);
@@ -75,7 +79,10 @@ async function main() {
     'directory: "/tools/quality"',
     'directory: "/missing-ci-tools"',
   );
-  assert.throws(() => assertScopes(invalidQuality), /Missing locked npm manifest/);
+  assert.throws(
+    () => assertScopes(invalidQuality),
+    /Missing locked npm manifest/,
+  );
   const invalidLab = yaml.replace(
     'directory: "/test/runtime-lab"',
     'directory: "/missing-runtime-lab"',
@@ -98,7 +105,7 @@ async function main() {
     /never test vulnerabilities against a production PLC/i,
   );
   console.log(
-    "SECURITY_CONFIG_PASS: YAML, four independent scopes, schedules, locked manifests and negative controls",
+    "SECURITY_CONFIG_PASS: four scopes, locked manifests, negative controls",
   );
 }
 
