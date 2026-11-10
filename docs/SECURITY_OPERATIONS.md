@@ -1,6 +1,34 @@
 # Security operations and Dependabot verification (PR #11)
 
-**Candidate updated 2026-11-10:** proposed on [PR #11](https://github.com/Missel2/node-red-contrib-s7/pull/11), not active on protected `master` until independently approved and merged. Protected baseline `2735621f217ae6372ed689d9a8943cd85c7bed00`. This is an operations checklist, not evidence of enabled repository Security settings.
+**Current evidence (2026-11-10):** security policy PR #11 merged into protected `master` `f1679ba0670a0511bf0689f917cfd9cc3f307c25` and four Dependabot scopes were processed by GitHub. Actual upstream Node-RED dependency advisories remain and are not automatically remediated. GitHub Security feature toggles require separate administrative verification.
+
+## Host dependency responsibility decision — 2026-11-10
+
+[Security policy/Dependabot PR #11](https://github.com/Missel2/node-red-contrib-s7/pull/11)
+was approved and merged into protected master
+`f1679ba0670a0511bf0689f917cfd9cc3f307c25`; all 26/26
+post-merge check runs passed. The four update scopes were discovered by
+GitHub, but a successful updater run did **not** eliminate Node-RED's
+transitive security findings.
+
+By explicit maintainer decision, we will **not** patch the Node-RED host or
+its bundled dependencies through downstream overrides in this extension,
+including the isolated installed-runtime lab. [PR #38](https://github.com/Missel2/node-red-contrib-s7/pull/38)
+was **closed without merging**, despite green software CI. Its exploratory
+candidate (38 findings) was not representative of an unmodified Node-RED
+installation; protected master continues to use the unmodified Node-RED
+5.0.9 lab lock with the originally observed 41 advisory findings. Audit
+counts vary by lock and date; no claim is made about exploitability of all
+deployments. Ownership and user-facing guidance are in
+[SECURITY.md](../SECURITY.md#node-red-host-versus-contrib-security).
+
+The proper operational response is to record the exact host dependency path
+and advisory conditions, link to [Node-RED's upstream security policy](https://github.com/node-red/node-red/security/policy),
+avoid suppressions and false-green claims, and evaluate only **official
+upstream releases** as a whole when testing later host versions. Issues
+concerning our own S7/nodes7 source are handled independently in this fork.
+No private-reporting feature status can be inferred from this document.
+
 
 ## Version-update scopes
 

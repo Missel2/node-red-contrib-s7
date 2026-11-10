@@ -35,6 +35,27 @@ These are engineering objectives. They do not claim industrial certification, IE
 
 Access to a real PLC, Siemens PLCSIM Advanced or another manufacturer simulator may be added as separate, licensed and gated verification. Such testing is not a requirement for the first protocol- and connection-level regression tests.
 
+### Independent Node-RED host boundary
+
+Node-RED itself is an independently installed prerequisite, not a component
+of this `node-red-contrib-s7` release or a platform fork we maintain.
+Changes to Node-RED core, its npm-bundled dependencies, and security
+workarounds implemented by package overrides inside the host are **out of
+scope**. The hosted software test lab uses unmodified upstream Node-RED, so
+users can interpret its results against an actual published host release.
+Testing a newer official release for compatibility is allowed, but upstream
+security defects must be reported to their appropriate maintainer instead
+of locally hidden.
+
+Security fixes in this contribution's own source or the maintained nodes7
+dependency **are** within scope and must still receive independent CI,
+review and disclosure. An upstream dependency advisory is an exposure
+indicator, not automatic proof every installation is exploitable.
+[Security details](../SECURITY.md#node-red-host-versus-contrib-security)
+and the [upstream reporting policy](https://github.com/node-red/node-red/security/policy)
+define the ownership and communication boundaries.
+
+
 ## Operating principles
 
 1. **No silent stale data.** A cached value must not be described as newly read merely because it was republished. Last successful communication, age, validity/quality and endpoint state must be distinguishable when exposed.

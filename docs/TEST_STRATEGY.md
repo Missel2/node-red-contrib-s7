@@ -9,6 +9,36 @@ Historical sections below retain the status of their named revision; they do not
 
 **Goal:** test the Node-RED S7 integration's protocol and connection behavior without requiring a complete PLC process simulation on each change.
 
+## Upstream host fidelity and vulnerability attribution
+
+The installed-runtime matrix must test the extension against a **genuine,
+unmodified Node-RED distribution**. The isolated
+`test/runtime-lab/package.json` and its npm lock select the official
+Node-RED package as published. Do not change Node-RED's own pinned
+dependencies, add overrides for indirect host packages, rewrite its bundled
+npm tarball, or silently downgrade the host for an apparently cleaner audit.
+A separately released upstream Node-RED version may be evaluated by an
+explicitly reviewed compatibility test without patching its internals.
+
+Audit the installed-host dependency graph **separately** from the shipped
+`node-red-contrib-s7`/nodes7 package. Preserve and disclose the original
+host-audit findings with a precise lock hash, installed versions, dependency
+paths, and the limitations of `npm audit`; findings that depend on specific
+runtimes or reachable code paths must not be declared universally exploitable.
+Do not suppress advisories in order to make CI green; a security report can
+record a nonzero upstream audit outcome while the owned S7 regression matrix
+remains independently and strictly gated.
+
+Originating Node-RED/npm dependencies belong to the appropriate
+[upstream security policy](https://github.com/node-red/node-red/security/policy).
+S7 wrapper/nodes7 defects belong here. The host-dependency override experiment
+[PR #38](https://github.com/Missel2/node-red-contrib-s7/pull/38) was **closed
+unmerged** by the maintainer's decision because it would have made the
+test host non-representative. [Issue #27](https://github.com/Missel2/node-red-contrib-s7/issues/27)
+records the original host findings and upstream ownership. This policy does
+not waive review of advisories in dependencies **shipped by our own package**.
+
+
 ## Required state-transition and command-versus-state regression standard
 
 For changes affecting connection, retry, timeout, S7 I/O, node lifecycle, flow deploy/close or queue ownership, require a **public-API behavioral contract with positive and negative tests**, not solely a method-level or mock assertion:

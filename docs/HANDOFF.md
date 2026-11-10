@@ -1,5 +1,39 @@
 # Current development handoff
 
+## Latest maintainer boundary decision — 2026-11-10
+
+The maintainer explicitly rejected downstream patching of upstream Node-RED
+security dependencies. **Node-RED is a separately installed, maintained host
+prerequisite; our scope is S7 node and maintained nodes7 fork.** Keep the
+installed Node-RED CI lab faithful to the *unmodified* upstream release,
+including its actual dependency graph, and openly document host-owned
+security findings. Do not add overrides, patch bundled npm, silently
+downgrade Node-RED, suppress upstream audit results or imply that every
+installation is exploitable solely from the audit count.
+
+[Partial-fix PR #38](https://github.com/Missel2/node-red-contrib-s7/pull/38)
+was **closed without merge**; experimental [PR #37](https://github.com/Missel2/node-red-contrib-s7/pull/37)
+was also closed unmerged. Protected master remains
+`f1679ba0670a0511bf0689f917cfd9cc3f307c25` with unmodified
+`node-red@5.0.9` test lab manifest and lock, merged PR #11 Dependabot
+scopes and 26/26 post-merge checks. The historical 41 advisory findings
+are from that host test dependency graph, not established vulnerabilities
+introduced by our production S7 package. Route relevant evidence to
+[Node-RED's official security policy](https://github.com/node-red/node-red/security/policy)
+and link our [security boundary](../SECURITY.md#node-red-host-versus-contrib-security).
+Upstream remediation is **not** a downstream development workstream.
+
+The current docs-only PR documents the policy **without modifying any
+runtime, package manifest, npm lock, installed test baseline, or CI gate**.
+Before any merge, verify its exact head, ruleset, CodeQL/reviews and human
+authorization. Future work returns to S7 correctness, compatibility and
+HIL debt; all real hardware access, deployment and npm publishing remain
+individually disallowed until authorized.
+
+**Older continuation notes below are historical and must not override
+this explicit ownership decision.**
+
+
 ## Latest security-maintenance continuation — 2026-11-10
 
 Protected wrapper `master` is `2735621f217ae6372ed689d9a8943cd85c7bed00`, after the explicitly authorized installed Node-RED lab PR #24 squash. Its nine required Windows/Linux, CodeQL and runtime test contexts passed, while a separately triggered Dependabot security updater failed on transitive `minimatch`, `multer` and `undici` in the Node-RED 5.0.9 test lab (**23/24 overall**). This is real open security-update debt, **not** a failed S7 runtime assertion; do not silently downgrade to Node-RED 4.x to make the bot green.
