@@ -1,5 +1,16 @@
 # Current development handoff
 
+## Latest security-maintenance continuation — 2026-11-10
+
+Protected wrapper `master` is `2735621f217ae6372ed689d9a8943cd85c7bed00`, after the explicitly authorized installed Node-RED lab PR #24 squash. Its nine required Windows/Linux, CodeQL and runtime test contexts passed, while a separately triggered Dependabot security updater failed on transitive `minimatch`, `multer` and `undici` in the Node-RED 5.0.9 test lab (**23/24 overall**). This is real open security-update debt, **not** a failed S7 runtime assertion; do not silently downgrade to Node-RED 4.x to make the bot green.
+
+Existing [security PR #11](https://github.com/Missel2/node-red-contrib-s7/pull/11) is being merged forward against that master on its own branch, preserving the protected installed-runtime CI, approved nodes7 pin and source history. Its proposed Dependabot policy covers four separate weekly manifest scopes: root npm, CI quality npm, installed runtime-lab npm and GitHub Actions. Static-quality CI validates the four schedules, manifests, grouping and deliberate broken-config negative controls on Windows/Linux. This proposal **does not** fix advisories, activate GitHub Security toggles, permit auto-merge or publish packages.
+
+Next: finish exact-head PR #11 CI and CodeQL, recheck required status contexts and review threads, then request a separate explicit squash-merge decision. Independently evaluate compatible fixes for the test-only transitive dependencies without overriding or disabling vulnerabilities. Real Siemens HIL-S7-001…007, release compatibility and production safety remain unverified. No physical PLC access, deployment, npm publication or timed development is authorized.
+
+**All subsequent 2026-11-09/earlier 2026-11-10 continuation notes below are historical and do not supersede this verified snapshot.**
+
+
 **Verified repository snapshot: 2026-11-09; baseline `7ef9ef5bbb8827fd56bcddad7260232f9bfbc9aa`.** PR #14 (static quality), #17 (test-harness deadline), #15 (fixed nodes7 pin), #10 (wire fixtures), #12 (lockfile) and #9 (stale reads) are merged. Security/Dependabot PR #11 remains open. This is software evidence, not a published fork release or physical Siemens qualification.
 
 
