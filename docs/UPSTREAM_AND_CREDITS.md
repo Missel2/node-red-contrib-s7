@@ -58,6 +58,6 @@ Any additional code or dependencies must receive a separate license and provenan
 
 A credit line cannot replace license compliance. Preserve notices, license texts, attribution and corresponding source obligations in any redistributed work.
 
-## CI-only static-analysis toolchain (unmerged PR #14)
+## CI-only static-analysis toolchain (merged PR #14)
 
-Draft PR #14 adds an isolated private `tools/quality` package with exact-version, lockfile-pinned development-only ESLint, Prettier, TypeScript, globals and Node type declarations. These are **not** shipped as S7 runtime dependencies and do not replace or relicense the original upstream source. Their individual license terms remain those of their respective distributions. The quality workflow runs hosted Ubuntu and Windows only; no Siemens/production integration or certification is implied.
+Merged PR #14 added an isolated private `tools/quality` package with exact-version, lockfile-pinned development-only ESLint, Prettier, TypeScript, globals and Node type declarations. These are **not** shipped as S7 runtime dependencies and do not replace or relicense the original upstream source. Their individual license terms remain those of their respective distributions. The quality workflow runs hosted Ubuntu and Windows only; no Siemens/production integration or certification is implied.
