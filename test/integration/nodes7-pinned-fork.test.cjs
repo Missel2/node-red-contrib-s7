@@ -11,7 +11,7 @@ const {EventEmitter} = require('node:events');
 const nodes7 = require('@st-one-io/nodes7');
 const {ISOOnTCPParser, constants} = require('iso-on-tcp');
 const OUT = path.resolve(__dirname, '../../test-reports');
-const SHA='2cf864e38be447c2709348a25eb0524d67f5cf2d';
+const SHA='95d5c511b2073b9d306ffe47fef186a7738f2254';
 const URL='https://codeload.github.com/Missel2/nodes7/tar.gz/'+SHA;
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
