@@ -388,11 +388,8 @@ test(
       assert.equal(invalidWrite.tag, "write-unknown");
       assert.match(invalidWrite.error, /missing/);
       assert.equal(
-        from(
-          invalidOffset,
-          "catch",
-          (event) => event.tag === "write-unknown",
-        ).length,
+        from(invalidOffset, "catch", (event) => event.tag === "write-unknown")
+          .length,
         1,
         "Invalid write must raise exactly one scoped Catch",
       );
