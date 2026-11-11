@@ -15,7 +15,7 @@ function fixture() {
     license: "GPL-3.0-or-later",
     files: ["red/", "src/"],
     publishConfig: { access: "public", tag: "alpha" },
-    dependencies: { "@st-one-io/nodes7": "fixture-source" },
+    dependencies: { "@st-one-io/nodes7": "npm:@missel2/nodes7@0.1.0-alpha.1" },
   };
   const lock = {
     name: pkg.name,
@@ -26,7 +26,14 @@ function fixture() {
         version: pkg.version,
         dependencies: pkg.dependencies,
       },
-      "node_modules/@st-one-io/nodes7": { version: "1.1.2" },
+      "node_modules/@st-one-io/nodes7": {
+        name: "@missel2/nodes7",
+        version: "0.1.0-alpha.1",
+        resolved:
+          "https://registry.npmjs.org/@missel2/nodes7/-/nodes7-0.1.0-alpha.1.tgz",
+        integrity:
+          "sha512-07lzsDrfxQ5P15iM/+rjxNVbo0gyIGWjKivXfgU/tEUQs1qO+A0upy6690qy85mG7mEiNpek1xqhRVASvb9ktw==",
+      },
       "node_modules/iso-on-tcp": { version: "0.1.0" },
     },
   };
@@ -74,6 +81,29 @@ test("wrong dist-tag, scope and dependency changes fail closed", () => {
   );
 });
 
+test("wrong published alias or SHA512 integrity is rejected", () => {
+  const { pkg, lock } = fixture();
+  assert.throws(() =>
+    assertReleaseIdentity(
+      { ...pkg, dependencies: { "@st-one-io/nodes7": "npm:@missel2/nodes7@latest" } },
+      lock,
+    ),
+  );
+  const nodePath = "node_modules/@st-one-io/nodes7";
+  assert.throws(() =>
+    assertReleaseIdentity(pkg, {
+      ...lock,
+      packages: {
+        ...lock.packages,
+        [nodePath]: {
+          ...lock.packages[nodePath],
+          integrity: "sha512-incorrect",
+        },
+      },
+    }),
+  );
+});
+
 test("archive reject-list catches unexpected files and missing runtime assets", () => {
   const { pkg, pack } = fixture();
   assert.throws(() =>
@@ -100,7 +130,7 @@ test("SBOM rejects missing locked production dependencies", () => {
     SPDXID: "SPDXRef-DOCUMENT",
     packages: [
       { name: pkg.name, versionInfo: pkg.version },
-      { name: "@st-one-io/nodes7", versionInfo: "1.1.2" },
+      { name: "@missel2/nodes7", versionInfo: "0.1.0-alpha.1" },
       { name: "iso-on-tcp", versionInfo: "0.1.0" },
     ],
   };
@@ -112,7 +142,7 @@ test("SBOM rejects missing locked production dependencies", () => {
       },
     },
     components: [
-      { name: "@st-one-io/nodes7", version: "1.1.2" },
+      { name: "@missel2/nodes7", version: "0.1.0-alpha.1" },
       { name: "iso-on-tcp", version: "0.1.0" },
     ],
   };
