@@ -1,3 +1,5 @@
+**2026-11-11 active candidate:** [PR #41](https://github.com/Missel2/node-red-contrib-s7/pull/41) is a **draft / not merged** opt-in one-pending-write-per-endpoint implementation for open [Issue #19](https://github.com/Missel2/node-red-contrib-s7/issues/19). Source baseline `bc7efd2d38a123f68a2c3654b6c40286b681e7a9` remains protected master; same-test baseline-red/candidate-green, installed Node-RED, CodeQL, Windows/Linux and active nine required checks must qualify the final PR head. The defaults and nodes7 pin remain unchanged. Diagnostics and global nodes7 queue capacity are not part of PR #41. [Operator contract](WRITE_ADMISSION_OPT_IN.md). HIL-S7-003/006/007 PENDING_HARDWARE.
+
 # Work index
 
 **Verified repository snapshot: 2026-11-09; baseline `7ef9ef5bbb8827fd56bcddad7260232f9bfbc9aa`.** PR #14 (static quality), #17 (test-harness deadline), #15 (fixed nodes7 pin), #10 (wire fixtures), #12 (lockfile) and #9 (stale reads) are merged. Security/Dependabot PR #11 remains open. This is software evidence, not a published fork release or physical Siemens qualification.
