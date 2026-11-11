@@ -154,6 +154,11 @@ module.exports = function (RED) {
         var readDeferred = 0;
         var connected = false;
         var closed = false;
+        // Opt-in only: one wrapper-originated write per configured endpoint,
+        // shared across every S7 Out referring to this configuration node.
+        // This does NOT bound the lower-level nodes7 PDU/job queue.
+        var boundedWrites = config.boundedWrites === true || config.boundedWrites === 'true';
+        var pendingWrites = new Set();
         // Invalidate callbacks from previous connections without releasing
         // ownership of an unresolved ItemGroup read (Issue #3).
         var connectionGeneration = 0;
@@ -233,10 +238,74 @@ module.exports = function (RED) {
             return status;
         };
 
+        node._boundedWrites = boundedWrites;
+
+        function writeError(code, messageKey) {
+            var error = new Error(RED._(messageKey));
+            error.code = code;
+            return error;
+        }
+
+        // Abort the Node-RED completion, not the PLC operation. An accepted
+        // write can already have reached the PLC. Retain its admission slot
+        // until the underlying promise actually settles, even if its output
+        // node has closed.
+        node._abortPendingWrites = function abortPendingWrites(owner) {
+            if (!boundedWrites) return;
+            for (const operation of pendingWrites) {
+                if (owner && operation.owner !== owner) continue;
+                if (operation.completed || operation.settled) continue;
+                operation.completed = true;
+                const done = operation.done;
+                operation.done = null;
+                operation.owner = null;
+                if (done) done(writeError('ERR_S7_WRITE_CLOSE_UNKNOWN', 's7.error.writecloseunknown'));
+            }
+        };
+
         node.writeVar = function writeVar(obj) {
-            itemGroup.writeItems(obj.name, obj.val)
-                .then(() => obj.done())
-                .catch(e => obj.done(e))
+            if (!boundedWrites) {
+                // Existing flows retain their original admission behavior.
+                itemGroup.writeItems(obj.name, obj.val)
+                    .then(() => obj.done())
+                    .catch(e => obj.done(e))
+                return;
+            }
+
+            if (closed || (obj.owner && obj.owner._s7OutputClosed)) {
+                obj.done(writeError('ERR_S7_WRITE_CLOSED', 's7.error.writeclosed'));
+                return false;
+            }
+            if (pendingWrites.size >= 1) {
+                // Rejected before writeItems: no wrapper-side write queue.
+                obj.done(writeError('ERR_S7_WRITE_BUSY', 's7.error.writebusy'));
+                return false;
+            }
+
+            var operation = { owner: obj.owner, done: obj.done, completed: false, settled: false };
+            pendingWrites.add(operation);
+            function settle(error) {
+                if (operation.settled) return;
+                operation.settled = true;
+                pendingWrites.delete(operation);
+                const done = operation.done;
+                operation.done = null;
+                operation.owner = null;
+                if (!operation.completed && done) {
+                    operation.completed = true;
+                    done(error);
+                }
+            }
+            try {
+                // Reserve before submission, without a delayed dispatch queue.
+                Promise.resolve(itemGroup.writeItems(obj.name, obj.val)).then(
+                    () => settle(),
+                    error => settle(error)
+                );
+            } catch (error) {
+                settle(error);
+            }
+            return true;
         };
 
         /**
@@ -367,6 +436,7 @@ module.exports = function (RED) {
 
         node.on('close', done => {
             closed = true;
+            node._abortPendingWrites();
             connected = false;
             connectionGeneration++;
             readDeferred = 0;
@@ -529,7 +599,8 @@ module.exports = function (RED) {
             var writeObj = {
                 name: config.variable || msg.variable,
                 val: msg.payload,
-                done: done
+                done: done,
+                owner: node
             };
 
             // Test for the case we're writing multiple vars
@@ -552,8 +623,9 @@ module.exports = function (RED) {
                 return done(RED._("s7.error.varunknown", { var: writeObj.name }));
             }
 
+            // A rejected opt-in write does not update the displayed value.
+            if (node.endpoint.writeVar(writeObj) === false) return;
             statusVal = writeObj.val;
-            node.endpoint.writeVar(writeObj);
             node.status(generateStatus(node.endpoint.getStatus(), statusVal));
         }
 
@@ -563,6 +635,10 @@ module.exports = function (RED) {
         node.endpoint.on('__STATUS__', onEndpointStatus);
 
         node.on('close', function (done) {
+            if (node.endpoint._boundedWrites) {
+                node._s7OutputClosed = true;
+                node.endpoint._abortPendingWrites(node);
+            }
             node.endpoint.removeListener('__STATUS__', onEndpointStatus);
             done();
         });

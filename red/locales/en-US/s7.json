@@ -67,7 +67,8 @@
                     "addr": "Address",
                     "export": "Export",
                     "import": "Import"
-                }
+                },
+                "bounded-writes": "Limit pending writes (1, no queue)"
             },
             "placeholder": {
                 "address": "IP Address or FQDN (plc01.example.com)"
@@ -102,7 +103,10 @@
             "invalidtransport": "Invalid transport \"__transport__\"",
             "invalidtsap": "Invalid TSAP configuration",
             "invalidtimeinterval": "Invalid time interval for cycle time of \"__interval__\"",
-            "invalidcontrolfunction": "Invalid control function \"__function__\""
+            "invalidcontrolfunction": "Invalid control function \"__function__\"",
+            "writebusy": "S7 write rejected: another write is pending on this endpoint",
+            "writeclosed": "S7 write rejected: endpoint or output has closed",
+            "writecloseunknown": "S7 write interrupted by flow close: PLC outcome unknown; do not retry automatically"
         },
         "info": {
             "connect": "Initiating connection to PLC",

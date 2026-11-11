@@ -67,7 +67,8 @@
                     "addr": "Adresse",
                     "export": "Export",
                     "import": "Import"
-                }
+                },
+                "bounded-writes": "Schreibaufträge begrenzen (1, keine Warteschlange)"
             },
             "placeholder": {
                 "address": "IP Adresse oder FQDN (plc01.example.com)"
@@ -102,7 +103,10 @@
             "invalidtransport": "Ungültiger Transport \"__transport__\"",
             "invalidtsap": "Ungültige TSAP Konfiguration",
             "invalidtimeinterval": "Ungültige Zeitspanne für Zykluszeit von \"__interval__\"",
-            "invalidcontrolfunction": "Ungültige Kontrollfunktion \"__function__\""
+            "invalidcontrolfunction": "Ungültige Kontrollfunktion \"__function__\"",
+            "writebusy": "S7-Schreibauftrag abgewiesen: Am Endpunkt ist bereits ein Auftrag offen",
+            "writeclosed": "S7-Schreibauftrag abgewiesen: Endpunkt oder Ausgang ist geschlossen",
+            "writecloseunknown": "S7-Schreibauftrag durch Flow-Schließen unterbrochen: SPS-Ergebnis unbekannt; nicht automatisch wiederholen"
         },
         "info": {
             "connect": "Initialisiere Verbindung zur SPS",

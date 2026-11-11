@@ -67,6 +67,10 @@
 				<input type="text" id="node-config-input-timeout" data-i18n="[placeholder]s7.endpoint.label.timeout" style="width: 60px;"> <span>ms</span>
 			</div>
 			<div class="form-row">
+				<label for="node-config-input-boundedWrites"><i class="fa fa-shield"></i> <span data-i18n="s7.endpoint.label.bounded-writes"></span></label>
+				<input type="checkbox" id="node-config-input-boundedWrites" style="display:inline-block; width:auto; vertical-align:middle;">
+			</div>
+			<div class="form-row">
 				<label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="s7.label.name"></span></label>
 				<input type="text" id="node-config-input-name" data-i18n="[placeholder]s7.label.name">
 			</div>
@@ -106,6 +110,16 @@
 		The <b>Timeout</b> parameter sets the maximum amount of time that the PLC
 		may take to answer our requests. It may be desirable to raise this time if
 		the network is busy of it's latency is high
+	</p>
+	<p>
+		<b>Limit pending writes</b> (optional, disabled by default) accepts at most
+		one unfinished S7 write message across all <i>s7 out</i> nodes sharing this
+		endpoint. Additional messages are rejected to Node-RED Catch, not queued.
+		A close/redeploy reports an unresolved submitted write as outcome unknown;
+		it cannot undo a PLC-side write. Its admission slot remains occupied until
+		the underlying write settles. This does not limit the internal nodes7
+		protocol queue, other callers, or the number of telegrams in one message.
+		No automatic write replay is performed.
 	</p>
 	<p>
 		It's possible to log the PLC communication by setting the <b>Debug</b> option
@@ -594,6 +608,9 @@
 			},
 			timeout: {
 				value: 2000
+			},
+			boundedWrites: {
+				value: false
 			},
 			name: {
 				value: ""

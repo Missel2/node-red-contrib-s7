@@ -15,7 +15,7 @@ function pending() {
     return { promise, resolve, reject };
 }
 
-function fixture() {
+function fixture({ boundedWrites = false } = {}) {
     const types = new Map(), timers = new Set(), errors = [], events = [];
     let group, endpointNode;
     const statuses = new Map();
@@ -79,6 +79,7 @@ function fixture() {
     const node = new Endpoint({
         transport: 'iso-on-tcp', connmode: 'rack-slot', address: '127.0.0.1',
         port: 1102, rack: 0, slot: 1, timeout: 200, cycletime: 50,
+        boundedWrites,
         vartable: [{ name: 'tag', addr: 'DB1,REAL0' }]
     });
     endpointNode = node;
@@ -295,4 +296,130 @@ test('write close BASELINE-RED: a pending callback can settle after S7 Out close
     assert.deepEqual(completions, [undefined], 'CURRENT GAP: late success callback after close');
     // HIL-S7-007: future candidate must define close ownership without
     // asserting it can retract an already submitted PLC write.
+});
+
+
+/*
+ * Issue #19 opt-in contract. The same assertions must FAIL on the immutable
+ * pre-admission wrapper source bc7efd2d and PASS on this candidate.
+ * They use only a controlled in-memory ItemGroup (not Siemens hardware).
+ * HIL-S7-003/-006/-007 stay PENDING_HARDWARE.
+ */
+test('write admission CONTRACT: two outputs share one pending slot with no queue', async () => {
+    const { group, createOutput } = fixture({ boundedWrites: true });
+    const gate = pending();
+    const calls = [];
+    group.writeItems = (name, value) => {
+        calls.push({ name, value });
+        return gate.promise;
+    };
+    const first = createOutput(), second = createOutput();
+    const success = [], rejected = [];
+    const original = { _msgid: 'first', topic: 'A', variable: 'tag', payload: 1 };
+    const excess = { _msgid: 'excess', topic: 'B', variable: 'tag', payload: 2 };
+    first.emit('input', original, () => assert.fail('S7 Out never sends a success payload'), error => success.push(error));
+    second.emit('input', excess, () => assert.fail('Excess write must never send a payload'), error => rejected.push(error));
+    assert.equal(calls.length, 1, 'The two outputs must share the endpoint-wide capacity');
+    assert.deepEqual(calls[0], { name: 'tag', value: 1 });
+    assert.equal(rejected.length, 1);
+    assert.equal(rejected[0].code, 'ERR_S7_WRITE_BUSY');
+    assert.deepEqual(success, []);
+    assert.equal(original.payload, 1);
+    assert.equal(excess.topic, 'B', 'Never change user message contents');
+
+    gate.resolve();
+    await tick();
+    assert.deepEqual(success, [undefined]);
+    assert.equal(rejected.length, 1, 'No implicit retry of the rejected message');
+
+    const another = pending();
+    group.writeItems = (name, value) => {
+        calls.push({ name, value });
+        return another.promise;
+    };
+    const resumed = [];
+    second.emit('input', { variable: 'tag', payload: 3 }, () => assert.fail('No success payload'), error => resumed.push(error));
+    assert.equal(calls.length, 2, 'A new explicit command is allowed after settlement');
+    another.resolve();
+    await tick();
+    assert.deepEqual(resumed, [undefined]);
+});
+
+test('write admission CONTRACT: closing output reports unknown once and holds slot', async () => {
+    const { group, createOutput } = fixture({ boundedWrites: true });
+    const gate = pending();
+    let writes = 0;
+    group.writeItems = () => { writes++; return gate.promise; };
+    const output = createOutput(), sibling = createOutput();
+    const completions = [], rejected = [];
+    output.emit('input', { variable: 'tag', payload: 11 }, () => assert.fail('No payload'), error => completions.push(error));
+    let closed = 0;
+    output.emit('close', () => closed++);
+    assert.equal(closed, 1);
+    assert.equal(completions.length, 1, 'An owned pending write needs a terminal callback at close');
+    assert.equal(completions[0].code, 'ERR_S7_WRITE_CLOSE_UNKNOWN');
+    sibling.emit('input', { variable: 'tag', payload: 12 }, () => assert.fail('No payload'), error => rejected.push(error));
+    assert.equal(writes, 1, 'Closing output cannot free an in-flight PLC write prematurely');
+    assert.equal(rejected[0].code, 'ERR_S7_WRITE_BUSY');
+
+    gate.resolve();
+    await tick();
+    assert.equal(completions.length, 1, 'No late success after the output has closed');
+    assert.equal(writes, 1, 'Rejected write is not replayed');
+});
+
+test('write admission CONTRACT: closing endpoint finishes pending and refuses new writes', async () => {
+    const { node, group, transport, createOutput } = fixture({ boundedWrites: true });
+    const gate = pending();
+    let writes = 0;
+    group.writeItems = () => { writes++; return gate.promise; };
+    const output = createOutput(), completions = [], rejected = [];
+    output.emit('input', { variable: 'tag', payload: 20 }, () => assert.fail('No payload'), error => completions.push(error));
+    await close(node);
+    assert.equal(transport.disconnectCount, 1);
+    assert.equal(completions.length, 1);
+    assert.equal(completions[0].code, 'ERR_S7_WRITE_CLOSE_UNKNOWN');
+    output.emit('input', { variable: 'tag', payload: 21 }, () => assert.fail('No payload'), error => rejected.push(error));
+    assert.equal(writes, 1, 'Never dispatch after endpoint close');
+    assert.equal(rejected[0].code, 'ERR_S7_WRITE_CLOSED');
+    gate.reject(Object.assign(new Error('late synthetic timeout'), { code: 'ERR_TIMEOUT' }));
+    await tick();
+    assert.equal(completions.length, 1, 'Late transport error must not overwrite unknown-close outcome');
+});
+
+test('write admission: synchronous submission failure releases the slot', async () => {
+    const { group, createOutput } = fixture({ boundedWrites: true });
+    let writes = 0;
+    const error = new Error('synthetic pre-transport error');
+    group.writeItems = () => { writes++; throw error; };
+    const output = createOutput(), completions = [];
+    output.emit('input', { variable: 'tag', payload: 22 }, () => assert.fail('No payload'), e => completions.push(e));
+    assert.deepEqual(completions, [error]);
+    output.emit('input', { variable: 'tag', payload: 23 }, () => assert.fail('No payload'), e => completions.push(e));
+    assert.equal(writes, 2, 'The rejected synchronous submission cannot permanently occupy capacity');
+    assert.deepEqual(completions, [error, error]);
+});
+
+test('write admission CONTRACT: burst rejects excess without storing or replaying it', async () => {
+    const { group, createOutput, transport } = fixture({ boundedWrites: true });
+    const gate = pending();
+    let writes = 0;
+    group.writeItems = () => { writes++; return gate.promise; };
+    const output = createOutput(), results = [];
+    for (let i = 0; i < 32; i++) {
+        output.emit('input', { variable: 'tag', payload: i },
+            () => assert.fail('No success payload'),
+            error => results.push({ i, code: error && error.code }));
+    }
+    assert.equal(writes, 1, 'No hidden write queue is permitted at the wrapper boundary');
+    assert.equal(results.length, 31);
+    assert.ok(results.every(r => r.code === 'ERR_S7_WRITE_BUSY'));
+    transport.emit('disconnect');
+    transport.emit('connect');
+    gate.reject(Object.assign(new Error('synthetic lost ACK'), { code: 'ERR_TIMEOUT' }));
+    await tick();
+    assert.equal(results.length, 32);
+    assert.equal(results.at(-1).i, 0);
+    assert.equal(results.at(-1).code, 'ERR_TIMEOUT');
+    assert.equal(writes, 1, 'Reconnect cannot replay an ambiguous write');
 });

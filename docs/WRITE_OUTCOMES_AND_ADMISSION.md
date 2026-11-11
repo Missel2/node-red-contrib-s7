@@ -1,3 +1,5 @@
+> **Implementation follow-up (unmerged):** [PR #41](https://github.com/Missel2/node-red-contrib-s7/pull/41) proposes the first opt-in wrapper-side single-write admission and owned close handling, based on protected `master` `bc7efd2d38a123f68a2c3654b6c40286b681e7a9`. Until an exact-head CI/review and explicit human squash-merge, this is *candidate code only*. The proposed outcome-metadata schema and truly bounded nodes7 job queue are still separate future stages. See [operator/technical behavior](WRITE_ADMISSION_OPT_IN.md). All physical HIL remains pending.
+
 # Proposed write-outcome and bounded-admission contract (Issue #19)
 
 > **Status: PROPOSED; NOT IMPLEMENTED OR ACCEPTED AS A RUNTIME CONTRACT.**

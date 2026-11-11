@@ -252,6 +252,49 @@ jobs:
             fi
             echo "::notice::Baseline-red / patch-green: $pattern"
           done
+      - name: Verify opt-in write admission original-red and candidate-green
+        shell: bash
+        run: |
+          set -euo pipefail
+          baseline_sha="bc7efd2d38a123f68a2c3654b6c40286b681e7a9"
+          git show "${baseline_sha}:red/s7.js" > test-reports/pre-admission-s7.js
+          patterns=(
+            "write admission CONTRACT: two outputs share one pending slot with no queue"
+            "write admission CONTRACT: closing output reports unknown once and holds slot"
+            "write admission CONTRACT: closing endpoint finishes pending and refuses new writes"
+            "write admission CONTRACT: burst rejects excess without storing or replaying it"
+          )
+          index=0
+          for pattern in "${patterns[@]}"; do
+            index=$((index + 1))
+            negative="test-reports/admission-baseline-${index}.tap"
+            positive="test-reports/admission-candidate-${index}.tap"
+            set +e
+            S7_TEST_SOURCE="$PWD/test-reports/pre-admission-s7.js" node --test --test-name-pattern="$pattern" test/unit/s7-endpoint.baseline.test.js > "$negative" 2>&1
+            baseline_code=$?
+            set -e
+            if [ "$baseline_code" -eq 0 ] ||
+               ! grep -Eq '^not ok [0-9]+ - ' "$negative" ||
+               ! grep -Fq " - $pattern" "$negative" ||
+               ! grep -Fq '# fail 1' "$negative" ||
+               ! grep -Fq 'AssertionError' "$negative"; then
+              cat "$negative"
+              echo "::error::Pre-admission source did not fail the exact write contract: $pattern"
+              exit 1
+            fi
+            S7_TEST_SOURCE="$PWD/red/s7.js" node --test --test-name-pattern="$pattern" test/unit/s7-endpoint.baseline.test.js > "$positive" 2>&1 || {
+              cat "$positive"
+              echo "::error::Candidate did not satisfy the write admission contract: $pattern"
+              exit 1
+            }
+            if ! grep -Fq '# fail 0' "$positive" ||
+               ! grep -Fq '# pass 1' "$positive"; then
+              cat "$positive"
+              echo "::error::Candidate write contract did not execute exactly once: $pattern"
+              exit 1
+            fi
+            echo "::notice::Write admission original-red / candidate-green: $pattern"
+          done
       - name: Preserve baseline-red and corrected-green test evidence
         if: always()
         uses: actions/upload-artifact@v4

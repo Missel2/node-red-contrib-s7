@@ -1,3 +1,13 @@
+## Current development handoff — 2026-11-11, Issue #19
+
+- Protected wrapper master `bc7efd2d38a123f68a2c3654b6c40286b681e7a9` contains approved/merged design-and-characterization PR #40 **only**; no write capacity limit on master.
+- Active **draft / not merged** [PR #41](https://github.com/Missel2/node-red-contrib-s7/pull/41) introduces optional `boundedWrites`, one pending user write across S7 Out children sharing an endpoint, immediate no-queue busy refusal and unknown-result closure ownership, plus English/German editor/help, baseline-red tests and installed Node-RED wire tests. See [technical operator contract](WRITE_ADMISSION_OPT_IN.md).
+- Next: inspect exact current PR head, CodeQL, nine required contexts, Windows/Linux Node 22/24 runtime, original-red/candidate-green negative controls, unresolved reviews and potential bugs. Fix on **this PR branch**; no duplicate implementation PR. Request a **separate explicit human squash-merge decision only after full qualification**.
+- nodes7 stays pinned at `95d5c511b2073b9d306ffe47fef186a7738f2254`; nodes7 PDU queue bound and opt-in error metadata schema are **not implemented by PR #41**.
+- HIL-S7-003/006/007 all PENDING_HARDWARE. Do not npm publish, merge, patch Node-RED host, deploy or contact real PLC hardware.
+
+---
+
 # Current development handoff
 
 ## Latest write-safety handoff — 2026-11-11 (Issue #19 design stage)
