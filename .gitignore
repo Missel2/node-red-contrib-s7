@@ -27,3 +27,6 @@ node_modules
 # out temp folder
 temp/
 test-reports/
+
+# Local, unpublished release evidence and temporary npm archive
+release-evidence/
