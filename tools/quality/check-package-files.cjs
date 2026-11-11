@@ -12,10 +12,17 @@ const required = [
   "red/locales/de/s7.json",
   "src/tools.js",
 ];
-const excluded = ["tools/quality/", "test/runtime-lab/", "test-reports/"];
+const excluded = [".github/", "docs/", "test/", "tools/", "scripts/", "test-reports/"];
 
 function assertPackageFiles(files) {
   const paths = files.map((item) => item.path);
+  const allowedRoots = ["LICENSE", "README.md", "package.json", "red/", "src/"];
+  for (const file of paths) {
+    assert.ok(
+      allowedRoots.some((root) => file === root || (root.endsWith("/") && file.startsWith(root))),
+      "Unexpected release package content: " + file,
+    );
+  }
   const included = new Set(paths);
   for (const file of required) {
     assert.ok(included.has(file), "Missing Node-RED runtime file: " + file);
@@ -32,6 +39,8 @@ const file = process.argv[2];
 if (!file) throw new Error("Missing npm pack JSON path");
 const packs = JSON.parse(fs.readFileSync(file, "utf8"));
 assert.equal(packs.length, 1, "npm pack must describe exactly one package");
+assert.equal(packs[0].name, "@missel2/node-red-contrib-s7");
+assert.equal(packs[0].version, "0.1.0-alpha.1");
 assertPackageFiles(packs[0].files);
 
 for (const prefix of excluded) {
