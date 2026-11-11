@@ -10,6 +10,14 @@ const root = path.resolve(__dirname, "../..");
 const expectedName = "@missel2/node-red-contrib-s7";
 const expectedVersion = "0.1.0-alpha.1";
 const dependencies = ["@st-one-io/nodes7", "iso-on-tcp"];
+const aliasName = "@st-one-io/nodes7";
+const publishedName = "@missel2/nodes7";
+const publishedVersion = "0.1.0-alpha.1";
+const aliasSpec = "npm:" + publishedName + "@" + publishedVersion;
+const registryTarball =
+  "https://registry.npmjs.org/@missel2/nodes7/-/nodes7-0.1.0-alpha.1.tgz";
+const publishedIntegrity =
+  "sha512-07lzsDrfxQ5P15iM/+rjxNVbo0gyIGWjKivXfgU/tEUQs1qO+A0upy6690qy85mG7mEiNpek1xqhRVASvb9ktw==";
 
 function readJson(filename) {
   return JSON.parse(fs.readFileSync(filename, "utf8"));
@@ -39,6 +47,29 @@ function assertReleaseIdentity(pkg, lock) {
   assert.equal(lock.packages?.[""]?.name, pkg.name);
   assert.equal(lock.packages?.[""]?.version, pkg.version);
   assert.deepEqual(lock.packages?.[""]?.dependencies, pkg.dependencies);
+  assert.equal(
+    pkg.dependencies?.[aliasName],
+    aliasSpec,
+    "Unexpected nodes7 release alias",
+  );
+  const actual = lock.packages?.["node_modules/" + aliasName];
+  assert.equal(
+    actual?.name,
+    publishedName,
+    "Lock must identify published nodes7 package",
+  );
+  assert.equal(actual?.version, publishedVersion, "Unexpected nodes7 version");
+  assert.equal(
+    actual?.resolved,
+    registryTarball,
+    "GitHub archive is not a registry release",
+  );
+  assert.equal(
+    actual?.integrity,
+    publishedIntegrity,
+    "Wrong published nodes7 integrity",
+  );
+  assert.equal(lock.packages?.["node_modules/iso-on-tcp"]?.version, "0.1.0");
   assert.deepEqual(
     Object.keys(lock.packages).filter(Boolean).sort(),
     dependencies.map((item) => "node_modules/" + item).sort(),
@@ -95,7 +126,12 @@ function readLicenseInventory(lock) {
     const location = path.join(root, "node_modules", name);
     const pkg = readJson(path.join(location, "package.json"));
     const locked = lock.packages["node_modules/" + name];
-    assert.equal(pkg.name, name, "Installed dependency name changed");
+    const releasedName = name === aliasName ? publishedName : name;
+    assert.equal(
+      pkg.name,
+      releasedName,
+      "Installed dependency identity changed",
+    );
     assert.equal(
       pkg.version,
       locked.version,
@@ -112,13 +148,21 @@ function readLicenseInventory(lock) {
     );
     assert.ok(notices.length > 0, "Dependency license text missing");
     result.push({
-      name,
+      name: releasedName,
+      installedAs: name,
       version: pkg.version,
       licenseDeclared: pkg.license,
       licenseFilePresent: true,
     });
   }
   return result;
+}
+
+function sbomPackageNameMatches(actualName, expectedName) {
+  return (
+    actualName === expectedName ||
+    (expectedName === aliasName && actualName === publishedName)
+  );
 }
 
 function assertSbom(spdx, cdx, pkg, lock) {
@@ -136,14 +180,19 @@ function assertSbom(spdx, cdx, pkg, lock) {
   ];
   for (const [name, version] of expected) {
     assert.ok(
-      spdx.packages.some((p) => p.name === name && p.versionInfo === version),
+      spdx.packages.some(
+        (p) =>
+          sbomPackageNameMatches(p.name, name) && p.versionInfo === version,
+      ),
       "SPDX missing production component",
     );
   }
   for (const name of dependencies) {
     const version = lock.packages["node_modules/" + name].version;
     assert.ok(
-      cdx.components.some((p) => p.name === name && p.version === version),
+      cdx.components.some(
+        (p) => sbomPackageNameMatches(p.name, name) && p.version === version,
+      ),
       "CycloneDX missing production dependency",
     );
   }

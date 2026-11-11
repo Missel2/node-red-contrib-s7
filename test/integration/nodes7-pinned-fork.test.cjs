@@ -1,6 +1,6 @@
 'use strict';
-// Reproducible cross-repository contract: installed, SHA-512-locked fork
-// @st-one-io/nodes7 from an immutable Missel2/nodes7 commit archive.
+// Reproducible cross-repository contract: the exact published scoped
+// nodes7 alpha arrives through the legacy import alias, SHA-512 verified.
 // HIL-S7-001/005/007 remain PENDING_HARDWARE. Loopback-only, no PLC writes.
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -11,14 +11,17 @@ const {EventEmitter} = require('node:events');
 const nodes7 = require('@st-one-io/nodes7');
 const {ISOOnTCPParser, constants} = require('iso-on-tcp');
 const OUT = path.resolve(__dirname, '../../test-reports');
-const SHA='95d5c511b2073b9d306ffe47fef186a7738f2254';
-const URL='https://codeload.github.com/Missel2/nodes7/tar.gz/'+SHA;
+const RELEASE_NAME='@missel2/nodes7';
+const RELEASE_VERSION='0.1.0-alpha.1';
+const RELEASE_SPEC='npm:'+RELEASE_NAME+'@'+RELEASE_VERSION;
+const RELEASE_URL='https://registry.npmjs.org/@missel2/nodes7/-/nodes7-'+RELEASE_VERSION+'.tgz';
+const RELEASE_INTEGRITY='sha512-07lzsDrfxQ5P15iM/+rjxNVbo0gyIGWjKivXfgU/tEUQs1qO+A0upy6690qy85mG7mEiNpek1xqhRVASvb9ktw==';
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 function persist(name, data) {
     fs.mkdirSync(OUT, {recursive:true});
     fs.writeFileSync(path.join(OUT,name), JSON.stringify({
-        provenance: 'Missel2/nodes7#'+SHA, platform: process.platform,
+        provenance: RELEASE_NAME+'@'+RELEASE_VERSION, integrity: RELEASE_INTEGRITY, platform: process.platform,
         node: process.version, hardware: false, ...data
     }, null, 2) + '\n');
 }
@@ -106,19 +109,25 @@ function makeNodeRed() {
     require('../../red/s7.js')(RED);
     return {registered,errors};
 }
-test('npm lock and installed module identify the exact corrected fork, not registry stock', ()=>{
+test('npm alias, lock integrity and installed package identify the exact released fork', ()=>{
     const pkg=require('../../package.json');
     const lock=require('../../package-lock.json');
     const moduleEntry=require.resolve('@st-one-io/nodes7');
     const source=fs.readFileSync(path.join(path.dirname(moduleEntry),'s7endpoint.js'),'utf8');
-    assert.equal(pkg.dependencies['@st-one-io/nodes7'],URL);
+    const installedPkg=JSON.parse(fs.readFileSync(path.resolve(path.dirname(moduleEntry),'../package.json'),'utf8'));
+    assert.equal(pkg.dependencies['@st-one-io/nodes7'],RELEASE_SPEC);
     assert.equal(lock.lockfileVersion,3);
-    assert.equal(lock.packages[''].dependencies['@st-one-io/nodes7'],URL);
+    assert.equal(lock.packages[''].dependencies['@st-one-io/nodes7'],RELEASE_SPEC);
     const installed=lock.packages['node_modules/@st-one-io/nodes7'];
-    assert.equal(installed.resolved,URL);
-    assert.equal(installed.version,'1.1.2');
-    assert.match(installed.integrity,/^sha512-[A-Za-z0-9+/]+={0,2}$/);
+    assert.equal(installed.name,RELEASE_NAME);
+    assert.equal(installed.resolved,RELEASE_URL);
+    assert.equal(installed.version,RELEASE_VERSION);
+    assert.equal(installed.integrity,RELEASE_INTEGRITY,'exact npm-published tarball is required');
+    assert.equal(installedPkg.name,RELEASE_NAME,'npm alias must resolve our own scoped binary');
+    assert.equal(installedPkg.version,RELEASE_VERSION);
     assert.equal(lock.packages['node_modules/iso-on-tcp'].version,'0.1.0');
+    assert.equal(fs.existsSync(path.resolve(__dirname,'../../node_modules/@missel2/nodes7')),false,
+        'a second independently installed protocol copy is forbidden');
     assert.equal(typeof nodes7.S7Endpoint,'function');
     assert.equal(typeof nodes7.S7ItemGroup,'function');
     assert.match(source,/this\._pendingTransport = stream/,'installed runtime must own a pending COTP socket');

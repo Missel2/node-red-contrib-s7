@@ -85,7 +85,8 @@ test('Node-RED S7 config node reads and writes synthetic DB1 over real installed
     {timeout:27000},async()=>{
     const report={scenario:'real red/s7.js wrapper + pinned nodes7 + python-snap7 3.3.1',
         port:PORT,loopbackOnly:true,hardware:false,
-        upstreamForkCommit:'2cf864e38be447c2709348a25eb0524d67f5cf2d',
+        installedProtocolRelease:'@missel2/nodes7@0.1.0-alpha.1',
+        publishedIntegrity:'sha512-07lzsDrfxQ5P15iM/+rjxNVbo0gyIGWjKivXfgU/tEUQs1qO+A0upy6690qy85mG7mEiNpek1xqhRVASvb9ktw==',
         steps:[],statuses:[]};
     fs.mkdirSync(path.dirname(EVIDENCE),{recursive:true});
     const fixture=await launchFixture();
