@@ -82,12 +82,6 @@ jobs:
         run: npm ci --prefix tools/quality --ignore-scripts --no-audit --no-fund
       - name: ESLint correctness checks, including CJS wire integration
         run: npm run lint
-      - name: Diagnostic - exact runtime test formatter delta
-        if: matrix.os == 'ubuntu-24.04'
-        shell: bash
-        run: |
-          node tools/quality/node_modules/prettier/bin/prettier.cjs test/runtime-lab/runtime.test.cjs > /tmp/s7-runtime-formatted.cjs
-          diff -u test/runtime-lab/runtime.test.cjs /tmp/s7-runtime-formatted.cjs || test "$?" -eq 1
       - name: Prettier on new and preformatted changed files
         run: npm run format:check
       - name: Real ESLint/Prettier failing and passing controls
