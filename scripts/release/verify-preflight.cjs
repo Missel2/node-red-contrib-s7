@@ -181,7 +181,8 @@ function assertSbom(spdx, cdx, pkg, lock) {
   for (const [name, version] of expected) {
     assert.ok(
       spdx.packages.some(
-        (p) => sbomPackageNameMatches(p.name, name) && p.versionInfo === version,
+        (p) =>
+          sbomPackageNameMatches(p.name, name) && p.versionInfo === version,
       ),
       "SPDX missing production component",
     );
