@@ -37,7 +37,8 @@ function assertPackageFiles(files) {
   for (const file of paths) {
     assert.ok(
       allowedRoots.some(
-        (root) => file === root || (root.endsWith("/") && file.startsWith(root)),
+        (root) =>
+          file === root || (root.endsWith("/") && file.startsWith(root)),
       ),
       "Unexpected release package content: " + file,
     );
