@@ -14,8 +14,11 @@ const red = require("node-red");
 const { createWirePeer, loopback } = require("./wire-peer.cjs");
 
 const [, , userDir, fixturePort, evidenceFile, nodes7Identity] = process.argv;
-assert.equal(nodes7Identity, "@missel2/nodes7@0.1.0-alpha.1",
-  "Only the independently released nodes7 alpha is qualified");
+assert.equal(
+  nodes7Identity,
+  "@missel2/nodes7@0.1.0-alpha.1",
+  "Only the independently released nodes7 alpha is qualified",
+);
 const packageName = "@missel2/node-red-contrib-s7";
 const types = ["s7 endpoint", "s7 in", "s7 out", "s7 control"];
 const originalValues = { temperature: 12.5, counter: -123, writable: 3.25 };
