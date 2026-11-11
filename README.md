@@ -4,6 +4,8 @@
 
 ## Purpose and current status
 
+The opt-in one-pending-write/no-queue profile is under development in [draft PR #41](https://github.com/Missel2/node-red-contrib-s7/pull/41) for [Issue #19](https://github.com/Missel2/node-red-contrib-s7/issues/19), **not yet merged, released or hardware-qualified**. [Proposed operator contract](docs/WRITE_ADMISSION_OPT_IN.md). Existing flows do not enable that profile by default.
+
 This fork is intended to develop the existing Siemens S7 integration for Node-RED with emphasis on **reproducible tests, reliable connection lifecycle management, observable failures, diagnosable data quality and controlled releases**. New features are secondary to establishing evidence that existing behavior remains correct during faults and recovery.
 
 **Verified repository snapshot: 2026-11-10; protected `master` `f1679ba0670a0511bf0689f917cfd9cc3f307c25`.** The pinned nodes7 fixes, strict installed Node-RED software-loopback CI and security/Dependabot policy PR #11 are merged. The downstream host-dependency override PR #38 was closed **without** merging. This is software evidence, not a published fork release, upstream Node-RED security certification or physical Siemens qualification.
