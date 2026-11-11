@@ -81,3 +81,27 @@ issue #21 for ordering and evidence gates; wrapper #18 qualifies the actual Node
 runtime, #19 specifies write outcomes and #20 proposes opt-in freshness. Default
 payload/topic compatibility stays intact. Independent npm identity, supported
 Node-RED versions and hardware qualification remain open release decisions.
+
+## D-013 — Proposed write-outcome and bounded admission contract (2026-11-11)
+
+**Status: PROPOSED FOR HUMAN REVIEW; NOT IMPLEMENTED OR ACCEPTED.** After
+PR #23 merged and passed exact-master 20/20 checks, write validation
+errors are correlated with the original input, but the transport may
+have applied a write whose acknowledgement is lost. The wrapper does
+not bound unresolved writes, and nodes7 limits simultaneous jobs rather
+than its internal queue length.
+
+[Draft contract and evidence gates](WRITE_OUTCOMES_AND_ADMISSION.md)
+propose four conservative outcomes: rejected before dispatch,
+acknowledged by successful protocol response, explicitly rejected
+by a verified single request, and **unknown** after an ambiguous sent
+or partially sent request. No implicit retry; batch writes may be
+partially applied. A proposed endpoint-wide **opt-in** admission
+profile starts at one pending write and zero queued writes, without
+changing legacy defaults. Full protocol-wide queue bounds need a
+separate nodes7 change and immutable wrapper pin update.
+
+This design/characterization PR **does not add runtime limits, new
+message fields or a versioned outcome API**. HIL-S7-003/006/007
+remain PENDING_HARDWARE; no npm release, OT deployment, or hardware
+access is authorized.

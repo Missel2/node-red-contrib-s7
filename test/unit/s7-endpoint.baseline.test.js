@@ -197,3 +197,102 @@ test('S7 Out preserves the originating message through the legacy input shim', (
 
     assert.deepEqual(errors, [{ err: 's7.error.varunknown', msg: message }]);
 });
+
+/*
+ * Issue #19 contract characterization: these tests describe the *current*
+ * callback/admission limitations. They are not a bounded-write implementation.
+ * HIL-S7-003/-006/-007 remain PENDING_HARDWARE. No PLC or TCP connection.
+ */
+test('write outcome baseline: a pending successful acknowledgement completes once', async () => {
+    const { group, createOutput } = fixture();
+    const gate = pending();
+    const requests = [];
+    group.writeItems = (name, val) => {
+        requests.push({ name, val });
+        return gate.promise;
+    };
+    const output = createOutput();
+    const message = { _msgid: 'ack-characterization', topic: 'sample', variable: 'tag', payload: 9 };
+    const doneCalls = [];
+    output.emit('input', message, () => assert.fail('S7 Out sends no success payload'), err => doneCalls.push(err));
+
+    assert.equal(requests.length, 1);
+    assert.deepEqual(doneCalls, [], 'No Complete before writeItems settles');
+    gate.resolve();
+    await tick();
+    assert.deepEqual(doneCalls, [undefined], 'One protocol-level success completion');
+    assert.equal(message.payload, 9);
+    assert.equal(message.topic, 'sample');
+});
+
+test('write outcome baseline: lost acknowledgement remains an error and is not replayed', async () => {
+    const { group, transport, createOutput } = fixture();
+    const gate = pending();
+    let requests = 0;
+    group.writeItems = () => { requests++; return gate.promise; };
+    const output = createOutput();
+    const message = { _msgid: 'unknown-outcome', topic: 'sample', variable: 'tag', payload: 10 };
+    const completions = [];
+    transport.emit('connect');
+    output.emit('input', message, () => assert.fail('S7 Out sends no success payload'), err => completions.push(err));
+
+    assert.equal(requests, 1);
+    transport.emit('disconnect');
+    transport.emit('connect');
+    const timeout = Object.assign(new Error('synthetic lost acknowledgement'), { code: 'ERR_TIMEOUT' });
+    gate.reject(timeout);
+    await tick();
+    assert.deepEqual(completions, [timeout], 'Preserve the exact timeout without a fake not-applied claim');
+    assert.equal(requests, 1, 'Transport status changes must not replay a submitted write');
+    assert.equal(message.payload, 10);
+    assert.equal(message.topic, 'sample');
+    // HIL-S7-006: whether the PLC actually applied the write is UNKNOWN.
+});
+
+test('write admission BASELINE-RED: three unresolved writes are currently admitted', async () => {
+    const { group, createOutput } = fixture();
+    const gates = [pending(), pending(), pending()];
+    const requests = [], completions = [];
+    group.writeItems = (name, val) => {
+        requests.push({ name, val });
+        return gates[requests.length - 1].promise;
+    };
+    const output = createOutput();
+    for (let i = 0; i < 3; i++) {
+        output.emit('input', { _msgid: 'pending-' + i, variable: 'tag', payload: i },
+            () => assert.fail('S7 Out sends no success payload'),
+            err => completions.push(err));
+    }
+    assert.equal(requests.length, 3, 'CURRENT GAP: the wrapper does not bound pending writes');
+    assert.deepEqual(completions, []);
+    assert.throws(
+        () => assert.ok(requests.length <= 1, 'Proposed maxPendingWrites=1 is not enforced'),
+        { name: 'AssertionError' },
+        'The proposed bounded-admission assertion must be RED on the baseline'
+    );
+    for (const gate of gates) gate.resolve();
+    await tick();
+    assert.deepEqual(completions, [undefined, undefined, undefined]);
+    // After an approved admission fix, replace this baseline expectation with
+    // the same-test red-on-current / green-on-candidate bounded assertion.
+});
+
+test('write close BASELINE-RED: a pending callback can settle after S7 Out closes', async () => {
+    const { group, createOutput } = fixture();
+    const gate = pending();
+    group.writeItems = () => gate.promise;
+    const output = createOutput();
+    const completions = [];
+    output.emit('input', { variable: 'tag', payload: 11 },
+        () => assert.fail('S7 Out sends no success payload'),
+        err => completions.push(err));
+    let closed = 0;
+    output.emit('close', () => closed++);
+    assert.equal(closed, 1);
+    assert.deepEqual(completions, [], 'Write remains unsettled at close');
+    gate.resolve();
+    await tick();
+    assert.deepEqual(completions, [undefined], 'CURRENT GAP: late success callback after close');
+    // HIL-S7-007: future candidate must define close ownership without
+    // asserting it can retract an already submitted PLC write.
+});
