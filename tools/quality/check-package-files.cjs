@@ -12,17 +12,17 @@ const required = [
   "red/locales/de/s7.json",
   "src/tools.js",
 ];
-const excluded = [".github/", "docs/", "test/", "tools/", "scripts/", "test-reports/"];
+const excluded = [
+  ".github/",
+  "docs/",
+  "test/",
+  "tools/",
+  "scripts/",
+  "test-reports/",
+];
 
 function assertPackageFiles(files) {
   const paths = files.map((item) => item.path);
-  const allowedRoots = ["LICENSE", "README.md", "package.json", "red/", "src/"];
-  for (const file of paths) {
-    assert.ok(
-      allowedRoots.some((root) => file === root || (root.endsWith("/") && file.startsWith(root))),
-      "Unexpected release package content: " + file,
-    );
-  }
   const included = new Set(paths);
   for (const file of required) {
     assert.ok(included.has(file), "Missing Node-RED runtime file: " + file);
@@ -31,6 +31,15 @@ function assertPackageFiles(files) {
     assert.ok(
       paths.every((name) => !name.startsWith(prefix)),
       "Test-only package content: " + prefix,
+    );
+  }
+  const allowedRoots = ["LICENSE", "README.md", "package.json", "red/", "src/"];
+  for (const file of paths) {
+    assert.ok(
+      allowedRoots.some(
+        (root) => file === root || (root.endsWith("/") && file.startsWith(root)),
+      ),
+      "Unexpected release package content: " + file,
     );
   }
 }
