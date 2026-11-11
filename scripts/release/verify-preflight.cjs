@@ -23,9 +23,17 @@ function assertReleaseIdentity(pkg, lock) {
   assert.equal(pkg.name, expectedName, "Unexpected release package identity");
   assert.equal(pkg.version, expectedVersion, "Unexpected release version");
   assert.equal(pkg.license, "GPL-3.0-or-later", "Root license changed");
-  assert.deepEqual(pkg.files, ["red/", "src/"], "Release file allowlist changed");
+  assert.deepEqual(
+    pkg.files,
+    ["red/", "src/"],
+    "Release file allowlist changed",
+  );
   assert.equal(pkg.publishConfig?.tag, "alpha", "Non-alpha dist-tag");
-  assert.equal(pkg.publishConfig?.access, "public", "Unexpected publish visibility");
+  assert.equal(
+    pkg.publishConfig?.access,
+    "public",
+    "Unexpected publish visibility",
+  );
   assert.equal(lock.name, pkg.name, "Root lockfile name mismatch");
   assert.equal(lock.version, pkg.version, "Root lockfile version mismatch");
   assert.equal(lock.packages?.[""]?.name, pkg.name);
@@ -49,7 +57,11 @@ function assertPack(record, pkg) {
   assert.ok(Array.isArray(record.files) && record.files.length >= 7);
   const allowed = ["LICENSE", "README.md", "package.json", "red/", "src/"];
   const paths = record.files.map((item) => item.path);
-  assert.equal(new Set(paths).size, paths.length, "Duplicate package file names");
+  assert.equal(
+    new Set(paths).size,
+    paths.length,
+    "Duplicate package file names",
+  );
   for (const filename of paths) {
     assert.ok(
       allowed.some(
@@ -84,14 +96,20 @@ function readLicenseInventory(lock) {
     const pkg = readJson(path.join(location, "package.json"));
     const locked = lock.packages["node_modules/" + name];
     assert.equal(pkg.name, name, "Installed dependency name changed");
-    assert.equal(pkg.version, locked.version, "Installed dependency version mismatch");
+    assert.equal(
+      pkg.version,
+      locked.version,
+      "Installed dependency version mismatch",
+    );
     assert.equal(
       pkg.license,
       "GPL-3.0-or-later",
       "Dependency license changed or is missing",
     );
     const files = fs.readdirSync(location);
-    const notices = files.filter((name) => /^(license|copying)(\..*)?$/i.test(name));
+    const notices = files.filter((name) =>
+      /^(license|copying)(\..*)?$/i.test(name),
+    );
     assert.ok(notices.length > 0, "Dependency license text missing");
     result.push({
       name,
@@ -111,7 +129,10 @@ function assertSbom(spdx, cdx, pkg, lock) {
   assert.ok(Array.isArray(cdx.components));
   const expected = [
     [pkg.name, pkg.version],
-    ...dependencies.map((name) => [name, lock.packages["node_modules/" + name].version]),
+    ...dependencies.map((name) => [
+      name,
+      lock.packages["node_modules/" + name].version,
+    ]),
   ];
   for (const [name, version] of expected) {
     assert.ok(
@@ -161,20 +182,32 @@ function main() {
       return item.slice("package/".length);
     })
     .filter((item) => item && !item.endsWith("/"));
-  assert.deepEqual(archived.sort(), filePaths.sort(), "Archive and npm metadata differ");
+  assert.deepEqual(
+    archived.sort(),
+    filePaths.sort(),
+    "Archive and npm metadata differ",
+  );
 
   const spdxFile = path.join(evidenceDir, "sbom.spdx.json");
   const cdxFile = path.join(evidenceDir, "sbom.cdx.json");
   assertSbom(readJson(spdxFile), readJson(cdxFile), pkg, lock);
   const licenses = readLicenseInventory(lock);
   const sourceSha = process.env.SOURCE_SHA;
-  assert.match(sourceSha || "", /^[0-9a-f]{40}$/, "Missing exact source commit");
+  assert.match(
+    sourceSha || "",
+    /^[0-9a-f]{40}$/,
+    "Missing exact source commit",
+  );
   const checkoutSha = execFileSync("git", ["rev-parse", "HEAD"], {
     cwd: root,
     encoding: "utf8",
     timeout: 10000,
   }).trim();
-  assert.equal(checkoutSha, sourceSha, "Checked-out commit differs from requested source");
+  assert.equal(
+    checkoutSha,
+    sourceSha,
+    "Checked-out commit differs from requested source",
+  );
 
   const manifest = {
     schemaVersion: 1,
@@ -194,8 +227,14 @@ function main() {
       integrity,
     },
     inputs: {
-      packageJsonSha256: digest(fs.readFileSync(path.join(root, "package.json")), "sha256"),
-      lockfileSha256: digest(fs.readFileSync(path.join(root, "package-lock.json")), "sha256"),
+      packageJsonSha256: digest(
+        fs.readFileSync(path.join(root, "package.json")),
+        "sha256",
+      ),
+      lockfileSha256: digest(
+        fs.readFileSync(path.join(root, "package-lock.json")),
+        "sha256",
+      ),
     },
     billOfMaterials: {
       type: "lockfile-derived, production dependencies only",
@@ -217,7 +256,9 @@ function main() {
     path.join(evidenceDir, "manifest.json"),
     JSON.stringify(manifest, null, 2) + "\n",
   );
-  console.log("RELEASE_PREFLIGHT_PASS: archive, integrity, dependency SBOM and license metadata");
+  console.log(
+    "RELEASE_PREFLIGHT_PASS: archive, integrity, dependency SBOM and license metadata",
+  );
   console.log("RELEASE_PREFLIGHT_SOURCE_SHA=" + sourceSha);
   console.log("RELEASE_PREFLIGHT_TARBALL_SHA256=" + manifest.package.sha256);
   console.log("RELEASE_PREFLIGHT_STATUS=not-published");
