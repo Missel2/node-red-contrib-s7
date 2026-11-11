@@ -83,11 +83,6 @@ async function main() {
       continue;
     }
     checked++;
-    if (file === "scripts/release/verify-preflight.cjs") {
-      console.log(
-        "FORMAT_EXPECTED_JSON:" + JSON.stringify(await prettier.format(current, opts)),
-      );
-    }
     if (!(await prettier.check(current, opts))) {
       failures.push(file);
       console.error("FORMAT_ERROR: " + file);
