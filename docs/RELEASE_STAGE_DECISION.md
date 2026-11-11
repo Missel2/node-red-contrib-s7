@@ -1,6 +1,6 @@
 # First npm staging decision — @missel2/node-red-contrib-s7
 
-**Status: proposed and NOT AUTHORIZED (2026-11-11).** This is a human review record, not an automated publishing procedure. It does not grant permission to stage, publish, move dist-tags, deploy, operate a real PLC or modify repository protection.
+**Historical approval checklist — first alpha staged and released on 2026-11-11.** The fields below reflect the original *pre-authorization* proposal and were deliberately left blank at that time; they are not the current npm status. For the completed actual source SHA, archived hash, stage ID, publisher approval and independent post-release verification, see [the immutable alpha.1 release record](ALPHA1_RELEASE_EVIDENCE.md). This record never grants permission for new releases, dist-tag changes, deployment or real PLC access.
 
 ## Immutable evidence baseline
 
@@ -28,7 +28,7 @@
 - Require another **independent** maintainer decision for `npm stage approve` (2FA). No blanket publication authorization follows from staging. After actual publication, verify registry `alpha`, exact integrity, installed Node-RED consumer behavior and release notes. Do not silently move `latest`.
 - Record both the irreversible public-release implications and remaining hardware/security limitations.
 
-## Decision slots (intentionally blank)
+## Original decision slots (historical, intentionally blank at creation)
 
 | Gate | Record |
 | --- | --- |

@@ -1,11 +1,12 @@
-Fork prerelease candidate: @missel2/node-red-contrib-s7@0.1.0-alpha.1 (UNPUBLISHED)
+Fork release: @missel2/node-red-contrib-s7@0.1.0-alpha.1 (npm alpha, 2026-11-11)
 ----------------------------------------------------------------------------------
  - Independently scoped GPL-3.0-or-later fork; retains original author credits.
  - Includes the opt-in endpoint-shared one-pending-write/no-wrapper-queue profile (off by default).
  - Preserves fixed COTP lifecycle, reconnect and stale-read software regression coverage.
  - Installs the published @missel2/nodes7@0.1.0-alpha.1 via a SHA-512-locked npm alias (merged PR #46).
  - Read-only release preflight tests archive composition, integrity, license metadata and SBOM.
- - This entry is a release candidate note, not an npm staging/publication or hardware-support claim.
+ - Published via separately approved npm staging; public-registry SHA-256 and clean Node-RED 5.0.9 consumer installation verified on Ubuntu/Windows (PR #48).
+ - Not qualified for real Siemens CPUs or productive industrial deployments; `latest` remains the npm placeholder.
 
 Version: 3.0.0
 ------------

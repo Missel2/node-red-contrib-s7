@@ -1,6 +1,6 @@
 # Alpha release preflight (NO publication)
 
-This checklist is a **preparation and verification procedure, not release authorization**. Current candidate: `@missel2/node-red-contrib-s7@0.1.0-alpha.1` (npm distribution tag `alpha`). The tested package identity was merged on protected `master` in PR #43 at `21a46dda0b6a9a57acfd53f4869a8ed31df710af`.
+This checklist documents the **read-only pre-publication gate**, not release authorization. The first `@missel2/node-red-contrib-s7@0.1.0-alpha.1` has since been **published** under `alpha`; exact source/registry/archive and independent post-release evidence are in [the alpha.1 release record](ALPHA1_RELEASE_EVIDENCE.md). The tested package identity was merged on protected `master` in PR #43 at `21a46dda0b6a9a57acfd53f4869a8ed31df710af`.
 
 ## Current automated evidence
 
@@ -28,7 +28,7 @@ For the exact pre-stage decision, gate order, registry placeholder effect and po
 - **Behavioral claims:** Record the exact software testing matrix; do not claim physical CPU verification or hardware read/write safety on the strength of synthetic S7Comm or Node-RED CI.
 - **Approval:** Require explicit maintainer approval for merging this preflight PR, and **another independent approval** for first staging and first public release. No automatic publishing, deployment or PLC connection.
 
-## Future staged first release — NOT implemented here
+## Historical first-stage procedure — executed externally, not by this workflow
 
 npm staged publishing (`npm stage publish`) requires npm CLI 11.15+ and Node.js 22.14+; approval is performed by a maintainer with 2FA. For a never-published package, **staging itself publishes a publicly visible placeholder version `0.0.0-stage`**. Therefore staging must never be treated as a private/no-impact check and requires prior explicit approval.
 
