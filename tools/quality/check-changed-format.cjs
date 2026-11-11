@@ -86,11 +86,6 @@ async function main() {
     if (!(await prettier.check(current, opts))) {
       failures.push(file);
       console.error("FORMAT_ERROR: " + file);
-      if (file === "scripts/release/verify-preflight.cjs") {
-        console.log("PREFLIGHT_FORMAT_BEGIN");
-        console.log(await prettier.format(current, opts));
-        console.log("PREFLIGHT_FORMAT_END");
-      }
     }
   }
 
