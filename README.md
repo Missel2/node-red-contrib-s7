@@ -4,13 +4,13 @@
 
 ## Purpose and current status
 
-The opt-in one-pending-write/no-queue profile is under development in [draft PR #41](https://github.com/Missel2/node-red-contrib-s7/pull/41) for [Issue #19](https://github.com/Missel2/node-red-contrib-s7/issues/19), **not yet merged, released or hardware-qualified**. [Proposed operator contract](docs/WRITE_ADMISSION_OPT_IN.md). Existing flows do not enable that profile by default.
+The opt-in one-pending-write/no-queue profile was merged in [PR #41](https://github.com/Missel2/node-red-contrib-s7/pull/41) for [Issue #19](https://github.com/Missel2/node-red-contrib-s7/issues/19). It remains **off by default**, has not been independently released, and has no real-hardware qualification. See the [operator contract](docs/WRITE_ADMISSION_OPT_IN.md).
 
 This fork is intended to develop the existing Siemens S7 integration for Node-RED with emphasis on **reproducible tests, reliable connection lifecycle management, observable failures, diagnosable data quality and controlled releases**. New features are secondary to establishing evidence that existing behavior remains correct during faults and recovery.
 
-**Verified repository snapshot: 2026-11-10; protected `master` `f1679ba0670a0511bf0689f917cfd9cc3f307c25`.** The pinned nodes7 fixes, strict installed Node-RED software-loopback CI and security/Dependabot policy PR #11 are merged. The downstream host-dependency override PR #38 was closed **without** merging. This is software evidence, not a published fork release, upstream Node-RED security certification or physical Siemens qualification.
+**Verified release-preparation baseline: 2026-11-11, protected `master` `bc9acc3f36f352a18f2664902cf4345103c1f4ce`.** The opt-in write admission profile and installed software-loopback tests are merged and qualified on that source. This branch only proposes separate alpha package metadata and requires fresh exact-head CI. No independent npm release or physical Siemens qualification has occurred.
 
-The upstream npm installation below does not install this fork. See [contributing](CONTRIBUTING.md), [current review](docs/PROJECT_REVIEW.md), and the [shared roadmap](https://github.com/Missel2/node-red-contrib-s7/issues/21).
+The original upstream npm installation documented below does not install this fork. The proposed fork package is **not yet published**; see [alpha candidate evidence and release gates](docs/ALPHA_RELEASE_CANDIDATE.md). See [contributing](CONTRIBUTING.md), [current review](docs/PROJECT_REVIEW.md), and the [shared roadmap](https://github.com/Missel2/node-red-contrib-s7/issues/21).
 
 **Development model:** This fork uses AI assistance for most engineering implementation and investigation. The human maintainer `Missel2` sets priorities, reviews the evidence and makes decisions on merges and releases. AI-generated code has no special exemption from testing or review. See [how the project is maintained](docs/AI_DEVELOPMENT.md).
 
@@ -72,6 +72,8 @@ You can install this node directly from the "Manage Palette" menu in the Node-RE
 Alternatively, run the following command in your Node-RED user directory - typically `~/.node-red` on Linux or `%HOMEPATH%\.nodered` on Windows
 
         npm install node-red-contrib-s7
+
+The command above installs the **original upstream package**. For this fork, the proposed future alpha command (only after an explicitly approved npm publication) is `npm install @missel2/node-red-contrib-s7@alpha`. Do not enable upstream and fork S7 modules simultaneously in one Node-RED instance: they register the same node type names.
 
 The inherited upstream minimums were Node.js 10 and Node-RED 1.0. This fork has not qualified that full range. Selected hosted checks run Node 22/24; full Node-RED version support is tracked in [issue #18](https://github.com/Missel2/node-red-contrib-s7/issues/18).
 

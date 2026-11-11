@@ -154,7 +154,7 @@ async function packArtifact(source, sandbox, report) {
   const packs = JSON.parse(packed.stdout);
   assert.equal(packs.length, 1);
   const [pack] = packs;
-  assert.equal(pack.name, "node-red-contrib-s7");
+  assert.equal(pack.name, "@missel2/node-red-contrib-s7");
   const packMetadata = path.join(sandbox, "pack.json");
   fs.writeFileSync(packMetadata, packed.stdout);
   await run(
@@ -218,7 +218,7 @@ async function installArtifact(
   );
 
   const installed = readJson(path.join(userDir, "package-lock.json")).packages;
-  const wrapper = "node_modules/node-red-contrib-s7";
+  const wrapper = "node_modules/@missel2/node-red-contrib-s7";
   assert.equal(
     installed[wrapper].integrity,
     artifact.integrity,
