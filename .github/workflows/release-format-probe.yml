@@ -1,0 +1,36 @@
+name: Temporary formatting probe (review only)
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  format-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.4'
+      - run: npm ci --prefix tools/quality --ignore-scripts --no-audit --no-fund
+      - name: Show formatted changes without pushing anything
+        shell: bash
+        run: |
+          node tools/quality/node_modules/prettier/bin/prettier.cjs --write scripts/release/verify-published-consumer.cjs test/release/published-consumer.test.cjs
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const files = ['scripts/release/verify-published-consumer.cjs', 'test/release/published-consumer.test.cjs'];
+          for (const file of files) {
+            const hex = fs.readFileSync(file).toString('hex');
+            console.log('S7FMT_BEGIN:' + file + ':' + hex.length);
+            for (let i = 0; i < hex.length; i += 1500) {
+              console.log('S7FMT_CHUNK:' + file + ':' + i + ':' + hex.slice(i, i + 1500));
+            }
+            console.log('S7FMT_END:' + file);
+          }
+          NODE
