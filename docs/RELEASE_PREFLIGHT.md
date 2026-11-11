@@ -6,7 +6,7 @@ This checklist is a **preparation and verification procedure, not release author
 
 [Release preflight](../.github/workflows/release-preflight.yml) runs on GitHub-hosted Ubuntu with `contents: read` only. It has no `id-token: write`, stored npm credentials, staging action, publish command, deployment connection or physical controller access.
 
-The workflow:
+The workflow (for the proposed npm-alias migration):
 
 1. Checks out the exact source commit, installs the production dependency tree with scripts disabled, and runs fail-closed release identity and archive tests.
 2. Executes `npm pack --ignore-scripts`. Enforces the alpha scope/version, tag, `red/` / `src/` allowlist, required Node-RED editor files, actual archive listing and matching SHA-1 (npm metadata), SHA-256 and SHA-512 checksums.
@@ -22,7 +22,7 @@ The standalone workflow is not yet one of the protected branch's required status
 
 - **Public disclosure:** Review the current source, README, package metadata, archive files, license and SBOM in a controlled environment. Complete the separate owner risk assessment for historical Git objects, issue/PR metadata and third-party copies. Do **not** add confidential indicator words, private allow/deny lists, internal URLs or real network logs to this public repository.
 - **Package rights:** Confirm npm account ownership, maintain original author/credit and GPL-3.0-or-later source/license obligations, and inspect all upstream source and dependency notices. A green metadata check is not proof of all obligations.
-- **Supply chain:** Verify the exact pinned public GitHub source archive dependency for `@st-one-io/nodes7` is reachable to consumers, and that the observed consumer lock/tree agrees with the tested source pair. Review separate npm advisory inventory and any unresolved dependency/security findings.
+- **Supply chain:** Confirm that npm serves `@missel2/nodes7@0.1.0-alpha.1` with the exact known SHA-512 tarball integrity, that the lockfile uses the deliberate `@st-one-io/nodes7` npm alias, and that the installed package's actual `package.json` reports `@missel2/nodes7`. Reproduce clean `npm ci` on both hosted platforms, test real Node-RED installed-runtime behavior and synthetic protocol faults; verify the declared `iso-on-tcp` runtime dependency independently. The old GitHub tarball is not the candidate source.
 - **Behavioral claims:** Record the exact software testing matrix; do not claim physical CPU verification or hardware read/write safety on the strength of synthetic S7Comm or Node-RED CI.
 - **Approval:** Require explicit maintainer approval for merging this preflight PR, and **another independent approval** for first staging and first public release. No automatic publishing, deployment or PLC connection.
 
