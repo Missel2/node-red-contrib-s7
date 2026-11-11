@@ -588,9 +588,7 @@ test(
       // local S7Comm WRITE_VAR whose ACK is deliberately withheld.
       peer.blackhole = false;
       const boundedFlow = flow(peer.port, "Opt-in bounded writes");
-      boundedFlow.find(
-        (entry) => entry.id === endpointId,
-      ).boundedWrites = true;
+      boundedFlow.find((entry) => entry.id === endpointId).boundedWrites = true;
       const secondOutputId = "lab-out-sibling";
       boundedFlow.push({
         id: secondOutputId,
@@ -612,12 +610,12 @@ test(
           tag: "bounded-excess",
         }),
       );
-      boundedFlow.find((entry) => entry.id === "lab-catch").scope.push(
-        secondOutputId,
-      );
-      boundedFlow.find((entry) => entry.id === "lab-complete").scope.push(
-        secondOutputId,
-      );
+      boundedFlow
+        .find((entry) => entry.id === "lab-catch")
+        .scope.push(secondOutputId);
+      boundedFlow
+        .find((entry) => entry.id === "lab-complete")
+        .scope.push(secondOutputId);
       offset = events.length;
       await admin.deploy(boundedFlow);
       await online(offset);
@@ -647,11 +645,8 @@ test(
       assert.equal(busy.code, "ERR_S7_WRITE_BUSY");
       assert.equal(peer.writes.length, beforeBoundedWrite + 1);
       assert.equal(
-        from(
-          offset,
-          "complete",
-          (event) => event.tag === "bounded-excess",
-        ).length,
+        from(offset, "complete", (event) => event.tag === "bounded-excess")
+          .length,
         0,
       );
       assert.equal(peer.droppedWrites.length, 2);
