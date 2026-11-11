@@ -1,3 +1,12 @@
+Fork prerelease candidate: @missel2/node-red-contrib-s7@0.1.0-alpha.1 (UNPUBLISHED)
+----------------------------------------------------------------------------------
+ - Independently scoped GPL-3.0-or-later fork; retains original author credits.
+ - Includes the opt-in endpoint-shared one-pending-write/no-wrapper-queue profile (off by default).
+ - Preserves fixed COTP lifecycle, reconnect and stale-read software regression coverage.
+ - Installs the published @missel2/nodes7@0.1.0-alpha.1 via a SHA-512-locked npm alias (merged PR #46).
+ - Read-only release preflight tests archive composition, integrity, license metadata and SBOM.
+ - This entry is a release candidate note, not an npm staging/publication or hardware-support claim.
+
 Version: 3.0.0
 ------------
  - Migrate underlying library to @st-one-io/node-s7
