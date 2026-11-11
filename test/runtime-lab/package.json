@@ -1,5 +1,5 @@
 {
-  "name": "@rischlab/s7-node-red-runtime-lab",
+  "name": "s7-node-red-runtime-lab",
   "version": "0.0.0",
   "private": true,
   "description": "Isolated integration test toolchain for the installed S7 package",
