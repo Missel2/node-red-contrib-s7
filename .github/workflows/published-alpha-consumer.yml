@@ -26,7 +26,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22.23.4'
-          package-manager-cache: false
       - name: Negative controls (offline fixtures)
         run: node --test test/release/published-consumer.test.cjs
       - name: Verify npm release bytes and disposable installed consumer
