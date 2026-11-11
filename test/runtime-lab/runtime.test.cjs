@@ -582,13 +582,15 @@ test(
       report.scenarios.push(
         "empty deployment closes the original COTP socket and observes the retry window",
       );
-      
+
       // Issue #19 opt-in verification in *installed*, unmodified Node-RED,
       // with two real s7 out nodes sharing the same endpoint and an actual
       // local S7Comm WRITE_VAR whose ACK is deliberately withheld.
       peer.blackhole = false;
       const boundedFlow = flow(peer.port, "Opt-in bounded writes");
-      boundedFlow.find((entry) => entry.id === endpointId).boundedWrites = true;
+      boundedFlow.find(
+        (entry) => entry.id === endpointId,
+      ).boundedWrites = true;
       const secondOutputId = "lab-out-sibling";
       boundedFlow.push({
         id: secondOutputId,
@@ -610,14 +612,19 @@ test(
           tag: "bounded-excess",
         }),
       );
-      boundedFlow.find((entry) => entry.id === "lab-catch").scope.push(secondOutputId);
-      boundedFlow.find((entry) => entry.id === "lab-complete").scope.push(secondOutputId);
+      boundedFlow.find((entry) => entry.id === "lab-catch").scope.push(
+        secondOutputId,
+      );
+      boundedFlow.find((entry) => entry.id === "lab-complete").scope.push(
+        secondOutputId,
+      );
       offset = events.length;
       await admin.deploy(boundedFlow);
       await online(offset);
       const boundedExport = await admin.export();
       assert.equal(
-        boundedExport.flows.find((entry) => entry.id === endpointId).boundedWrites,
+        boundedExport.flows.find((entry) => entry.id === endpointId)
+          .boundedWrites,
         true,
         "The opt-in setting must survive a real Node-RED flow export",
       );
@@ -633,13 +640,18 @@ test(
       const busy = await waitEvent(
         offset,
         "catch",
-        (event) => event.tag === "bounded-excess" && event.source === secondOutputId,
+        (event) =>
+          event.tag === "bounded-excess" && event.source === secondOutputId,
         "sibling S7 Out capacity rejection Catch",
       );
       assert.equal(busy.code, "ERR_S7_WRITE_BUSY");
       assert.equal(peer.writes.length, beforeBoundedWrite + 1);
       assert.equal(
-        from(offset, "complete", (event) => event.tag === "bounded-excess").length,
+        from(
+          offset,
+          "complete",
+          (event) => event.tag === "bounded-excess",
+        ).length,
         0,
       );
       assert.equal(peer.droppedWrites.length, 2);
@@ -647,7 +659,10 @@ test(
       // is removed. The unit test proves the owned callback is called once;
       // here we verify transport closes and no deferred write is replayed.
       await admin.deploy([]);
-      await waitFor(() => peer.active.size === 0, "bounded-flow peer socket close");
+      await waitFor(
+        () => peer.active.size === 0,
+        "bounded-flow peer socket close",
+      );
       assert.equal(peer.writes.length, beforeBoundedWrite + 1);
       report.boundedWrites = {
         setting: true,
@@ -655,7 +670,11 @@ test(
         queued: 0,
         siblingCatchCode: busy.code,
         wireWrites: peer.writes.length - beforeBoundedWrite,
-        rejectedCompletes: from(offset, "complete", (event) => event.tag === "bounded-excess").length,
+        rejectedCompletes: from(
+          offset,
+          "complete",
+          (event) => event.tag === "bounded-excess",
+        ).length,
         finalLivePeers: peer.active.size,
       };
       report.scenarios.push(
