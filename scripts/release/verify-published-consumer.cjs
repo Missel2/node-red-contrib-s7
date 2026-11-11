@@ -18,7 +18,12 @@ const FILES = ["LICENSE", "README.md", "package.json", "red/locales/de/s7.json",
 const REGISTRY = "https://registry.npmjs.org/";
 
 function npm(args, cwd) {
-  return execFileSync(process.platform === "win32" ? "npm.cmd" : "npm", args, {
+  // Node's execFileSync cannot launch npm.cmd directly on Windows.
+  // The official setup-node Windows toolcache includes npm's JS entrypoint.
+  const windows = process.platform === "win32";
+  const npmCli = path.join(path.dirname(process.execPath), "node_modules", "npm", "bin", "npm-cli.js");
+  if (windows) assert.ok(fs.existsSync(npmCli), "Official Windows npm CLI missing");
+  return execFileSync(windows ? process.execPath : "npm", windows ? [npmCli, ...args] : args, {
     cwd, encoding: "utf8", timeout: 240000, windowsHide: true,
     maxBuffer: 4 * 1024 * 1024,
   });
