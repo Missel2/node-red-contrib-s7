@@ -1,5 +1,37 @@
 # Current development handoff
 
+## Latest write-safety handoff — 2026-11-11 (Issue #19 design stage)
+
+Protected wrapper `master` `6859f4f59de372db729da7575f0f0b36fcb5f296` includes explicitly approved
+squash PR #23: rejected-before-send S7 write validation errors
+are correlated to an original tagged Catch input. Post-merge
+master verification passed 20/20 checks with 9/9 required; the
+original Node-RED 5.0.9 host and its lockfiles remain unmodified.
+No current write outcome/admission implementation is implied.
+
+This continuation proposes [the outcome/admission contract](WRITE_OUTCOMES_AND_ADMISSION.md)
+and **adds only deterministic unit characterizations**, no production
+S7 code or dependency changes. The tests demonstrate current:
+one completion on a successful promise, one raw error with no
+implicit replay after a lost ACK, **three concurrently unresolved
+writes admitted**, and a late write callback after S7 Out close.
+The last two cases are specifically **KNOWN GAPS** and must not
+be called fixes merely because characterization CI is green.
+
+The proposed future sequence is (1) independent human review of
+the ADR/tests, (2) opt-in endpoint-level maxPendingWrites=1,
+maxQueuedWrites=0 with baseline-red/candidate-green evidence,
+(3) separate versioned opt-in diagnostics with real Node-RED
+Catch/Complete assertions, (4) separate nodes7 protocol queue
+capacity fix and pin governance. A wrapper limit alone does not
+bound the nodes7 internal `_jobQueue`.
+
+Issue #19 remains OPEN. Per-value freshness Issue #20 stays
+separate. HIL-S7-003/-006/-007 PENDING_HARDWARE. No automatic merge,
+npm release, production deployment, Node-RED host patch or real
+PLC/hardware access. Historical handoff follows.
+
+
 ## Latest maintainer boundary decision — 2026-11-10
 
 The maintainer explicitly rejected downstream patching of upstream Node-RED

@@ -144,3 +144,39 @@ The report separates verified runtime scenarios, historical negative evidence
 from the previously affected nodes7 pin, and the current strict teardown
 contract (zero extra retries and zero live peers before fixture cleanup).
 Hardware HIL-S7-001 through HIL-S7-007 remains pending.
+
+## Write outcome and admission contract (Issue #19)
+
+The [proposed ADR](WRITE_OUTCOMES_AND_ADMISSION.md) separates an input
+**rejected before invoking `writeItems`** from a successful protocol
+acknowledgement, a provably negative single-request response, and an
+**unknown outcome** after timeout/disconnect/lost ACK or a partial
+multi-PDU write. Do not infer that `ERR_TIMEOUT` means the PLC did
+not apply a write. Do not replay writes on reconnect. A successful
+`writeItems` promise is an S7 reply, not proof of durable PLC state.
+
+Existing `test/unit/s7-endpoint.baseline.test.js` now characterizes:
+one callback after synthetic acknowledgement, one error after a
+synthetic lost reply with **zero wrapper retries**, **three unresolved
+writes accepted concurrently** (known missing admission limit), and
+a pending callback settling after output close (known lifetime gap).
+The two baseline-gap tests intentionally assert that a *future*
+bounded/lifetime contract is currently red. They must **not** be
+described as fixed, and any future fix must rewrite the exact
+negative evidence into a true same-test candidate-green gate.
+The current mock does not establish on-wire dispatch, protocol
+queue capacity or Siemens CPU behavior.
+
+Candidate future opt-in endpoint-level admission: one pending,
+zero queued, no silent drops and explicit pre-submit rejection.
+This is a **design target**, not a live configuration option or
+release guarantee. nodes7's `maxJobs` is a parallelism limit, while
+`S7Connection._jobQueue` is independently unbounded; do not claim
+globally bounded resources before an approved nodes7 transport fix.
+Only an independently reviewed protocol/queue update and wrapper
+SHA pin can establish that assertion.
+
+HIL-S7-003/-006/-007 remain PENDING_HARDWARE. Preserve
+`msg.payload`/`msg.topic` by default and the unmodified upstream
+Node-RED host; opt-in diagnostic schema, locales/examples and
+compatibility migration need later separate PRs.
