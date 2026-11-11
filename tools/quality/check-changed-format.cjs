@@ -86,6 +86,11 @@ async function main() {
     if (!(await prettier.check(current, opts))) {
       failures.push(file);
       console.error("FORMAT_ERROR: " + file);
+      if (file === "tools/quality/check-package-files.cjs") {
+        console.log("PRETTIER_EXPECTED_START");
+        console.log(await prettier.format(current, opts));
+        console.log("PRETTIER_EXPECTED_END");
+      }
     }
   }
 
