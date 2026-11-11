@@ -6,7 +6,7 @@ This checklist is a **preparation and verification procedure, not release author
 
 [Release preflight](../.github/workflows/release-preflight.yml) runs on GitHub-hosted Ubuntu with `contents: read` only. It has no `id-token: write`, stored npm credentials, staging action, publish command, deployment connection or physical controller access.
 
-The workflow (for the proposed npm-alias migration):
+The workflow (including the merged npm-alias migration in PR #46):
 
 1. Checks out the exact source commit, installs the production dependency tree with scripts disabled, and runs fail-closed release identity and archive tests.
 2. Executes `npm pack --ignore-scripts`. Enforces the alpha scope/version, tag, `red/` / `src/` allowlist, required Node-RED editor files, actual archive listing and matching SHA-1 (npm metadata), SHA-256 and SHA-512 checksums.
@@ -16,7 +16,9 @@ The workflow (for the proposed npm-alias migration):
 
 The manifest records source commit, package/archive hashes, SBOM hashes, tool versions, lock hash, licenses and explicit no-publish status. An npm package SBOM generated from the lockfile does not by itself establish that the bytes inside a tarball have been audited. The tarball/metadata comparison and manual inspection are distinct checks. CI pass does not establish security certification, absence of vulnerabilities, complete copyright compliance or physical Siemens CPU support.
 
-The standalone workflow is not yet one of the protected branch's required status checks. The maintainer should decide whether to make it required **after** verifying its stability; no repository administration change is claimed here.
+The standalone workflow completed successfully on `master` `f7da551c770aee7074f94233e55bc04445ff4bec` ([run 43025921248](https://github.com/Missel2/node-red-contrib-s7/actions/runs/43025921248)) and remains **outside the nine directly required `protect-master` contexts**. Before releasing, require a fresh green preflight on the immutable release candidate and assess whether to make it a required status check in a separate repository-administration decision. This documentation change does not modify branch protection.
+
+For the exact pre-stage decision, gate order, registry placeholder effect and post-stage verification procedure, use [the stage decision record](RELEASE_STAGE_DECISION.md). This is a checklist only; no npm write action is authorized.
 
 ## Separate manual gates before *any* npm stage or publish operation
 
