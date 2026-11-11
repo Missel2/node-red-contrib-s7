@@ -1,6 +1,6 @@
 # Alpha candidate: package and release evidence
 
-**Status: packaging merged in PR #43; no npm release.** Protected `master` includes the scoped alpha metadata and previously passed 22/22 post-merge checks. This document and the separate [release preflight](RELEASE_PREFLIGHT.md) do not authorize any registry staging, publication, release tag, container build, production installation or real-controller access.
+**Status: wrapper packaging merged in PR #43; no wrapper npm release. The nodes7 dependency is independently published on npm and this proposed integration PR is not yet merged.** Protected `master` includes the scoped alpha metadata and previously passed 22/22 post-merge checks. This document and the separate [release preflight](RELEASE_PREFLIGHT.md) do not authorize any registry staging, publication, release tag, container build, production installation or real-controller access.
 
 ## Identity and compatibility
 
@@ -8,8 +8,8 @@
 - This is an independently maintained GPL-3.0-or-later fork of the original ST-One node package; preserve upstream credits and license.
 - Tested software environment: unmodified Node-RED 5.0.9, Ubuntu 24.04 / Windows 2025, Node.js 22 / 24 in hosted CI. **No other platform, CPU firmware, production environment or write behavior is asserted compatible.**
 - The Node-RED node types remain `s7 endpoint`, `s7 in`, `s7 out`, `s7 control`; an original S7 node package and this fork **must not be enabled together in one Node-RED runtime** due to type collisions.
-- The maintained protocol fork is pinned by commit to a GitHub tarball dependency. Downstream consumers need access to that source at install time. Releasing an independent registry package for the protocol fork is a separate supply-chain decision.
-- npm account ownership of the proposed user scope and the package identity must be confirmed by the maintainer. The intended metadata is not evidence that this package exists on npm.
+- The candidate now installs the exact independent `@missel2/nodes7@0.1.0-alpha.1` npm release through the legacy `@st-one-io/nodes7` alias, with a SHA-512 lockfile pin, preserving current import paths. This replaces the historical GitHub archive dependency. Consumer installation and actual Node-RED runtime compatibility must pass cross-platform CI on this PR before any wrapper merge or release.
+- `@missel2/nodes7@0.1.0-alpha.1` is published under npm's `alpha` tag. Its `latest` tag still resolves to the public `0.0.0-stage` placeholder; this PR does not modify any npm dist-tags. The separate wrapper package `@missel2/node-red-contrib-s7@0.1.0-alpha.1` remains unpublished and independently gated.
 
 ## Package boundary and qualification
 
