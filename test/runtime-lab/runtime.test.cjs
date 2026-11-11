@@ -15,7 +15,7 @@ const { createWirePeer, loopback } = require("./wire-peer.cjs");
 
 const [, , userDir, fixturePort, evidenceFile, nodes7Commit] = process.argv;
 assert.match(nodes7Commit, /^[0-9a-f]{40}$/, "pinned nodes7 SHA required");
-const packageName = "node-red-contrib-s7";
+const packageName = "@missel2/node-red-contrib-s7";
 const types = ["s7 endpoint", "s7 in", "s7 out", "s7 control"];
 const originalValues = { temperature: 12.5, counter: -123, writable: 3.25 };
 const tab = "lab-tab";
