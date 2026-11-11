@@ -374,33 +374,47 @@ test(
       );
       assert.equal(invalidCycle.source, controlId);
       assert.match(invalidCycle.error, /cycle|interval/i);
-      const errorOffset = runtimeErrors.length;
+      // Rejecting a write must reach a scoped Catch with the original input
+      // tag; merely writing an uncorrelated error log is NOT a passing test.
+      const invalidOffset = events.length;
       await admin.inject("write-unknown");
-      const invalidWrite = await waitFor(
-        () =>
-          from(
-            offset,
-            "catch",
-            (event) =>
-              event.tag === "write-unknown" && event.source === outputId,
-          )[0] ||
-          runtimeErrors
-            .slice(errorOffset)
-            .find((entry) => entry.source === outputId),
-        "unknown variable diagnosis",
+      const invalidWrite = await waitEvent(
+        invalidOffset,
+        "catch",
+        (event) => event.tag === "write-unknown" && event.source === outputId,
+        "originating invalid write scoped Catch",
       );
+      assert.equal(invalidWrite.source, outputId);
+      assert.equal(invalidWrite.tag, "write-unknown");
       assert.match(invalidWrite.error, /missing/);
+      assert.equal(
+        from(invalidOffset, "catch", (event) => event.tag === "write-unknown")
+          .length,
+        1,
+        "Invalid write must raise exactly one scoped Catch",
+      );
+      assert.equal(
+        from(
+          invalidOffset,
+          "complete",
+          (event) => event.tag === "write-unknown",
+        ).length,
+        0,
+        "Invalid write cannot complete successfully",
+      );
       assert.equal(
         peer.writes.length,
         0,
         "Invalid inputs must send zero writes",
       );
       report.invalidWrite = {
-        route: invalidWrite.channel === "catch" ? "Catch" : "runtime log",
+        route: "Catch",
+        source: invalidWrite.source,
+        tag: invalidWrite.tag,
         wireWrites: 0,
       };
       report.scenarios.push(
-        "triggered read, validation, Catch and zero invalid wire writes",
+        "invalid write Catch correlation, no Complete and zero S7 wire writes",
       );
 
       offset = events.length;

@@ -17,7 +17,8 @@ function pending() {
 
 function fixture() {
     const types = new Map(), timers = new Set(), errors = [], events = [];
-    let group;
+    let group, endpointNode;
+    const statuses = new Map();
     class Transport extends EventEmitter {
         constructor() {
             super();
@@ -46,12 +47,12 @@ function fixture() {
         httpAdmin: { get: () => {} },
         nodes: {
             registerType: (name, ctor) => types.set(name, ctor),
-            getNode: () => null,
+            getNode: id => id === 'fixture-endpoint' ? endpointNode : null,
             createNode: node => {
                 Object.setPrototypeOf(node, EventEmitter.prototype);
-                node.error = err => errors.push(err);
+                node.error = (err, msg) => errors.push({ err, msg });
                 node.warn = () => {};
-                node.status = () => {};
+                node.status = status => statuses.set(node, status);
                 node.send = () => {};
             }
         }
@@ -80,8 +81,11 @@ function fixture() {
         port: 1102, rack: 0, slot: 1, timeout: 200, cycletime: 50,
         vartable: [{ name: 'tag', addr: 'DB1,REAL0' }]
     });
+    endpointNode = node;
+    const Output = types.get('s7 out');
     node.on('__STATUS__', s => events.push(s.status));
-    return { node, transport: node.endpoint, group, timers, errors, events };
+    const createOutput = () => new Output({ endpoint: 'fixture-endpoint', variable: '' });
+    return { node, transport: node.endpoint, group, timers, errors, events, createOutput, statuses };
 }
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const close = node => new Promise(resolve => node.emit('close', resolve));
@@ -160,4 +164,36 @@ test('repeated triggers during an unresolved read coalesce into one follow-up', 
     await tick();
     assert.equal(calls, 2, 'multiple triggers must coalesce to one follow-up');
     assert.deepEqual(observed, [11, 22]);
+});
+
+// HIL: not applicable. Validation fails before a request reaches the transport.
+for (const { name, message, error } of [
+    { name: 'unknown scalar', message: { variable: 'missing', payload: 5 }, error: 's7.error.varunknown' },
+    { name: 'unknown array member', message: { variable: ['tag', 'missing'], payload: [5, 6] }, error: 's7.error.varunknown' },
+    { name: 'array value mismatch', message: { variable: ['tag'], payload: [] }, error: 's7.error.valmismatch' }
+]) {
+    test('S7 Out rejects ' + name + ' once through the input completion callback', () => {
+        const { group, createOutput, errors, statuses } = fixture();
+        let writes = 0;
+        group.writeItems = () => { writes++; return Promise.resolve(); };
+        const output = createOutput();
+        const completions = [];
+
+        output.emit('input', message, () => assert.fail('Invalid write sent output'), err => completions.push(err));
+
+        assert.deepEqual(completions, [error]);
+        assert.equal(statuses.get(output).fill, 'yellow');
+        assert.equal(writes, 0);
+        assert.deepEqual(errors, []);
+    });
+}
+
+test('S7 Out preserves the originating message through the legacy input shim', () => {
+    const { createOutput, errors } = fixture();
+    const output = createOutput();
+    const message = { variable: 'missing', payload: 5, _msgid: 'fixture-request' };
+
+    output.emit('input', message);
+
+    assert.deepEqual(errors, [{ err: 's7.error.varunknown', msg: message }]);
 });
