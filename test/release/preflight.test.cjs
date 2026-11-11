@@ -15,7 +15,9 @@ function fixture() {
     license: "GPL-3.0-or-later",
     files: ["red/", "src/"],
     publishConfig: { access: "public", tag: "alpha" },
-    dependencies: { "@st-one-io/nodes7": "npm:@missel2/nodes7@0.1.0-alpha.1" },
+    dependencies: {
+      "@st-one-io/nodes7": "npm:@missel2/nodes7@0.1.0-alpha.1",
+    },
   };
   const lock = {
     name: pkg.name,
@@ -83,12 +85,11 @@ test("wrong dist-tag, scope and dependency changes fail closed", () => {
 
 test("wrong published alias or SHA512 integrity is rejected", () => {
   const { pkg, lock } = fixture();
-  assert.throws(() =>
-    assertReleaseIdentity(
-      { ...pkg, dependencies: { "@st-one-io/nodes7": "npm:@missel2/nodes7@latest" } },
-      lock,
-    ),
-  );
+  const wrongAlias = {
+    ...pkg,
+    dependencies: { "@st-one-io/nodes7": "npm:@missel2/nodes7@latest" },
+  };
+  assert.throws(() => assertReleaseIdentity(wrongAlias, lock));
   const nodePath = "node_modules/@st-one-io/nodes7";
   assert.throws(() =>
     assertReleaseIdentity(pkg, {
