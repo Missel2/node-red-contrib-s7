@@ -10,7 +10,7 @@ Dates describe the time a direction was documented. An accepted direction is not
 
 ## D-002 — Initial regression priority (2026-11-06)
 
-**Decision:** First investigate the connection-lifecycle failure previously worked on in a Musashi Node-RED environment. Source patch and runtime evidence must be retrieved and validated. The initial fork uses `@st-one-io/nodes7`; any historical `s7-plus` patch is a separate component and must not be folded into the classic S7 integration without an explicit architecture decision.
+**Decision:** First investigate the connection-lifecycle failure previously reported in a private industrial Node-RED environment. Source patch and runtime evidence must be retrieved and validated. The initial fork uses `@st-one-io/nodes7`; any historical `s7-plus` patch is a separate component and must not be folded into the classic S7 integration without an explicit architecture decision.
 
 **Open:** exact source location, minimal failing case, dependency ownership, correct limits on application-managed sessions.
 
@@ -30,7 +30,7 @@ Dates describe the time a direction was documented. An accepted direction is not
 
 ## D-006 — Scoped S7 wrapper regression (2026-11-06)
 
-**Decision:** Test and address stale callback and timer cleanup behavior in the Node-RED wrapper first, without conflating this with the Musashi pending-handshake/socket problem inside `@st-one-io/nodes7`. Protocol-level socket cleanup remains P0 and must be independently reproduced and verified.
+**Decision:** Test and address stale callback and timer cleanup behavior in the Node-RED wrapper first, without conflating this with the reported pending-handshake/socket problem inside `@st-one-io/nodes7`. Protocol-level socket cleanup remains P0 and must be independently reproduced and verified.
 
 ## D-007 — Public provenance and credits (2026-11-07)
 
@@ -56,10 +56,14 @@ Dates describe the time a direction was documented. An accepted direction is not
 
 ## D-010 — Planned isolated S7-1200 HIL and mandatory per-change test debts (2026-11-07)
 
-**Decision (human maintainer):** A physical Siemens S7-1200 and a RischLab-managed runner are a *future* test level, not a presently available test environment. Every PR names the pending `HIL-S7-*` tests that must run once the bench is available; no HIL outcome may be claimed without hardware evidence. Track cases and safeguards in [HIL_TEST_MATRIX.md](HIL_TEST_MATRIX.md), [Issue #8](https://github.com/Missel2/node-red-contrib-s7/issues/8).
+**Decision (human maintainer):** A physical Siemens S7-1200 and an access-controlled, isolated runner are a *future* test level, not a presently available test environment. Every PR names the pending `HIL-S7-*` tests that must run once the bench is available; no HIL outcome may be claimed without hardware evidence. Track cases and safeguards in [HIL_TEST_MATRIX.md](HIL_TEST_MATRIX.md), [Issue #8](https://github.com/Missel2/node-red-contrib-s7/issues/8).
 
 **Safety and security:** Isolation from productive OT networks and outputs, controlled scratch DB, explicit authorization for writes, and trusted-source gating are mandatory. An open-source public PR must not be allowed to run untrusted code on the HIL-capable runner.
 
+
+## D-010A — Vendor-neutral disclosure and private hardware evidence (2026-11-11)
+
+**Decision:** Keep all public repository content and source history review vendor-neutral. Real installation identifiers, network details, raw industrial logs, infrastructure metadata and unredacted hardware test evidence belong in separately controlled private systems, not in public source, issues, CI or packages. Public reports may present only manually sanitized non-identifying summaries. Never add confidential lookup values to public deny-lists; inspection before the first public push is mandatory. See [PUBLIC_DISCLOSURE_POLICY.md](PUBLIC_DISCLOSURE_POLICY.md).
 
 ## D-011 — Migrate Issue #3 from expected-red to baseline-red/candidate-green (2026-11-07)
 
