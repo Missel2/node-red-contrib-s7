@@ -25,8 +25,8 @@ The preflight must:
 
 ## Human release gate
 
-This branch does **not** add an npm publish, npm stage, dist-tag, tag-triggered release or environment/deployment workflow. A future distinct release PR must add reviewable OIDC trusted publishing (prefer staged publishing with human approval), provenance and SBOM evidence. Prepare the external npm account/scope settings only as a separate human decision. Prevent inadvertent `latest` tagging.
+This branch does **not** add an npm publish, npm stage, dist-tag, tag-triggered release or environment/deployment workflow. A future distinct release PR must add reviewable OIDC trusted publishing (prefer staged publishing with human approval), provenance and SBOM evidence. Verify npm account ownership and handle first-package bootstrap explicitly: trusted publisher registration may require the package to exist first; do not assume that this candidate or its metadata creates an npm package. See [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/) and [scoped public packages](https://docs.npmjs.com/creating-and-publishing-scoped-public-packages/). Prepare the external npm account/scope settings only as a separate human decision. Prevent inadvertent `latest` tagging.
 
 No hardware access follows from successful software CI. Future physical read-only results must be explicitly authorized, recorded in a private evidence store and summarized publicly only after independent sanitization. Write tests remain a distinct, separately approved safety boundary.
 
-Before first publication, reconcile [public disclosure policy](PUBLIC_DISCLOSURE_POLICY.md) and complete the private historical review. The policy is proposed in a separate pending PR; do not treat it as merged.
+The [public disclosure policy](PUBLIC_DISCLOSURE_POLICY.md) was merged in PR #42 on 2026-11-11. Its current-tree coverage does **not** erase historical public Git objects, PR metadata or third-party caches. Complete the confidential historical exposure assessment and owner risk decision separately before any publication.
