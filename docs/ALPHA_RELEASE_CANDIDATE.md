@@ -1,6 +1,6 @@
 # Alpha candidate: package and release evidence
 
-**Status: unmerged candidate only.** No registry publication, release tag, container build, production installation or real-controller access is authorized by this document.
+**Status: packaging merged in PR #43; no npm release.** Protected `master` includes the scoped alpha metadata and previously passed 22/22 post-merge checks. This document and the separate [release preflight](RELEASE_PREFLIGHT.md) do not authorize any registry staging, publication, release tag, container build, production installation or real-controller access.
 
 ## Identity and compatibility
 
@@ -25,7 +25,7 @@ The preflight must:
 
 ## Human release gate
 
-This branch does **not** add an npm publish, npm stage, dist-tag, tag-triggered release or environment/deployment workflow. A future distinct release PR must add reviewable OIDC trusted publishing (prefer staged publishing with human approval), provenance and SBOM evidence. Verify npm account ownership and handle first-package bootstrap explicitly: trusted publisher registration may require the package to exist first; do not assume that this candidate or its metadata creates an npm package. See [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/) and [scoped public packages](https://docs.npmjs.com/creating-and-publishing-scoped-public-packages/). Prepare the external npm account/scope settings only as a separate human decision. Prevent inadvertent `latest` tagging.
+This branch does **not** add an npm publish, npm stage, dist-tag, tag-triggered release or environment/deployment workflow. A separate read-only release-preflight PR prepares SBOM and archive evidence. A **later distinct** release PR must add reviewable OIDC trusted publishing with stage-only permission and human approval; npm provenance applies only to an actual supported trusted publication. Verify npm account ownership and handle first-package bootstrap explicitly: trusted publisher registration may require the package to exist first; do not assume that this candidate or its metadata creates an npm package. See [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/) and [scoped public packages](https://docs.npmjs.com/creating-and-publishing-scoped-public-packages/). Prepare the external npm account/scope settings only as a separate human decision. Prevent inadvertent `latest` tagging.
 
 No hardware access follows from successful software CI. Future physical read-only results must be explicitly authorized, recorded in a private evidence store and summarized publicly only after independent sanitization. Write tests remain a distinct, separately approved safety boundary.
 

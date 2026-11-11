@@ -1,0 +1,54 @@
+name: Release preflight (no publish)
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+# Read-only hosted CI. No npm credentials, deployment secrets, OIDC or publishing.
+permissions:
+  contents: read
+
+jobs:
+  release-preflight:
+    name: Alpha archive, SBOM and license preflight
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - name: Install exact production dependencies without running install scripts
+        run: npm ci --omit=dev --ignore-scripts --no-audit --no-fund
+      - name: Prove fail-closed release preflight negative controls
+        run: node --test test/release/preflight.test.cjs
+      - name: Build and inspect unpublished alpha release evidence
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p release-evidence
+          npm pack --ignore-scripts --json --pack-destination release-evidence > release-evidence/pack.json
+          node tools/quality/check-package-files.cjs release-evidence/pack.json
+          npm sbom --package-lock-only --omit=dev --sbom-format=spdx > release-evidence/sbom.spdx.json
+          npm sbom --package-lock-only --omit=dev --sbom-format=cyclonedx > release-evidence/sbom.cdx.json
+          node scripts/release/verify-preflight.cjs release-evidence
+      - name: Preserve review evidence only (never upload the tarball)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alpha-preflight-${{ github.run_id }}
+          path: |
+            release-evidence/manifest.json
+            release-evidence/pack.json
+            release-evidence/sbom.spdx.json
+            release-evidence/sbom.cdx.json
+          if-no-files-found: error
+          retention-days: 7
