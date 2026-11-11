@@ -62,6 +62,8 @@ Commit author metadata records the submitting account; it does not establish who
 
 ## Safety and publication boundaries
 
+- [ ] Private pre-push disclosure review performed; no identifiable organization/site/network/infrastructure details in commits, PR metadata, fixtures or artifacts
+- [ ] Publicly shared evidence is synthetic or human-reviewed and non-identifying; private rule sets are not embedded in CI
 - [ ] No secrets, real PLC address lists or unredacted industrial logs committed
 - [ ] No silent retry of ambiguous PLC writes introduced
 - [ ] Node-RED compatibility considered

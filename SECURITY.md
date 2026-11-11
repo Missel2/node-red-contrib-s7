@@ -19,6 +19,10 @@ The inherited package version is `3.1.3`. It does not indicate a separately publ
 
 There is currently **no guaranteed response time, remediation deadline or security support SLA**. Prioritize reported issues based on severity, reproducibility and impact.
 
+## Public repository and industrial evidence boundary
+
+See [the public disclosure policy](docs/PUBLIC_DISCLOSURE_POLICY.md). Actual deployment, customer, site, topology, registry and controller information must not appear in public tickets, source, logs or releases. Confidential disclosure indicators must not be placed in public automated checks. Inspect changes privately before publishing to GitHub; CI cannot undo a disclosure. Complete hardware evidence remains private, with only non-identifying summaries published after review.
+
 ## Reporting a vulnerability
 
 **Do not publish security vulnerabilities, credentials, plant addresses, exploit details or production logs in public Issues, Pull Requests or Discussions.**

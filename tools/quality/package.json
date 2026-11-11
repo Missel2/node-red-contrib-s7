@@ -1,5 +1,5 @@
 {
-  "name": "@rischlab/s7-ci-quality-tools",
+  "name": "s7-ci-quality-tools",
   "version": "0.0.0",
   "private": true,
   "description": "CI-only static quality toolchain for the independent S7 fork",
