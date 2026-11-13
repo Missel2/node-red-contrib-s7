@@ -1,3 +1,27 @@
+## Current cross-repository continuation — 2026-11-13 (no release)
+
+- Protected Contrib `master`: `37022913204283dcd9098079480e448d28f02757`.
+  Published `@missel2/node-red-contrib-s7@0.1.0-alpha.1` remains immutable
+  and still pins the published `@missel2/nodes7@0.1.0-alpha.1` via the
+  SHA-512-locked `@st-one-io/nodes7` npm alias.
+- Protected nodes7 `master`: `b4a0a5dd846988e8b687e6c0b53b454ffbc206da`
+  after approved P0 write-integrity PR #31, all post-merge checks green.
+  The next S7ANY range fix is [Draft PR #33](https://github.com/Missel2/nodes7/pull/33)
+  for [Issue #32](https://github.com/Missel2/nodes7/issues/32): **not merged**.
+- Current separate next-alpha evidence/decision sequence:
+  [NEXT_ALPHA_PAIR_GATES.md](NEXT_ALPHA_PAIR_GATES.md). It specifies
+  **no release or merge permission**. The alpha.1 artifacts and Contrib
+  production manifest/lock are not changed by this documentation candidate.
+- Before proceeding: qualify and separately authorize nodes7 #33, then verify
+  actual master CI; only afterward prepare an independently reviewed library
+  version/stage, then a new Contrib alias/lock PR and a separate Contrib
+  prerelease. HIL-S7-001..007 remain PENDING_HARDWARE.
+- **Documentation-only change**; original-red/candidate-green S7 code evidence
+  is not applicable to this patch. No new npm publication, dependency update,
+  Node-RED host patch, OT deployment, automatic merge or hardware access.
+
+---
+
 ## Current development handoff — 2026-11-11, Issue #19
 
 - Protected wrapper master `bc7efd2d38a123f68a2c3654b6c40286b681e7a9` contains approved/merged design-and-characterization PR #40 **only**; no write capacity limit on master.
