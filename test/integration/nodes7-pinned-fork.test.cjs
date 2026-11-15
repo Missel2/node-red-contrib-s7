@@ -12,10 +12,10 @@ const nodes7 = require('@st-one-io/nodes7');
 const {ISOOnTCPParser, constants} = require('iso-on-tcp');
 const OUT = path.resolve(__dirname, '../../test-reports');
 const RELEASE_NAME='@missel2/nodes7';
-const RELEASE_VERSION='0.1.0-alpha.1';
+const RELEASE_VERSION='0.1.0-alpha.2';
 const RELEASE_SPEC='npm:'+RELEASE_NAME+'@'+RELEASE_VERSION;
 const RELEASE_URL='https://registry.npmjs.org/@missel2/nodes7/-/nodes7-'+RELEASE_VERSION+'.tgz';
-const RELEASE_INTEGRITY='sha512-07lzsDrfxQ5P15iM/+rjxNVbo0gyIGWjKivXfgU/tEUQs1qO+A0upy6690qy85mG7mEiNpek1xqhRVASvb9ktw==';
+const RELEASE_INTEGRITY='sha512-4Lmejz+WT5YOLHBXfdSForyHltgct5A9J1indi0Q/sxZKpGIY2omRrjSMRU6fKeW6YDAb+jwAjjEz7hQE/Z9pQ==';
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 function persist(name, data) {
