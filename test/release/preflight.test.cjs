@@ -16,7 +16,7 @@ function fixture() {
     files: ["red/", "src/"],
     publishConfig: { access: "public", tag: "alpha" },
     dependencies: {
-      "@st-one-io/nodes7": "npm:@missel2/nodes7@0.1.0-alpha.1",
+      "@st-one-io/nodes7": "npm:@missel2/nodes7@0.1.0-alpha.2",
     },
   };
   const lock = {
@@ -30,11 +30,11 @@ function fixture() {
       },
       "node_modules/@st-one-io/nodes7": {
         name: "@missel2/nodes7",
-        version: "0.1.0-alpha.1",
+        version: "0.1.0-alpha.2",
         resolved:
-          "https://registry.npmjs.org/@missel2/nodes7/-/nodes7-0.1.0-alpha.1.tgz",
+          "https://registry.npmjs.org/@missel2/nodes7/-/nodes7-0.1.0-alpha.2.tgz",
         integrity:
-          "sha512-07lzsDrfxQ5P15iM/+rjxNVbo0gyIGWjKivXfgU/tEUQs1qO+A0upy6690qy85mG7mEiNpek1xqhRVASvb9ktw==",
+          "sha512-4Lmejz+WT5YOLHBXfdSForyHltgct5A9J1indi0Q/sxZKpGIY2omRrjSMRU6fKeW6YDAb+jwAjjEz7hQE/Z9pQ==",
       },
       "node_modules/iso-on-tcp": { version: "0.1.0" },
     },
@@ -131,7 +131,7 @@ test("SBOM rejects missing locked production dependencies", () => {
     SPDXID: "SPDXRef-DOCUMENT",
     packages: [
       { name: pkg.name, versionInfo: pkg.version },
-      { name: "@missel2/nodes7", versionInfo: "0.1.0-alpha.1" },
+      { name: "@missel2/nodes7", versionInfo: "0.1.0-alpha.2" },
       { name: "iso-on-tcp", versionInfo: "0.1.0" },
     ],
   };
@@ -143,7 +143,7 @@ test("SBOM rejects missing locked production dependencies", () => {
       },
     },
     components: [
-      { name: "@missel2/nodes7", version: "0.1.0-alpha.1" },
+      { name: "@missel2/nodes7", version: "0.1.0-alpha.2" },
       { name: "iso-on-tcp", version: "0.1.0" },
     ],
   };
