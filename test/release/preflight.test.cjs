@@ -105,6 +105,32 @@ test("wrong published alias or SHA512 integrity is rejected", () => {
   );
 });
 
+test("historical alpha.1 cannot sneak into the new source-only dependency pin", () => {
+  const { pkg, lock } = fixture();
+  const alias = "node_modules/@st-one-io/nodes7";
+  assert.throws(() => assertReleaseIdentity({
+    ...pkg,
+    dependencies: { "@st-one-io/nodes7": "npm:@missel2/nodes7@0.1.0-alpha.1" },
+  }, lock));
+  assert.throws(() => assertReleaseIdentity(pkg, {
+    ...lock,
+    packages: {
+      ...lock.packages,
+      [alias]: { ...lock.packages[alias], version: "0.1.0-alpha.1" },
+    },
+  }));
+  assert.throws(() => assertReleaseIdentity(pkg, {
+    ...lock,
+    packages: {
+      ...lock.packages,
+      [alias]: {
+        ...lock.packages[alias],
+        resolved: "https://registry.npmjs.org/@missel2/nodes7/-/nodes7-0.1.0-alpha.1.tgz",
+      },
+    },
+  }));
+});
+
 test("archive reject-list catches unexpected files and missing runtime assets", () => {
   const { pkg, pack } = fixture();
   assert.throws(() =>
