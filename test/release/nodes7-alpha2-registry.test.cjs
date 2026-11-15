@@ -63,7 +63,7 @@ test("corrupted or non-gzip tarballs never count as approved release", () => {
 test("registry proof workflow is read-only, on GitHub-hosted Windows/Linux", () => {
   const workflow = fs.readFileSync(".github/workflows/published-alpha-consumer.yml", "utf8");
   assert.match(workflow, /name: Published alpha consumer proof \(no publish\)/);
-  assert.match(workflow, /on:\n  pull_request:/);
+  assert.match(workflow, /on:\r?\n  pull_request:/);
   assert.match(workflow, /os: \[ubuntu-24\.04, windows-2025\]/);
   assert.match(workflow, /node scripts\/release\/verify-nodes7-alpha2-registry\.cjs/);
   assert.doesNotMatch(workflow, /id-token: write|npm stage publish|npm stage approve|npm publish|npm dist-tag/);
