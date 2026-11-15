@@ -82,6 +82,12 @@ jobs:
         run: npm ci --prefix tools/quality --ignore-scripts --no-audit --no-fund
       - name: ESLint correctness checks, including CJS wire integration
         run: npm run lint
+      # Temporary developer-only read-back: public-source formatting, no secrets or writebacks.
+      - name: Emit canonical Prettier output for three PR-only files (temporary)
+        if: matrix.os == 'ubuntu-24.04'
+        shell: bash
+        run: |
+          node -e "const fs=require('fs');const p=require('./tools/quality/node_modules/prettier');(async()=>{for(const name of ['scripts/release/verify-nodes7-alpha2-registry.cjs','test/release/nodes7-alpha2-registry.test.cjs','test/release/preflight.test.cjs']){const code=await p.format(fs.readFileSync(name,'utf8'),{filepath:name,endOfLine:'auto'});console.log('NODES7_FORMATTED_FILE:'+name+':'+JSON.stringify(code));}})().catch(e=>{console.error(e);process.exitCode=1;})"
       - name: Prettier on new and preformatted changed files
         run: npm run format:check
       - name: Real ESLint/Prettier failing and passing controls
