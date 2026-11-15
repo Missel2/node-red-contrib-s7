@@ -12,12 +12,12 @@ const expectedVersion = "0.1.0-alpha.1";
 const dependencies = ["@st-one-io/nodes7", "iso-on-tcp"];
 const aliasName = "@st-one-io/nodes7";
 const publishedName = "@missel2/nodes7";
-const publishedVersion = "0.1.0-alpha.1";
+const publishedVersion = "0.1.0-alpha.2";
 const aliasSpec = "npm:" + publishedName + "@" + publishedVersion;
 const registryTarball =
-  "https://registry.npmjs.org/@missel2/nodes7/-/nodes7-0.1.0-alpha.1.tgz";
+  "https://registry.npmjs.org/@missel2/nodes7/-/nodes7-0.1.0-alpha.2.tgz";
 const publishedIntegrity =
-  "sha512-07lzsDrfxQ5P15iM/+rjxNVbo0gyIGWjKivXfgU/tEUQs1qO+A0upy6690qy85mG7mEiNpek1xqhRVASvb9ktw==";
+  "sha512-4Lmejz+WT5YOLHBXfdSForyHltgct5A9J1indi0Q/sxZKpGIY2omRrjSMRU6fKeW6YDAb+jwAjjEz7hQE/Z9pQ==";
 
 function readJson(filename) {
   return JSON.parse(fs.readFileSync(filename, "utf8"));
