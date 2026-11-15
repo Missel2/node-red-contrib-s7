@@ -59,7 +59,8 @@ function inspectArchive(buffer, view) {
 
 async function getBytes(url) {
   const response = await fetch(url, {
-    headers: { Accept: "application/vnd.npm.install-v1+json" },
+    // Full npm packument retains manifest license/credits, unlike install-v1 metadata.
+    headers: { Accept: url === PACKUMENT_URL ? "application/json" : "application/octet-stream" },
     signal: AbortSignal.timeout(25000),
   });
   assert.equal(response.status, 200, "Public npm GET failed for " + url);
