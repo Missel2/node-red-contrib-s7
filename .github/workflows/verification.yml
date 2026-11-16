@@ -82,12 +82,6 @@ jobs:
         run: npm ci --prefix tools/quality --ignore-scripts --no-audit --no-fund
       - name: ESLint correctness checks, including CJS wire integration
         run: npm run lint
-      # TEMPORARY source formatting proof for this PR; remove before final review.
-      - name: Emit pinned Prettier output for candidate files (temporary)
-        if: matrix.os == 'ubuntu-24.04'
-        shell: bash
-        run: |
-          node -e "const fs=require('fs');const p=require('./tools/quality/node_modules/prettier');(async()=>{for(const name of ['scripts/release/check-alpha2-npm-availability.cjs','scripts/release/compare-alpha2-archives.cjs','scripts/release/verify-preflight.cjs','test/release/alpha2-archive.test.cjs','test/release/preflight.test.cjs']){const code=await p.format(fs.readFileSync(name,'utf8'),{filepath:name,endOfLine:'auto'});console.log('CONTRIB_ALPHA2_FORMATTED_FILE:'+name+':'+JSON.stringify(code));}})().catch(e=>{console.error(e);process.exitCode=1;})"
       - name: Prettier on new and preformatted changed files
         run: npm run format:check
       - name: Real ESLint/Prettier failing and passing controls
