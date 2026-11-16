@@ -58,7 +58,11 @@ function publicRegistry() {
 }
 
 test("same-source Windows/Linux independent candidate bytes are accepted", () => {
-  const result = compareManifests(candidate("linux"), candidate("win32"), SOURCE);
+  const result = compareManifests(
+    candidate("linux"),
+    candidate("win32"),
+    SOURCE,
+  );
   assert.equal(result.sha256, "b".repeat(64));
   assert.equal(result.version, "0.1.0-alpha.2");
 });
@@ -67,7 +71,9 @@ test("different byte hashes, package size, source or lock must fail closed", () 
   for (const changed of [
     { package: { ...candidate("win32").package, sha256: "f".repeat(64) } },
     { package: { ...candidate("win32").package, bytes: 39673 } },
-    { inputs: { ...candidate("win32").inputs, lockfileSha256: "f".repeat(64) } },
+    {
+      inputs: { ...candidate("win32").inputs, lockfileSha256: "f".repeat(64) },
+    },
     { sourceCommit: "f".repeat(40) },
   ]) {
     assert.throws(() =>
@@ -117,12 +123,18 @@ test("already published candidate, moved tags or untrusted metadata fail closed"
 });
 test("cross-OS GitHub workflow cannot publish or upload the tarball", () => {
   const workflow = fs
-    .readFileSync(".github/workflows/alpha2-archive-reproducibility.yml", "utf8")
+    .readFileSync(
+      ".github/workflows/alpha2-archive-reproducibility.yml",
+      "utf8",
+    )
     .replace(/\r\n/g, "\n");
   assert.match(workflow, /on:\n  pull_request:\n  push:/);
   assert.match(workflow, /os: \[ubuntu-24\.04, windows-2025\]/);
   assert.match(workflow, /node scripts\/release\/verify-preflight\.cjs/);
   assert.match(workflow, /node scripts\/release\/compare-alpha2-archives\.cjs/);
   assert.match(workflow, /path: release-evidence\/manifest\.json/);
-  assert.doesNotMatch(workflow, /id-token: write|npm stage|npm publish|npm dist-tag/);
+  assert.doesNotMatch(
+    workflow,
+    /id-token: write|npm stage|npm publish|npm dist-tag/,
+  );
 });
