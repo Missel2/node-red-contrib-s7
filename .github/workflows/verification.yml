@@ -54,7 +54,7 @@ jobs:
         run: npm run test:integration
       - name: Save real TCP observations
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pinned-nodes7-integration-${{ matrix.os }}-node22
           path: test-reports/nodes7-pinned-*.json
@@ -110,7 +110,7 @@ jobs:
           }
       - name: Archive diagnostic output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: js-type-diagnostics-ubuntu-node22
           path: test-reports/js-type-diagnostics.txt
@@ -147,7 +147,7 @@ jobs:
         run: npm run test:runtime-lab
       - name: Preserve package digest and observed runtime outcomes
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: installed-node-red-runtime-${{ matrix.os }}-node${{ matrix.node }}
           path: test-reports/s7-runtime-lab.json
@@ -297,7 +297,7 @@ jobs:
           done
       - name: Preserve baseline-red and corrected-green test evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lifecycle-baseline-red-and-fixed-green-ubuntu-node22
           path: test-reports/*.tap
@@ -332,7 +332,7 @@ jobs:
         run: node scripts/ci/verify-s7-wire-replay.cjs
       - name: Keep synthetic S7 protocol evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: s7-wire-loopback-${{ matrix.os }}-node22
           path: test-reports/s7-*
