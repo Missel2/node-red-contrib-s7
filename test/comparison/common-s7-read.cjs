@@ -52,9 +52,11 @@ async function until(fn, ms, what) {
 }
 function openSockets(port) {
   if (typeof process._getActiveHandles !== "function") return null;
-  return process._getActiveHandles().filter(
-    (h) => h instanceof net.Socket && !h.destroyed && h.remotePort === port,
-  ).length;
+  return process
+    ._getActiveHandles()
+    .filter(
+      (h) => h instanceof net.Socket && !h.destroyed && h.remotePort === port,
+    ).length;
 }
 async function startFixture() {
   const python = process.env.S7_FIXTURE_PYTHON || "python";
@@ -106,18 +108,32 @@ function nodes(mode, port) {
       factories: [consumer("@missel2/node-red-contrib-s7/red/s7.js")],
       flow: [
         {
-          id: "ep", type: "s7 endpoint", transport: "iso-on-tcp",
-          connmode: "rack-slot", address: "127.0.0.1", port,
-          rack: 0, slot: 1, timeout: 2000, cycletime: 0,
+          id: "ep",
+          type: "s7 endpoint",
+          transport: "iso-on-tcp",
+          connmode: "rack-slot",
+          address: "127.0.0.1",
+          port,
+          rack: 0,
+          slot: 1,
+          timeout: 2000,
+          cycletime: 0,
           vartable: names.map((name, i) => ({ name, addr: tags[i] })),
         },
         {
-          id: "read", type: "s7 in", endpoint: "ep", mode: "all",
-          diff: false, wires: [["out"]],
+          id: "read",
+          type: "s7 in",
+          endpoint: "ep",
+          mode: "all",
+          diff: false,
+          wires: [["out"]],
         },
         {
-          id: "control", type: "s7 control", endpoint: "ep",
-          function: "", wires: [[]],
+          id: "control",
+          type: "s7 control",
+          endpoint: "ep",
+          function: "",
+          wires: [[]],
         },
         { id: "out", type: "helper" },
       ],
@@ -130,13 +146,24 @@ function nodes(mode, port) {
     ],
     flow: [
       {
-        id: "ep", type: "s7rs-endpoint", protocol: "s7",
-        host: "127.0.0.1", port, cpu: "1200", rack: 0, slot: 1,
-        timeout: 2000, reconnect: 5000,
+        id: "ep",
+        type: "s7rs-endpoint",
+        protocol: "s7",
+        host: "127.0.0.1",
+        port,
+        cpu: "1200",
+        rack: 0,
+        slot: 1,
+        timeout: 2000,
+        reconnect: 5000,
       },
       {
-        id: "read", type: "s7rs-read", endpoint: "ep",
-        tags: tags.join("\n"), output: "object", wires: [["out"]],
+        id: "read",
+        type: "s7rs-read",
+        endpoint: "ep",
+        tags: tags.join("\n"),
+        output: "object",
+        wires: [["out"]],
       },
       { id: "out", type: "helper" },
     ],
@@ -144,8 +171,11 @@ function nodes(mode, port) {
 }
 async function exercise(mode, port) {
   const result = {
-    status: "failed", protocol: "S7Comm",
-    readVerified: false, closeVerified: false, errors: [],
+    status: "failed",
+    protocol: "S7Comm",
+    readVerified: false,
+    closeVerified: false,
+    errors: [],
   };
   report.candidates[mode] = result;
   let loaded = false;
@@ -157,8 +187,10 @@ async function exercise(mode, port) {
     assert.ok(ep);
     const before = performance.now();
     await until(
-      () => mode === "js" ? ep.getStatus?.() === "online" :
-        ep.state?.state === "connected",
+      () =>
+        mode === "js"
+          ? ep.getStatus?.() === "online"
+          : ep.state?.state === "connected",
       12000,
       mode + " connection",
     );
@@ -168,14 +200,20 @@ async function exercise(mode, port) {
     const received = once(sink, "input");
     const startRead = performance.now();
     if (mode === "js") {
-      helper.getNode("control").receive({ function: "trigger", payload: "read" });
+      helper
+        .getNode("control")
+        .receive({ function: "trigger", payload: "read" });
     } else {
       helper.getNode("read").receive({ payload: "read" });
     }
     const [message] = await deadline(received, 7500, mode + " read");
     result.readMs = Math.round(performance.now() - startRead);
-    result.observed = mode === "js" ? message.payload :
-      Object.fromEntries(names.map((name, i) => [name, message.payload[tags[i]]]));
+    result.observed =
+      mode === "js"
+        ? message.payload
+        : Object.fromEntries(
+            names.map((name, i) => [name, message.payload[tags[i]]]),
+          );
     assert.deepEqual(result.observed, expected);
     result.readVerified = true;
     await deadline(helper.unload(), 8000, mode + " unload");
@@ -187,7 +225,7 @@ async function exercise(mode, port) {
     result.closeVerified = true;
     result.status = "passed";
   } catch (error) {
-    result.errors.push(String(error?.stack || error).slice(0,2500));
+    result.errors.push(String(error?.stack || error).slice(0, 2500));
   } finally {
     if (loaded) {
       try {
@@ -204,7 +242,11 @@ async function main() {
   try {
     assert.equal(process.platform, "linux");
     assert.equal(process.arch, "x64");
-    assert.equal(process.env.S7RS_NAPI, undefined, "No test-only Rust fake addon");
+    assert.equal(
+      process.env.S7RS_NAPI,
+      undefined,
+      "No test-only Rust fake addon",
+    );
     assert.equal(report.nodeRed, "5.0.9");
     assert.equal(report.packageIds.js, "0.1.0-alpha.2");
     assert.equal(report.packageIds.rust, "1.4.0");
@@ -212,7 +254,10 @@ async function main() {
       userDir,
       "node_modules/node-red-contrib-s7-rust/bin/linux-x64-gnu/s7napi.node",
     );
-    assert.ok(fs.statSync(native).size > 100000, "Real native release addon not installed");
+    assert.ok(
+      fs.statSync(native).size > 100000,
+      "Real native release addon not installed",
+    );
     fixture = await startFixture();
     helper.init(consumer.resolve("node-red"));
     await deadline(helper.startServer(), 15000, "Node-RED start");
@@ -220,11 +265,14 @@ async function main() {
     await exercise("js", fixture.port);
     await exercise("rust", fixture.port);
     if (Object.values(report.candidates).every((c) => c.status === "passed")) {
-      assert.deepEqual(report.candidates.js.observed, report.candidates.rust.observed);
+      assert.deepEqual(
+        report.candidates.js.observed,
+        report.candidates.rust.observed,
+      );
       report.status = "passed";
     }
   } catch (error) {
-    report.error = String(error?.stack || error).slice(0,2500);
+    report.error = String(error?.stack || error).slice(0, 2500);
   } finally {
     if (serverStarted) {
       try {
