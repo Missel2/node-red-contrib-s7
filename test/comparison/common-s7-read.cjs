@@ -57,7 +57,11 @@ async function until(fn, ms, what) {
 // Node's _getActiveHandles() cannot see sockets owned by the native addon.
 // Both candidates connect to the same pinned IPv4 loopback fixture.
 function establishedClientSockets(port) {
-  const rows = fs.readFileSync("/proc/net/tcp", "utf8").trim().split("\n").slice(1);
+  const rows = fs
+    .readFileSync("/proc/net/tcp", "utf8")
+    .trim()
+    .split("\n")
+    .slice(1);
   const fixturePortHex = port.toString(16).toUpperCase().padStart(4, "0");
   return rows.filter((line) => {
     const fields = line.trim().split(/\s+/);
@@ -252,7 +256,8 @@ async function exercise(mode, port) {
       0,
       mode + " must not retain or reopen its native/JS socket",
     );
-    result.socketObserver = "Linux /proc/net/tcp (kernel TCP state ESTABLISHED)";
+    result.socketObserver =
+      "Linux /proc/net/tcp (kernel TCP state ESTABLISHED)";
     result.closeVerified = true;
     result.status = "passed";
   } catch (error) {
