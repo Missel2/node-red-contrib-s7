@@ -289,6 +289,15 @@ async function main() {
       if (/HARNESS_TIMEOUT/.test(String(error))) throw error;
       lostAckOutcome = String(error.message);
     }
+    report.scenarios.lost_write_ack = {
+      result: "failed",
+      observedOutcome: lostAckOutcome,
+      ackDropsObserved: peer.droppedWrites.length,
+      fixtureApplied: peer.droppedWrites[0]?.fixtureAcknowledged ?? null,
+      totalWireWritesForAttempt: peer.writes.length - preLoss,
+      replayedWriteCount: Math.max(0, peer.writes.length - preLoss - 1),
+      elapsedMs: Math.round(performance.now() - t0),
+    };
     assert.notEqual(
       lostAckOutcome,
       "unexpected_success",
