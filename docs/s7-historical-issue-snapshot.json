@@ -1,0 +1,2372 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-16",
+  "scope": "Public issue records in seven selected, historically relevant nodes7/S7-Node-RED repositories; not a census of all GitHub forks, offline reports, all commits or all filed bugs.",
+  "sourceRepositories": [
+    "plcpeople/nodes7",
+    "st-one-io/nodes7",
+    "oriolrius/nodes7",
+    "Missel2/nodes7",
+    "st-one-io/node-red-contrib-s7",
+    "oriolrius/node-red-contrib-s7",
+    "Missel2/node-red-contrib-s7"
+  ],
+  "snapshotIssueCount": 293,
+  "countsByRepository": {
+    "plcpeople/nodes7": 112,
+    "st-one-io/nodes7": 13,
+    "oriolrius/nodes7": 0,
+    "Missel2/nodes7": 10,
+    "st-one-io/node-red-contrib-s7": 141,
+    "oriolrius/node-red-contrib-s7": 1,
+    "Missel2/node-red-contrib-s7": 16
+  },
+  "sourceRetrievalFailures": [],
+  "classificationRule": "Issue titles are triage hints, not confirmed defects. Every entry remains NOT_TESTED until an explicit, independent testcase links a run and immutable package version.",
+  "entries": [
+    {
+      "repo": "Missel2/node-red-contrib-s7",
+      "issue": 2,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/node-red-contrib-s7",
+      "issue": 3,
+      "state": "closed",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/node-red-contrib-s7",
+      "issue": 4,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/node-red-contrib-s7",
+      "issue": 5,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/node-red-contrib-s7",
+      "issue": 7,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/node-red-contrib-s7",
+      "issue": 8,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/node-red-contrib-s7",
+      "issue": 16,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/node-red-contrib-s7",
+      "issue": 18,
+      "state": "open",
+      "family": "platform_compatibility",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/node-red-contrib-s7",
+      "issue": 19,
+      "state": "closed",
+      "family": "write_semantics",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/node-red-contrib-s7",
+      "issue": 20,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/node-red-contrib-s7",
+      "issue": 21,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/node-red-contrib-s7",
+      "issue": 27,
+      "state": "closed",
+      "family": "write_semantics",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/node-red-contrib-s7",
+      "issue": 45,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/node-red-contrib-s7",
+      "issue": 50,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/node-red-contrib-s7",
+      "issue": 51,
+      "state": "open",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/node-red-contrib-s7",
+      "issue": 56,
+      "state": "open",
+      "family": "cross_impl_qualification",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/nodes7",
+      "issue": 10,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/nodes7",
+      "issue": 12,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/nodes7",
+      "issue": 14,
+      "state": "closed",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/nodes7",
+      "issue": 15,
+      "state": "open",
+      "family": "write_semantics",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/nodes7",
+      "issue": 16,
+      "state": "open",
+      "family": "fault_soak",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/nodes7",
+      "issue": 17,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/nodes7",
+      "issue": 20,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/nodes7",
+      "issue": 27,
+      "state": "open",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/nodes7",
+      "issue": 29,
+      "state": "open",
+      "family": "write_area_truncation",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "Missel2/nodes7",
+      "issue": 32,
+      "state": "open",
+      "family": "s7any_address_overflow",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "oriolrius/node-red-contrib-s7",
+      "issue": 1,
+      "state": "closed",
+      "family": "offline_reconnect_storm",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 1,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 2,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 3,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 4,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 5,
+      "state": "closed",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 6,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 8,
+      "state": "open",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 12,
+      "state": "closed",
+      "family": "platform_compatibility",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 13,
+      "state": "closed",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 15,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 16,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 17,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 18,
+      "state": "closed",
+      "family": "write_semantics",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 20,
+      "state": "closed",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 21,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 22,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 23,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 24,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 25,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 26,
+      "state": "closed",
+      "family": "tpkt_coalescing",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 29,
+      "state": "closed",
+      "family": "socket_cleanup",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 32,
+      "state": "open",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 33,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 36,
+      "state": "closed",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 37,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 38,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 40,
+      "state": "closed",
+      "family": "pdu_request_overflow",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 41,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 43,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 44,
+      "state": "open",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 45,
+      "state": "open",
+      "family": "parallel_read_bad_quality",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 46,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 47,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 48,
+      "state": "closed",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 49,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 50,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 51,
+      "state": "closed",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 52,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 54,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 55,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 56,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 58,
+      "state": "open",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 59,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 61,
+      "state": "closed",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 63,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 64,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 67,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 68,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 69,
+      "state": "closed",
+      "family": "crash_or_invalid_frames",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 70,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 71,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 72,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 74,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 75,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 76,
+      "state": "open",
+      "family": "concurrent_read_callbacks",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 77,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 78,
+      "state": "closed",
+      "family": "crash_or_invalid_frames",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 80,
+      "state": "closed",
+      "family": "crash_or_invalid_frames",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 82,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 83,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 85,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 86,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 87,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 88,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 89,
+      "state": "closed",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 90,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 91,
+      "state": "closed",
+      "family": "pdu_reference_collision",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 92,
+      "state": "closed",
+      "family": "platform_compatibility",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 93,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 94,
+      "state": "open",
+      "family": "write_after_end",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 95,
+      "state": "closed",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 97,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 98,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 99,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 100,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 101,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 102,
+      "state": "open",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 103,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 104,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 105,
+      "state": "closed",
+      "family": "crash_or_invalid_frames",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 106,
+      "state": "closed",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 107,
+      "state": "closed",
+      "family": "crash_or_invalid_frames",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 108,
+      "state": "closed",
+      "family": "crash_or_invalid_frames",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 109,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 110,
+      "state": "closed",
+      "family": "crash_or_invalid_frames",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 111,
+      "state": "closed",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 112,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 113,
+      "state": "closed",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 114,
+      "state": "open",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 115,
+      "state": "open",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 116,
+      "state": "open",
+      "family": "drop_callback_order",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 117,
+      "state": "open",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 119,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 120,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 121,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 123,
+      "state": "closed",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 125,
+      "state": "closed",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 127,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 128,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 129,
+      "state": "open",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 130,
+      "state": "open",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 131,
+      "state": "open",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 132,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 134,
+      "state": "open",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 135,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 136,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 137,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 138,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 139,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 140,
+      "state": "open",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 141,
+      "state": "closed",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "plcpeople/nodes7",
+      "issue": 143,
+      "state": "open",
+      "family": "malformed_error_item_crash",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 2,
+      "state": "closed",
+      "family": "platform_compatibility",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 3,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 4,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 5,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 6,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 7,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 8,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 9,
+      "state": "closed",
+      "family": "platform_compatibility",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 10,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 11,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 12,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 14,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 15,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 16,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 17,
+      "state": "closed",
+      "family": "write_semantics",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 18,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 20,
+      "state": "closed",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 21,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 22,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 23,
+      "state": "closed",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 24,
+      "state": "closed",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 25,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 26,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 27,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 28,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 29,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 30,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 31,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 32,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 33,
+      "state": "closed",
+      "family": "array_diff_suppression",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 34,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 35,
+      "state": "closed",
+      "family": "write_semantics",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 36,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 37,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 38,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 39,
+      "state": "closed",
+      "family": "write_semantics",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 40,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 41,
+      "state": "closed",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 42,
+      "state": "closed",
+      "family": "crash_or_invalid_frames",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 43,
+      "state": "closed",
+      "family": "crash_or_invalid_frames",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 44,
+      "state": "closed",
+      "family": "write_semantics",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 45,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 48,
+      "state": "closed",
+      "family": "crash_or_invalid_frames",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 49,
+      "state": "closed",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 50,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 51,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 52,
+      "state": "closed",
+      "family": "crash_or_invalid_frames",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 53,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 54,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 55,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 56,
+      "state": "closed",
+      "family": "platform_compatibility",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 57,
+      "state": "closed",
+      "family": "platform_compatibility",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 58,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 59,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 61,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 62,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 63,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 64,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 65,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 67,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 69,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 70,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 71,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 72,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 73,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 74,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 75,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 77,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 78,
+      "state": "closed",
+      "family": "platform_compatibility",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 79,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 80,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 81,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 82,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 83,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 84,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 85,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 86,
+      "state": "closed",
+      "family": "write_semantics",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 87,
+      "state": "closed",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 88,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 89,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 90,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 91,
+      "state": "open",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 92,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 93,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 94,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 95,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 96,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 98,
+      "state": "open",
+      "family": "missing_error_event",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 99,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 100,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 102,
+      "state": "open",
+      "family": "duplicate_connections",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 104,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 105,
+      "state": "closed",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 106,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 107,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 108,
+      "state": "closed",
+      "family": "write_semantics",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 109,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 110,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 111,
+      "state": "closed",
+      "family": "write_semantics",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 112,
+      "state": "closed",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 113,
+      "state": "closed",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 114,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 115,
+      "state": "open",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 116,
+      "state": "open",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 117,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 118,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 119,
+      "state": "closed",
+      "family": "platform_compatibility",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 120,
+      "state": "closed",
+      "family": "write_semantics",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 121,
+      "state": "open",
+      "family": "write_semantics",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 122,
+      "state": "closed",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 123,
+      "state": "open",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 124,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 125,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 126,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 127,
+      "state": "open",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 128,
+      "state": "open",
+      "family": "multi_item_write_padding",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 129,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 130,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 131,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 132,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 133,
+      "state": "open",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 134,
+      "state": "open",
+      "family": "odd_length_read_pdu",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 135,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 136,
+      "state": "open",
+      "family": "reconnect_stall",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 137,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 138,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 140,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 141,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 142,
+      "state": "closed",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 143,
+      "state": "open",
+      "family": "uncaught_late_error",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 144,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 145,
+      "state": "open",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 146,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 147,
+      "state": "open",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 150,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 154,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 155,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 156,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 157,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 158,
+      "state": "open",
+      "family": "connection_lifecycle",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/node-red-contrib-s7",
+      "issue": 160,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/nodes7",
+      "issue": 1,
+      "state": "open",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/nodes7",
+      "issue": 2,
+      "state": "open",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/nodes7",
+      "issue": 3,
+      "state": "closed",
+      "family": "pdu_or_data_integrity",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/nodes7",
+      "issue": 4,
+      "state": "open",
+      "family": "review_unclassified",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/nodes7",
+      "issue": 5,
+      "state": "closed",
+      "family": "feature_or_question",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/nodes7",
+      "issue": 8,
+      "state": "open",
+      "family": "multi_item_write_padding",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/nodes7",
+      "issue": 10,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/nodes7",
+      "issue": 11,
+      "state": "open",
+      "family": "read_quality",
+      "triage": "title_classification_unverified",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/nodes7",
+      "issue": 12,
+      "state": "open",
+      "family": "listener_growth",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/nodes7",
+      "issue": 13,
+      "state": "open",
+      "family": "uncaught_late_error",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/nodes7",
+      "issue": 16,
+      "state": "open",
+      "family": "multi_item_write_padding",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/nodes7",
+      "issue": 17,
+      "state": "open",
+      "family": "odd_length_read_pdu",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    },
+    {
+      "repo": "st-one-io/nodes7",
+      "issue": 20,
+      "state": "open",
+      "family": "overlapping_split_parts",
+      "triage": "manually_curated_family",
+      "testEvidence": "NOT_TESTED_BY_THIS_INVENTORY"
+    }
+  ]
+}

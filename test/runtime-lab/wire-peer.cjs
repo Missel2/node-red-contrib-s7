@@ -54,6 +54,58 @@ function s7Pdu(frame) {
   };
 }
 
+// A partial/malformed reply may not contain header fields at their usual
+// offsets. The observer itself must never throw while recording such a frame.
+function read16IfPresent(frame, offset) {
+  return frame.length >= offset + 2 ? frame.readUInt16BE(offset) : null;
+}
+
+// Opt-in deterministic corruption of a LIVE fixture ReadVar ACK. Keep actual
+// COTP/S7 handshake and read request authentic; only the selected reply is
+// mutated. The normal relay is byte-identical when readReplyMutation is null.
+function corruptReadReply(original, mutation) {
+  assert.ok(original.length >= 22 && original[7] === 0x32 && original[8] === 3);
+  assert.equal(original[19], READ_VAR);
+  if (mutation === "error_items_nonzero_length") {
+    assert.equal(
+      original[20],
+      3,
+      "Negative control requires 3 separate READ_VAR items",
+    );
+    const dataStart = 19 + original.readUInt16BE(13);
+    assert.ok(dataStart <= original.length, "Read response parameter bounds");
+    // plcpeople/nodeS7#143: 0x0A (missing DB), size=0, length=4, *no data*.
+    // A legal outer TPKT and S7 header contains three intentionally invalid
+    // return items; unsafe clients have crashed on non-integer parse offsets.
+    const invalidItem = Buffer.from([0x0a, 0x00, 0x00, 0x04]);
+    const frame = Buffer.concat([
+      original.subarray(0, dataStart),
+      invalidItem,
+      invalidItem,
+      invalidItem,
+    ]);
+    frame.writeUInt16BE(12, 15);
+    frame.writeUInt16BE(frame.length, 2);
+    return frame;
+  }
+  if (mutation === "short_s7_reply") {
+    const frame = Buffer.from(original.subarray(0, 12));
+    frame.writeUInt16BE(frame.length, 2);
+    return frame;
+  }
+  if (mutation === "inconsistent_data_length") {
+    const frame = Buffer.from(original);
+    frame.writeUInt16BE(0x7fff, 15);
+    return frame;
+  }
+  if (mutation === "wrong_pdu_reference") {
+    const frame = Buffer.from(original);
+    frame.writeUInt16BE((frame.readUInt16BE(11) + 1) & 0xffff, 11);
+    return frame;
+  }
+  throw new Error("Unknown approved READ_VAR reply mutation");
+}
+
 async function createWirePeer(upstreamPort) {
   assert.ok(
     Number.isInteger(upstreamPort) &&
@@ -70,6 +122,9 @@ async function createWirePeer(upstreamPort) {
     cotpRequests: 0,
     blackholedRequests: 0,
     writes: [],
+    reads: [],
+    readReplyMutation: null,
+    mutatedReadReplies: [],
     droppedWrites: [],
     withheldReads: [],
     errors: [],
@@ -120,6 +175,13 @@ async function createWirePeer(upstreamPort) {
           if (pdu.functionCode === WRITE_VAR) {
             peer.writes.push({ session, reference: pdu.reference });
           }
+          if (pdu.functionCode === READ_VAR) {
+            peer.reads.push({
+              session,
+              reference: pdu.reference,
+              itemCount: frame[18],
+            });
+          }
         }
         upstream?.write(frame);
       },
@@ -134,6 +196,28 @@ async function createWirePeer(upstreamPort) {
           if (pdu?.kind === 3) {
             const request = requests.get(pdu.reference);
             requests.delete(pdu.reference);
+            if (request === READ_VAR && peer.readReplyMutation) {
+              const selected = peer.readReplyMutation;
+              peer.readReplyMutation = null;
+              const mutant = corruptReadReply(frame, selected);
+              peer.mutatedReadReplies.push({
+                session,
+                reference: pdu.reference,
+                mutation: selected,
+                requestObserved: true,
+                originalBytes: frame.length,
+                deliveredBytes: mutant.length,
+                originalItemCount: frame[20],
+                originalPduRef: frame.readUInt16BE(11),
+                deliveredPduRef: read16IfPresent(mutant, 11),
+                originalDataLength: frame.readUInt16BE(15),
+                deliveredDataLength: read16IfPresent(mutant, 15),
+                originalTpktLength: frame.readUInt16BE(2),
+                deliveredTpktLength: mutant.readUInt16BE(2),
+              });
+              client.write(mutant);
+              return;
+            }
             if (
               request === WRITE_VAR &&
               pdu.functionCode === WRITE_VAR &&
@@ -174,4 +258,4 @@ async function createWirePeer(upstreamPort) {
   return peer;
 }
 
-module.exports = { createWirePeer, loopback };
+module.exports = { createWirePeer, loopback, read16IfPresent };

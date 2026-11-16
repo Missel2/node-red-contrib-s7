@@ -11,6 +11,10 @@ from snap7.type import SrvArea
 
 LISTEN_ADDRESS = "127.0.0.1"
 LISTEN_PORT = int(os.environ.get("S7_FIXTURE_PORT", "1102"))
+# Larger deterministic DB1 is opt-in for independent historical regressions.
+DB_BYTES = int(os.environ.get("S7_FIXTURE_DB_BYTES", "64"))
+if DB_BYTES not in (64, 2048):
+    raise ValueError("S7 fixture DB must be 64 or 2048 synthetic bytes")
 if LISTEN_PORT != 0 and not 1024 <= LISTEN_PORT <= 65535:
     raise ValueError("S7 test port must be unprivileged")
 stop_requested = threading.Event()
@@ -22,7 +26,7 @@ def request_stop(_signal_number, _frame):
 
 def main():
     logging.basicConfig(level=logging.WARNING)
-    synthetic_db = bytearray(64)
+    synthetic_db = bytearray(i & 0xFF for i in range(DB_BYTES)) if DB_BYTES > 64 else bytearray(64)
     struct.pack_into(">f", synthetic_db, 0, 12.5)
     struct.pack_into(">h", synthetic_db, 4, -123)
     struct.pack_into(">f", synthetic_db, 8, 3.25)
