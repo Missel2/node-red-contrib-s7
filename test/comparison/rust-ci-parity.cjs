@@ -33,6 +33,7 @@ const report = {
   node: process.version,
   platform: process.platform,
   hil: "PENDING_HARDWARE",
+  caseMode: process.env.S7_RUST_PARITY_CASE || "full",
   scenarios: {},
 };
 
@@ -226,6 +227,7 @@ async function main() {
       consumer("node-red-contrib-s7-rust/nodes/s7rs-read.js"),
       consumer("node-red-contrib-s7-rust/nodes/s7rs-write.js"),
     ];
+    if (report.caseMode === "full") {
     await bounded(
       helper.load(factories, flow(peer.port)),
       12000,
@@ -368,6 +370,7 @@ async function main() {
       socketsAfterUnload: 0,
     });
 
+    }
     peer.blackhole = true;
     const priorBlackholed = peer.blackholedRequests;
     await bounded(
@@ -412,7 +415,10 @@ async function main() {
       observationMs: 5400,
     };
 
-    assert.equal(Object.keys(report.scenarios).length, 5);
+    assert.equal(
+      Object.keys(report.scenarios).length,
+      report.caseMode === "full" ? 6 : 1,
+    );
     report.result = Object.values(report.scenarios).every(
       (scenario) => scenario.result === "passed",
     )
