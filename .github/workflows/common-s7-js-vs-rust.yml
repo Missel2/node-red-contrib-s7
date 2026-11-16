@@ -110,6 +110,37 @@ jobs:
           path: test-reports/malformed-*.json
           if-no-files-found: warn
           retention-days: 14
+      - name: Mutate READ_VAR replies from real Snap7 server (isolated parser fuzz cases)
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          status=0
+          for engine in js rust; do
+            for fault in error_items_nonzero_length short_s7_reply inconsistent_data_length wrong_pdu_reference; do
+              echo "::group::${engine}/${fault}: live READ_VAR reply mutation"
+              if timeout --signal=TERM --kill-after=3s 36s \
+                env S7_READ_FAULT_ENGINE="$engine" S7_READ_FAULT_CASE="$fault" \
+                node test/comparison/malformed-read.cjs "$S7_COMPARISON_DIR/consumer"; then
+                echo "MALFORMED_READ_CASE_PASSED=${engine}/${fault}"
+              else
+                result=$?
+                echo "::error::Live READ_VAR mutation regression: $engine/$fault exit=$result"
+                status=1
+              fi
+              echo "::endgroup::"
+            done
+          done
+          exit "$status"
+        timeout-minutes: 8
+      - name: Preserve independent READ_VAR mutation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s7-malformed-read-cross-engine
+          path: test-reports/malformed-read-*.json
+          if-no-files-found: warn
+          retention-days: 14
       - name: Keep neutral protocol proof regardless of test outcome
         if: always()
         uses: actions/upload-artifact@v4
