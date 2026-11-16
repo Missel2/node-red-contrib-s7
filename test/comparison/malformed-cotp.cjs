@@ -22,25 +22,48 @@ const cases = Object.freeze({
   invalid_cotp_cc: Buffer.from([3, 0, 0, 7, 1, 0xd0, 0]),
 });
 assert.ok(["js", "rust"].includes(engine), "Only known installed engines");
-assert.ok(Object.hasOwn(cases, fault), "Only approved deterministic malformed cases");
+assert.ok(
+  Object.hasOwn(cases, fault),
+  "Only approved deterministic malformed cases",
+);
 const consumer = createRequire(path.join(userDir, "package.json"));
 const helper = consumer("node-red-node-test-helper");
-const reportPath = path.join(root, "test-reports", "malformed-" + engine + "-" + fault + ".json");
+const reportPath = path.join(
+  root,
+  "test-reports",
+  "malformed-" + engine + "-" + fault + ".json",
+);
 const report = {
   schemaVersion: 1,
-  engine, fault, verdict: "failed", hardware: "PENDING_HARDWARE",
-  commit: execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim(),
+  engine,
+  fault,
+  verdict: "failed",
+  hardware: "PENDING_HARDWARE",
+  commit: execFileSync("git", ["rev-parse", "HEAD"], {
+    cwd: root,
+    encoding: "utf8",
+  }).trim(),
   nodeRed: consumer("node-red/package.json").version,
-  package: engine === "js"
-    ? consumer("@missel2/node-red-contrib-s7/package.json").version
-    : consumer("node-red-contrib-s7-rust/package.json").version,
-  injections: 0, cotpRequests: 0, observedConnections: 0, unexpectedOnline: false,
+  package:
+    engine === "js"
+      ? consumer("@missel2/node-red-contrib-s7/package.json").version
+      : consumer("node-red-contrib-s7-rust/package.json").version,
+  injections: 0,
+  cotpRequests: 0,
+  observedConnections: 0,
+  unexpectedOnline: false,
 };
 function bounded(promise, timeout, what) {
   let id;
-  return Promise.race([promise, new Promise((_, reject) => {
-    id = setTimeout(() => reject(new Error("HARNESS_TIMEOUT: " + what)), timeout);
-  })]).finally(() => clearTimeout(id));
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      id = setTimeout(
+        () => reject(new Error("HARNESS_TIMEOUT: " + what)),
+        timeout,
+      );
+    }),
+  ]).finally(() => clearTimeout(id));
 }
 async function until(predicate, timeout, what) {
   const start = performance.now();
@@ -51,32 +74,56 @@ async function until(predicate, timeout, what) {
   throw new Error("HARNESS_TIMEOUT: " + what);
 }
 function flow(port) {
-  if (engine === "js") return {
-    factories: [consumer("@missel2/node-red-contrib-s7/red/s7.js")],
-    nodes: [
-      {
-        id: "ep", type: "s7 endpoint", transport: "iso-on-tcp",
-        connmode: "rack-slot", address: "127.0.0.1", port,
-        rack: 0, slot: 1, timeout: 900, cycletime: 0,
-        vartable: [{ name: "dummy", addr: "DB1,INT4" }],
-      },
-      { id: "reader", type: "s7 in", endpoint: "ep", mode: "all", diff: false, wires: [["out"]] },
-      { id: "out", type: "helper" },
-    ],
-  };
+  if (engine === "js")
+    return {
+      factories: [consumer("@missel2/node-red-contrib-s7/red/s7.js")],
+      nodes: [
+        {
+          id: "ep",
+          type: "s7 endpoint",
+          transport: "iso-on-tcp",
+          connmode: "rack-slot",
+          address: "127.0.0.1",
+          port,
+          rack: 0,
+          slot: 1,
+          timeout: 900,
+          cycletime: 0,
+          vartable: [{ name: "dummy", addr: "DB1,INT4" }],
+        },
+        {
+          id: "reader",
+          type: "s7 in",
+          endpoint: "ep",
+          mode: "all",
+          diff: false,
+          wires: [["out"]],
+        },
+        { id: "out", type: "helper" },
+      ],
+    };
   return {
     factories: [consumer("node-red-contrib-s7-rust/nodes/s7rs-endpoint.js")],
     nodes: [
       {
-        id: "ep", type: "s7rs-endpoint", protocol: "s7",
-        host: "127.0.0.1", port, cpu: "1200", rack: 0, slot: 1,
-        timeout: 900, reconnect: 5000,
+        id: "ep",
+        type: "s7rs-endpoint",
+        protocol: "s7",
+        host: "127.0.0.1",
+        port,
+        cpu: "1200",
+        rack: 0,
+        slot: 1,
+        timeout: 900,
+        reconnect: 5000,
       },
     ],
   };
 }
 async function main() {
-  let server, loaded = false, started = false;
+  let server,
+    loaded = false,
+    started = false;
   const sockets = new Set();
   try {
     assert.equal(process.platform, "linux");
@@ -115,14 +162,30 @@ async function main() {
     await bounded(helper.startServer(), 15000, "Node-RED start");
     started = true;
     const cfg = flow(port);
-    await bounded(helper.load(cfg.factories, cfg.nodes), 14000, "load actual installed Node-RED extension");
+    await bounded(
+      helper.load(cfg.factories, cfg.nodes),
+      14000,
+      "load actual installed Node-RED extension",
+    );
     loaded = true;
-    await until(() => report.injections > 0, 7500, "real COTP request plus injected malformed response");
+    await until(
+      () => report.injections > 0,
+      7500,
+      "real COTP request plus injected malformed response",
+    );
     await sleep(1000);
     const ep = helper.getNode("ep");
-    report.endpointStatus = engine === "js" ? ep.getStatus?.() : ep.state?.state;
-    report.unexpectedOnline = engine === "js" ? ep.getStatus?.() === "online" : ep.state?.state === "connected";
-    assert.equal(report.unexpectedOnline, false, "malformed CC cannot report S7 online");
+    report.endpointStatus =
+      engine === "js" ? ep.getStatus?.() : ep.state?.state;
+    report.unexpectedOnline =
+      engine === "js"
+        ? ep.getStatus?.() === "online"
+        : ep.state?.state === "connected";
+    assert.equal(
+      report.unexpectedOnline,
+      false,
+      "malformed CC cannot report S7 online",
+    );
     assert.ok(report.cotpRequests >= 1 && report.injections >= 1);
     await bounded(helper.unload(), 9000, "unload malformed endpoint");
     loaded = false;
@@ -136,27 +199,53 @@ async function main() {
     report.error = String(error?.stack || error).slice(0, 2300);
   } finally {
     if (loaded) {
-      try { await bounded(helper.unload(), 9000, "unload cleanup"); }
-      catch (error) { report.cleanupError = String(error); report.verdict = "failed"; }
+      try {
+        await bounded(helper.unload(), 9000, "unload cleanup");
+      } catch (error) {
+        report.cleanupError = String(error);
+        report.verdict = "failed";
+      }
     }
     if (started) {
-      try { await bounded(helper.stopServer(), 12000, "stop Node-RED"); }
-      catch (error) { report.stopError = String(error); report.verdict = "failed"; }
+      try {
+        await bounded(helper.stopServer(), 12000, "stop Node-RED");
+      } catch (error) {
+        report.stopError = String(error);
+        report.verdict = "failed";
+      }
     }
     if (server) {
       for (const socket of sockets) socket.destroy();
-      try { await bounded(new Promise((resolve, reject) =>
-        server.close((err) => err ? reject(err) : resolve())), 5000, "stop fake COTP peer"); }
-      catch (error) { report.serverStopError = String(error); report.verdict = "failed"; }
+      try {
+        await bounded(
+          new Promise((resolve, reject) =>
+            server.close((err) => (err ? reject(err) : resolve())),
+          ),
+          5000,
+          "stop fake COTP peer",
+        );
+      } catch (error) {
+        report.serverStopError = String(error);
+        report.verdict = "failed";
+      }
     }
     fs.mkdirSync(path.dirname(reportPath), { recursive: true });
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2) + "\n");
-    console.log("MALFORMED_COTP_RESULT=" + JSON.stringify({
-      engine, fault, verdict: report.verdict, injected: report.injections,
-      unexpectedOnline: report.unexpectedOnline,
-    }));
+    console.log(
+      "MALFORMED_COTP_RESULT=" +
+        JSON.stringify({
+          engine,
+          fault,
+          verdict: report.verdict,
+          injected: report.injections,
+          unexpectedOnline: report.unexpectedOnline,
+        }),
+    );
     if (report.error) console.error(report.error);
     if (report.verdict !== "passed") process.exitCode = 1;
   }
 }
-main().catch((error) => { console.error(error); process.exitCode = 1; });
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
