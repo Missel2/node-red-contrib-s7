@@ -202,6 +202,12 @@ async function createWirePeer(upstreamPort) {
                 originalBytes: frame.length,
                 deliveredBytes: mutant.length,
                 originalItemCount: frame[20],
+                originalPduRef: frame.readUInt16BE(11),
+                deliveredPduRef: mutant.readUInt16BE(11),
+                originalDataLength: frame.readUInt16BE(15),
+                deliveredDataLength: mutant.readUInt16BE(15),
+                originalTpktLength: frame.readUInt16BE(2),
+                deliveredTpktLength: mutant.readUInt16BE(2),
               });
               client.write(mutant);
               return;
