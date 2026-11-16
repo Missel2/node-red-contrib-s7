@@ -2,7 +2,7 @@
 // Independent first common S7Comm proof: installed Node-RED, external loopback.
 // HIL-S7-001/002/007 remain PENDING_HARDWARE.
 const assert = require("node:assert/strict");
-const { spawn } = require("node:child_process");
+const { execFileSync, spawn } = require("node:child_process");
 const { createRequire } = require("node:module");
 const { once } = require("node:events");
 const fs = require("node:fs");
@@ -23,7 +23,11 @@ const expected = { temperature: 12.5, counter: -123, writable: 3.25 };
 const report = {
   schemaVersion: 1,
   status: "failed",
-  sourceCommit: process.env.GITHUB_SHA || "local",
+  sourceCommit: execFileSync("git", ["rev-parse", "HEAD"], {
+    cwd: root,
+    encoding: "utf8",
+  }).trim(),
+  workflowCommit: process.env.GITHUB_SHA || "local",
   nodeRed: consumer("node-red/package.json").version,
   fixture: "python-snap7==3.3.1 classic S7Comm loopback, synthetic DB1",
   packageIds: {
