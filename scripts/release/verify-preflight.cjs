@@ -203,6 +203,29 @@ function assertSbom(spdx, cdx, pkg, lock) {
   );
 }
 
+function npmVersion() {
+  // Windows uses npm.cmd, which execFileSync cannot execute directly.
+  // Read the official setup-node toolcache npm CLI through node itself.
+  if (process.platform === "win32") {
+    const cli = path.join(
+      path.dirname(process.execPath),
+      "node_modules",
+      "npm",
+      "bin",
+      "npm-cli.js",
+    );
+    assert.ok(fs.existsSync(cli), "Missing official Windows npm CLI");
+    return execFileSync(process.execPath, [cli, "--version"], {
+      encoding: "utf8",
+      timeout: 10000,
+    }).trim();
+  }
+  return execFileSync("npm", ["--version"], {
+    encoding: "utf8",
+    timeout: 10000,
+  }).trim();
+}
+
 function main() {
   const evidenceDir = path.resolve(process.argv[2] || "release-evidence");
   const pkg = readJson(path.join(root, "package.json"));
@@ -271,7 +294,7 @@ function main() {
     status: "preflight-only-not-published",
     sourceCommit: sourceSha,
     node: process.version,
-    npm: execFileSync("npm", ["--version"], { encoding: "utf8" }).trim(),
+    npm: npmVersion(),
     platform: process.platform,
     package: {
       name: pkg.name,
