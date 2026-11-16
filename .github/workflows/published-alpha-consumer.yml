@@ -32,7 +32,7 @@ jobs:
         run: node scripts/release/verify-published-consumer.cjs
       - name: Preserve non-identifying release evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: npm-public-consumer-${{ matrix.os }}
           path: test-reports/public-npm-consumer.json
@@ -61,7 +61,7 @@ jobs:
         run: node scripts/release/verify-nodes7-alpha2-registry.cjs
       - name: Preserve public metadata and SHA evidence only (no package)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nodes7-alpha2-public-registry-${{ matrix.os }}
           path: test-reports/nodes7-alpha2-registry-*.json
