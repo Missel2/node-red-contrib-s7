@@ -8,6 +8,7 @@ const {
   inspectMaster,
   inspectRuleset,
   inspectCheckRuns,
+  requiredForRelease,
 } = require("../../scripts/release/manual-alpha2-release-guard.cjs");
 
 const SHA = "a".repeat(40);
@@ -202,4 +203,18 @@ test("missing, failed, pending, stale or foreign-app checks stop publication", (
   ];
   for (const item of cases)
     assert.throws(() => inspectCheckRuns(item, required, SHA));
+});
+
+test("public release additionally requires runtime, protocol and archive evidence", () => {
+  const checks = requiredForRelease(["Analyze (actions)"]);
+  for (const name of [
+    "Installed Node-RED runtime (windows-2025, Node 24)",
+    "Installed Node-RED runtime (ubuntu-24.04, Node 22)",
+    "S7 wire tests (windows-2025, Node 22)",
+    "Compare immutable alpha2 archive bytes (Ubuntu vs Windows)",
+    "Manual alpha2 admission negative controls (Ubuntu, Node 22)",
+  ]) {
+    assert.ok(checks.includes(name), "Missing release gate: " + name);
+  }
+  assert.throws(() => inspectCheckRuns(sampleChecks(), checks, SHA));
 });
