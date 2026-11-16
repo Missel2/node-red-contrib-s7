@@ -1,3 +1,12 @@
+Candidate release: @missel2/node-red-contrib-s7@0.1.0-alpha.2 (source-only review)
+-----------------------------------------------------------------------------------
+ - New unique npm prerelease version prepared independently of immutable Contrib alpha.1; no npm publication by the source PR.
+ - Package keeps the historical Node-RED S7 node types and upstream GPL-3.0-or-later origin and credits.
+ - Direct runtime alias now resolves published @missel2/nodes7@0.1.0-alpha.2 with independently downloaded registry SHA-512 integrity; iso-on-tcp@0.1.0 remains locked.
+ - Corrected multi-PDU writes may affect more requested PLC bytes than older library behavior; no automatic retry for ambiguous writes.
+ - Hosted Windows/Linux Node 22/24, unmodified upstream Node-RED 5.0.9, synthetic S7Comm and package reproducibility must qualify the candidate.
+ - No physical Siemens CPU, firmware, production deployment or safety certification; HIL-S7-001..007 pending.
+
 Fork release: @missel2/node-red-contrib-s7@0.1.0-alpha.1 (npm alpha, 2026-11-11)
 ----------------------------------------------------------------------------------
  - Independently scoped GPL-3.0-or-later fork; retains original author credits.
