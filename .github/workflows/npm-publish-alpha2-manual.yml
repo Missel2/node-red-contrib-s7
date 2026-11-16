@@ -1,0 +1,163 @@
+name: npm publish Contrib alpha2 (manual)
+
+# Absolutely no PR, push or tag publication.
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        type: choice
+        description: 'verify (no npm write) or publish public alpha2'
+        required: true
+        default: verify
+        options: [verify, publish]
+
+concurrency:
+  group: contrib-alpha2-public-release
+  cancel-in-progress: false
+permissions:
+  contents: read
+
+jobs:
+  verify-master:
+    if: github.repository == 'Missel2/node-red-contrib-s7' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    permissions:
+      contents: read
+      checks: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.4'
+      - run: node --test test/release/manual-alpha2-release-guard.test.cjs test/release/alpha2-archive.test.cjs
+      - name: Verify protected master, CI and source identity
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_OPERATION: ${{ inputs.operation }}
+        run: node scripts/release/manual-alpha2-release-guard.cjs
+      - run: node scripts/release/check-alpha2-npm-availability.cjs
+
+  pack-matrix:
+    name: Rebuild archive on ${{ matrix.os }}
+    needs: verify-master
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    env:
+      SOURCE_SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.4'
+      - run: npm ci --omit=dev --ignore-scripts --no-audit --no-fund
+      - name: Verify npm archive, licenses and production SBOMs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release-evidence
+          npm pack --ignore-scripts --json --pack-destination release-evidence > release-evidence/pack.json
+          node tools/quality/check-package-files.cjs release-evidence/pack.json
+          npm sbom --package-lock-only --omit=dev --sbom-format=spdx > release-evidence/sbom.spdx.json
+          npm sbom --package-lock-only --omit=dev --sbom-format=cyclonedx > release-evidence/sbom.cdx.json
+          node scripts/release/verify-preflight.cjs release-evidence
+      - uses: actions/upload-artifact@v4
+        with:
+          name: contrib-alpha2-archive-${{ matrix.os }}-node22
+          path: release-evidence/manifest.json
+          if-no-files-found: error
+          retention-days: 7
+
+  compare:
+    name: Require Windows/Linux identical tarballs
+    needs: pack-matrix
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    env:
+      SOURCE_SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.4'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: contrib-alpha2-archive-*-node22
+          path: compare-manifests
+      - run: node scripts/release/compare-alpha2-archives.cjs compare-manifests
+
+  publish:
+    name: Public npm alpha2 only by deliberate dispatch
+    if: inputs.operation == 'publish' && github.repository == 'Missel2/node-red-contrib-s7' && github.ref == 'refs/heads/master'
+    needs: compare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: npm-release
+    permissions:
+      contents: read
+      checks: read
+      actions: read
+      id-token: write
+    env:
+      SOURCE_SHA: ${{ github.sha }}
+      RELEASE_OPERATION: ${{ inputs.operation }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.4'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Recheck master and all mandatory CI
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/release/manual-alpha2-release-guard.cjs
+      - run: node scripts/release/check-alpha2-npm-availability.cjs
+      - run: npm ci --omit=dev --ignore-scripts --no-audit --no-fund
+      - name: Rebuild and independently verify the exact publication bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p publish-evidence
+          npm pack --ignore-scripts --json --pack-destination publish-evidence > publish-evidence/pack.json
+          node tools/quality/check-package-files.cjs publish-evidence/pack.json
+          npm sbom --package-lock-only --omit=dev --sbom-format=spdx > publish-evidence/sbom.spdx.json
+          npm sbom --package-lock-only --omit=dev --sbom-format=cyclonedx > publish-evidence/sbom.cdx.json
+          node scripts/release/verify-preflight.cjs publish-evidence
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: contrib-alpha2-archive-*-node22
+          path: compare-manifests
+      - run: node scripts/release/check-alpha2-publish-archive.cjs compare-manifests publish-evidence/manifest.json
+      - run: npm install --global npm@11.15.0 --ignore-scripts --no-audit --no-fund
+      - name: Verify pinned OIDC-capable npm
+        shell: bash
+        run: test "$(npm --version)" = '11.15.0'
+      - name: Dry-run the exact local tarball (no registry write)
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm publish ./publish-evidence/missel2-node-red-contrib-s7-0.1.0-alpha.2.tgz --dry-run --tag=alpha --access=public --ignore-scripts --registry=https://registry.npmjs.org/
+      - name: PUBLIC publish; never retry without checking registry state
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$RELEASE_OPERATION" = 'publish'
+          npm publish ./publish-evidence/missel2-node-red-contrib-s7-0.1.0-alpha.2.tgz --tag=alpha --access=public --provenance --ignore-scripts --registry=https://registry.npmjs.org/
+          echo 'CONTRIB_ALPHA2_PUBLIC_NPM_PUBLISH_SUCCEEDED'
