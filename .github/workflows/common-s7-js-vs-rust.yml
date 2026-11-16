@@ -66,6 +66,8 @@ jobs:
       - name: Run identical classic S7Comm DB1 read and flow-removal teardown
         run: node test/comparison/common-s7-read.cjs "$S7_COMPARISON_DIR/consumer"
         timeout-minutes: 5
+      - name: Validate historical issue provenance and no fake test passes
+        run: node scripts/ci/validate-s7-historical-issue-index.cjs
       - name: Compare historical multi-write, odd PDU and overlapping read regressions
         run: node test/comparison/historical-s7-regressions.cjs "$S7_COMPARISON_DIR/consumer"
         timeout-minutes: 7
@@ -152,5 +154,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          node tools/quality/node_modules/prettier/bin/prettier.cjs --write test/comparison/historical-s7-regressions.cjs
+          node tools/quality/node_modules/prettier/bin/prettier.cjs --write test/comparison/historical-s7-regressions.cjs scripts/ci/validate-s7-historical-issue-index.cjs docs/s7-historical-issue-snapshot.json
           node -e 'const fs=require("node:fs"); console.log("FORMATTED_HISTORY_BASE64="+fs.readFileSync("test/comparison/historical-s7-regressions.cjs").toString("base64"))'
+          node -e 'const fs=require("node:fs"); console.log("FORMATTED_VALIDATOR_BASE64="+fs.readFileSync("scripts/ci/validate-s7-historical-issue-index.cjs").toString("base64"))'
