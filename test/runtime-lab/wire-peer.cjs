@@ -61,7 +61,11 @@ function corruptReadReply(original, mutation) {
   assert.ok(original.length >= 22 && original[7] === 0x32 && original[8] === 3);
   assert.equal(original[19], READ_VAR);
   if (mutation === "error_items_nonzero_length") {
-    assert.equal(original[20], 3, "Negative control requires 3 separate READ_VAR items");
+    assert.equal(
+      original[20],
+      3,
+      "Negative control requires 3 separate READ_VAR items",
+    );
     const dataStart = 19 + original.readUInt16BE(13);
     assert.ok(dataStart <= original.length, "Read response parameter bounds");
     // plcpeople/nodeS7#143: 0x0A (missing DB), size=0, length=4, *no data*.
