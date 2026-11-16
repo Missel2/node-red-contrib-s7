@@ -1,0 +1,220 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-16",
+  "description": "Prioritized executable contracts derived from historic S7 reports, NOT one-to-one coverage of 293 issue records. Implemented means the driver and named case exist, never that a candidate passes. Run artifacts provide outcomes.",
+  "sourceIndex": "docs/s7-historical-issue-snapshot.json",
+  "contracts": [
+    {
+      "id": "W01",
+      "label": "S7 multi-item BYTE write fill/padding",
+      "source": "st-one-io/nodes7#16",
+      "importance": "P0",
+      "implementation": "implemented",
+      "driver": "test/comparison/historical-s7-regressions.cjs",
+      "caseMarker": "multi_write_padding",
+      "target": "both"
+    },
+    {
+      "id": "W03",
+      "label": "Lost ACK write must not automatically replay",
+      "source": "Missel2/node-red-contrib-s7#56",
+      "importance": "P0",
+      "implementation": "implemented",
+      "driver": "test/comparison/rust-ci-parity.cjs",
+      "caseMarker": "lost_write_ack",
+      "target": "rust"
+    },
+    {
+      "id": "R01",
+      "label": "Many odd-length S7 array parts fit negotiated PDU",
+      "source": "st-one-io/nodes7#17",
+      "importance": "P1",
+      "implementation": "implemented",
+      "driver": "test/comparison/historical-s7-regressions.cjs",
+      "caseMarker": "odd_length_read_pdu",
+      "target": "both"
+    },
+    {
+      "id": "R02",
+      "label": "Overlapping split read retains every byte",
+      "source": "st-one-io/nodes7#20",
+      "importance": "P0",
+      "implementation": "implemented",
+      "driver": "test/comparison/historical-s7-regressions.cjs",
+      "caseMarker": "overlapping_split_parts",
+      "target": "both"
+    },
+    {
+      "id": "R04a",
+      "label": "Nonzero declared length on missing read item",
+      "source": "plcpeople/nodes7#143",
+      "importance": "P0",
+      "implementation": "implemented",
+      "driver": "test/comparison/malformed-read.cjs",
+      "caseMarker": "error_items_nonzero_length",
+      "target": "both"
+    },
+    {
+      "id": "R04b",
+      "label": "Truncated S7 AckData",
+      "source": "plcpeople/nodes7#143",
+      "importance": "P0",
+      "implementation": "implemented",
+      "driver": "test/comparison/malformed-read.cjs",
+      "caseMarker": "short_s7_reply",
+      "target": "both"
+    },
+    {
+      "id": "R04c",
+      "label": "Malformed S7 AckData declared header data length",
+      "source": "plcpeople/nodes7#143",
+      "importance": "P1",
+      "implementation": "implemented",
+      "driver": "test/comparison/malformed-read.cjs",
+      "caseMarker": "inconsistent_data_length",
+      "target": "both"
+    },
+    {
+      "id": "R06a",
+      "label": "Wrong 16-bit S7 PDU transaction reference",
+      "source": "plcpeople/nodes7#91",
+      "importance": "P1",
+      "implementation": "implemented",
+      "driver": "test/comparison/malformed-read.cjs",
+      "caseMarker": "wrong_pdu_reference",
+      "target": "both"
+    },
+    {
+      "id": "R07a",
+      "label": "Short COTP connection-confirm packet",
+      "source": "plcpeople/nodes7#143",
+      "importance": "P0",
+      "implementation": "implemented",
+      "driver": "test/comparison/malformed-cotp.cjs",
+      "caseMarker": "short_tpkt",
+      "target": "both"
+    },
+    {
+      "id": "R07b",
+      "label": "Non-TPKT response in handshake",
+      "source": "plcpeople/nodes7#143",
+      "importance": "P0",
+      "implementation": "implemented",
+      "driver": "test/comparison/malformed-cotp.cjs",
+      "caseMarker": "non_tpkt",
+      "target": "both"
+    },
+    {
+      "id": "R07c",
+      "label": "Declared long TPKT truncated",
+      "source": "plcpeople/nodes7#40",
+      "importance": "P1",
+      "implementation": "implemented",
+      "driver": "test/comparison/malformed-cotp.cjs",
+      "caseMarker": "declared_long_tpkt",
+      "target": "both"
+    },
+    {
+      "id": "R07d",
+      "label": "Invalid COTP CC body",
+      "source": "plcpeople/nodes7#143",
+      "importance": "P0",
+      "implementation": "implemented",
+      "driver": "test/comparison/malformed-cotp.cjs",
+      "caseMarker": "invalid_cotp_cc",
+      "target": "both"
+    },
+    {
+      "id": "C04",
+      "label": "Pending read must not emit after flow unload",
+      "source": "plcpeople/nodes7#132",
+      "importance": "P1",
+      "implementation": "implemented",
+      "driver": "test/comparison/rust-ci-parity.cjs",
+      "caseMarker": "pending_read_on_unload",
+      "target": "rust"
+    },
+    {
+      "id": "C05",
+      "label": "No new reconnects after explicit unload",
+      "source": "oriolrius/node-red-contrib-s7#1",
+      "importance": "P1",
+      "implementation": "implemented",
+      "driver": "test/comparison/rust-ci-parity.cjs",
+      "caseMarker": "blackhole_and_explicit_removal",
+      "target": "rust"
+    },
+    {
+      "id": "W02",
+      "label": "Full multi-PDU writeArea content/offset",
+      "source": "Missel2/nodes7#29",
+      "importance": "P0",
+      "implementation": "pending",
+      "reason": "Requires dedicated exact byte+offset oracle and original-red mutation control",
+      "target": "both"
+    },
+    {
+      "id": "R03",
+      "label": "24-bit S7ANY address wrap and entire-span guard",
+      "source": "Missel2/nodes7#32",
+      "importance": "P0",
+      "implementation": "pending",
+      "reason": "Requires exact pre-dispatch no-wire oracle and documented BIT address semantics",
+      "target": "both"
+    },
+    {
+      "id": "R05",
+      "label": "Concurrent reads settle each callback once",
+      "source": "plcpeople/nodes7#76",
+      "importance": "P1",
+      "implementation": "pending",
+      "reason": "Needs independent queue and message-correlation oracle",
+      "target": "both"
+    },
+    {
+      "id": "R06b",
+      "label": "Late stale reply after reconnect and transaction wrap",
+      "source": "plcpeople/nodes7#91",
+      "importance": "P0",
+      "implementation": "pending",
+      "reason": "Needs delayed responses with differing valid content and exact PDU ref",
+      "target": "both"
+    },
+    {
+      "id": "R07e",
+      "label": "TCP fragmentation/coalescing of complete S7Comm replies",
+      "source": "plcpeople/nodes7#26",
+      "importance": "P1",
+      "implementation": "pending",
+      "reason": "Need byte stream mutation and fresh read oracle, not only TPKT reassembly by proxy",
+      "target": "both"
+    },
+    {
+      "id": "C02",
+      "label": "Late ECONNRESET must not crash Node-RED",
+      "source": "st-one-io/nodes7#13",
+      "importance": "P0",
+      "implementation": "pending",
+      "reason": "Needs delayed valid COTP+timer race and isolated child-process exit proof",
+      "target": "both"
+    },
+    {
+      "id": "C01",
+      "label": "Offline 100+ cycle listener/RSS/socket soak",
+      "source": "oriolrius/node-red-contrib-s7#1",
+      "importance": "P1",
+      "implementation": "pending",
+      "reason": "Needs bounded long soak, resource trends and explicit stop semantics",
+      "target": "both"
+    },
+    {
+      "id": "R08",
+      "label": "STRING/CHAR/BOOL/64-bit/DTL exact bit oracle",
+      "source": "st-one-io/nodes7#4",
+      "importance": "P1",
+      "implementation": "pending",
+      "reason": "Needs shared datatype capability N/A map and exact-byte fixtures",
+      "target": "both"
+    }
+  ]
+}
