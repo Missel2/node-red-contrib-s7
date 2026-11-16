@@ -24,7 +24,7 @@ jobs:
         os: [ubuntu-24.04, windows-2025]
         node: ['22', '24']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
@@ -44,7 +44,7 @@ jobs:
       matrix:
         os: [ubuntu-24.04, windows-2025]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -70,7 +70,7 @@ jobs:
       matrix:
         os: [ubuntu-24.04, windows-2025]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: actions/setup-node@v4
@@ -94,7 +94,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -127,7 +127,7 @@ jobs:
         os: [ubuntu-24.04, windows-2025]
         node: ['22', '24']
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -172,7 +172,7 @@ jobs:
           RUNTIME_RESULT: ${{ needs.installed-runtime.result }}
         run: |
           node -e "for (const [kind,state] of [['S7 wire',process.env.S7_WIRE_RESULT],['Pinned fork',process.env.FORK_RESULT],['Static quality',process.env.QUALITY_RESULT],['Installed runtime',process.env.RUNTIME_RESULT]]) if(state!=='success') throw Error(kind+' matrix failed: '+state)"
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -195,7 +195,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # The original read-only baseline commit is an ancestor of master.
           fetch-depth: 0
@@ -313,7 +313,7 @@ jobs:
       matrix:
         os: [ubuntu-24.04, windows-2025]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
