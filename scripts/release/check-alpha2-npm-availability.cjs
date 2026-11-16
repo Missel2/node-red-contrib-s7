@@ -31,7 +31,11 @@ async function main() {
     headers: { Accept: "application/json" },
     signal: AbortSignal.timeout(20000),
   });
-  assert.equal(response.status, 200, "Cannot prove registry absence without valid npm GET");
+  assert.equal(
+    response.status,
+    200,
+    "Cannot prove registry absence without valid npm GET",
+  );
   const text = await response.text();
   assert.ok(text.length < 4 * 1024 * 1024, "Unexpectedly large npm metadata");
   inspectPublicRegistry(JSON.parse(text));
@@ -40,7 +44,9 @@ async function main() {
 
 if (require.main === module)
   main().catch((error) => {
-    console.error("CONTRIB_ALPHA2_PUBLIC_REGISTRY_GUARD_FAIL: " + String(error.message));
+    console.error(
+      "CONTRIB_ALPHA2_PUBLIC_REGISTRY_GUARD_FAIL: " + String(error.message),
+    );
     process.exitCode = 1;
   });
 module.exports = { inspectPublicRegistry };
