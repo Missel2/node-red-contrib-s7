@@ -79,6 +79,37 @@ jobs:
           path: test-reports/s7-historical-cross-engine.json
           if-no-files-found: warn
           retention-days: 14
+      - name: Malformed TPKT and COTP parser stability (isolated processes)
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          status=0
+          for engine in js rust; do
+            for fault in short_tpkt non_tpkt declared_long_tpkt invalid_cotp_cc; do
+              echo "::group::${engine}/${fault}: real installed Node-RED in isolated process"
+              if timeout --signal=TERM --kill-after=3s 32s \
+                env S7_MALFORMED_ENGINE="$engine" S7_MALFORMED_CASE="$fault" \
+                node test/comparison/malformed-cotp.cjs "$S7_COMPARISON_DIR/consumer"; then
+                echo "MALFORMED_CASE_PASSED=${engine}/${fault}"
+              else
+                result=$?
+                echo "::error::Malformed handshake regression: $engine/$fault exit=$result"
+                status=1
+              fi
+              echo "::endgroup::"
+            done
+          done
+          exit "$status"
+        timeout-minutes: 7
+      - name: Keep all real-process malformed response evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s7-malformed-cotp-cross-engine
+          path: test-reports/malformed-*.json
+          if-no-files-found: warn
+          retention-days: 14
       - name: Keep neutral protocol proof regardless of test outcome
         if: always()
         uses: actions/upload-artifact@v4
