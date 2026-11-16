@@ -52,6 +52,24 @@ function checkManifest(manifest, sourceCommit, platform) {
 function compareManifests(linux, windows, sourceCommit) {
   checkManifest(linux, sourceCommit, "linux");
   checkManifest(windows, sourceCommit, "win32");
+  // Public npm package contents only: diagnose platform-specific byte/mode drift.
+  console.log(
+    "CONTRIB_ALPHA2_CROSS_OS_MEMBER_DIAGNOSTIC=" +
+      JSON.stringify({
+        linux: {
+          bytes: linux.package.bytes,
+          sha256: linux.package.sha256,
+          sourceFiles: linux.package.files,
+          inputHashes: linux.inputs,
+        },
+        windows: {
+          bytes: windows.package.bytes,
+          sha256: windows.package.sha256,
+          sourceFiles: windows.package.files,
+          inputHashes: windows.inputs,
+        },
+      }),
+  );
   for (const field of ["fileCount", "bytes", "sha256", "sha512", "integrity"]) {
     assert.equal(
       linux.package[field],
