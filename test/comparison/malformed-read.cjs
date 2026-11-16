@@ -19,12 +19,15 @@ const userDir = path.resolve(process.argv[2] || "/dev/null");
 const engine = process.env.S7_READ_FAULT_ENGINE;
 const fault = process.env.S7_READ_FAULT_CASE;
 assert.ok(["js", "rust"].includes(engine), "Only two real installed engines");
-assert.ok([
-  "error_items_nonzero_length",
-  "short_s7_reply",
-  "inconsistent_data_length",
-  "wrong_pdu_reference",
-].includes(fault), "Explicit tested parser-fault corpus");
+assert.ok(
+  [
+    "error_items_nonzero_length",
+    "short_s7_reply",
+    "inconsistent_data_length",
+    "wrong_pdu_reference",
+  ].includes(fault),
+  "Explicit tested parser-fault corpus",
+);
 const consumer = createRequire(path.join(userDir, "package.json"));
 const helper = consumer("node-red-node-test-helper");
 const vars = [
@@ -32,14 +35,25 @@ const vars = [
   { name: "b", tag: "DB1,B130", expected: 130 },
   { name: "c", tag: "DB1,B259", expected: 3 },
 ];
-const reportFile = path.join(root, "test-reports", "malformed-read-" + engine + "-" + fault + ".json");
+const reportFile = path.join(
+  root,
+  "test-reports",
+  "malformed-read-" + engine + "-" + fault + ".json",
+);
 const report = {
-  schemaVersion: 1, engine, fault, verdict: "failed",
-  sourceCommit: execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim(),
+  schemaVersion: 1,
+  engine,
+  fault,
+  verdict: "failed",
+  sourceCommit: execFileSync("git", ["rev-parse", "HEAD"], {
+    cwd: root,
+    encoding: "utf8",
+  }).trim(),
   nodeRed: consumer("node-red/package.json").version,
-  pkg: engine === "js"
-    ? consumer("@missel2/node-red-contrib-s7/package.json").version
-    : consumer("node-red-contrib-s7-rust/package.json").version,
+  pkg:
+    engine === "js"
+      ? consumer("@missel2/node-red-contrib-s7/package.json").version
+      : consumer("node-red-contrib-s7-rust/package.json").version,
   server: "python-snap7==3.3.1, 2KiB disposable DB1",
   hardware: "PENDING_HARDWARE",
   seen: [],
@@ -49,7 +63,10 @@ function bounded(promise, timeout, name) {
   return Promise.race([
     promise,
     new Promise((_, reject) => {
-      timer = setTimeout(() => reject(Error("HARNESS_TIMEOUT " + name)), timeout);
+      timer = setTimeout(
+        () => reject(Error("HARNESS_TIMEOUT " + name)),
+        timeout,
+      );
     }),
   ]).finally(() => clearTimeout(timer));
 }
@@ -62,22 +79,37 @@ async function until(predicate, timeout, name) {
   throw Error("HARNESS_TIMEOUT " + name);
 }
 async function startFixture() {
-  const child = spawn(process.env.S7_FIXTURE_PYTHON || "python", ["-u", "test/protocol/fixture_server.py"], {
-    cwd: root,
-    env: { ...process.env, S7_FIXTURE_PORT: "0", S7_FIXTURE_DB_BYTES: "2048", PYTHONUNBUFFERED: "1" },
-    stdio: ["ignore", "pipe", "pipe"],
-  });
+  const child = spawn(
+    process.env.S7_FIXTURE_PYTHON || "python",
+    ["-u", "test/protocol/fixture_server.py"],
+    {
+      cwd: root,
+      env: {
+        ...process.env,
+        S7_FIXTURE_PORT: "0",
+        S7_FIXTURE_DB_BYTES: "2048",
+        PYTHONUNBUFFERED: "1",
+      },
+      stdio: ["ignore", "pipe", "pipe"],
+    },
+  );
   const reader = readline.createInterface({ input: child.stdout });
   const exit = once(child, "close");
   try {
-    const port = await bounded(Promise.race([
-      once(reader, "line").then(([line]) => {
-        const m = /^S7_WIRE_FIXTURE_READY (\d+) (3\.3\.1)$/.exec(line);
-        assert.ok(m, "Expected pinned synthetic server");
-        return Number(m[1]);
-      }),
-      exit.then(() => { throw Error("Fixture exited before readiness"); }),
-    ]), 12000, "fixture startup");
+    const port = await bounded(
+      Promise.race([
+        once(reader, "line").then(([line]) => {
+          const m = /^S7_WIRE_FIXTURE_READY (\d+) (3\.3\.1)$/.exec(line);
+          assert.ok(m, "Expected pinned synthetic server");
+          return Number(m[1]);
+        }),
+        exit.then(() => {
+          throw Error("Fixture exited before readiness");
+        }),
+      ]),
+      12000,
+      "fixture startup",
+    );
     return {
       port,
       async stop() {
@@ -92,20 +124,41 @@ async function startFixture() {
   }
 }
 function loadConfig(port) {
-  if (engine === "js") return {
-    factories: [consumer("@missel2/node-red-contrib-s7/red/s7.js")],
-    flow: [
-      {
-        id: "ep", type: "s7 endpoint", transport: "iso-on-tcp",
-        connmode: "rack-slot", address: "127.0.0.1", port,
-        rack: 0, slot: 1, timeout: 1200, cycletime: 0,
-        vartable: vars.map((x) => ({ name: x.name, addr: x.tag })),
-      },
-      { id: "read", type: "s7 in", endpoint: "ep", mode: "all", diff: false, wires: [["out"]] },
-      { id: "control", type: "s7 control", endpoint: "ep", function: "", wires: [[]] },
-      { id: "out", type: "helper" },
-    ],
-  };
+  if (engine === "js")
+    return {
+      factories: [consumer("@missel2/node-red-contrib-s7/red/s7.js")],
+      flow: [
+        {
+          id: "ep",
+          type: "s7 endpoint",
+          transport: "iso-on-tcp",
+          connmode: "rack-slot",
+          address: "127.0.0.1",
+          port,
+          rack: 0,
+          slot: 1,
+          timeout: 1200,
+          cycletime: 0,
+          vartable: vars.map((x) => ({ name: x.name, addr: x.tag })),
+        },
+        {
+          id: "read",
+          type: "s7 in",
+          endpoint: "ep",
+          mode: "all",
+          diff: false,
+          wires: [["out"]],
+        },
+        {
+          id: "control",
+          type: "s7 control",
+          endpoint: "ep",
+          function: "",
+          wires: [[]],
+        },
+        { id: "out", type: "helper" },
+      ],
+    };
   return {
     factories: [
       consumer("node-red-contrib-s7-rust/nodes/s7rs-endpoint.js"),
@@ -113,13 +166,24 @@ function loadConfig(port) {
     ],
     flow: [
       {
-        id: "ep", type: "s7rs-endpoint", protocol: "s7", host: "127.0.0.1",
-        port, rack: 0, slot: 1, cpu: "1200", timeout: 1200, reconnect: 5000,
+        id: "ep",
+        type: "s7rs-endpoint",
+        protocol: "s7",
+        host: "127.0.0.1",
+        port,
+        rack: 0,
+        slot: 1,
+        cpu: "1200",
+        timeout: 1200,
+        reconnect: 5000,
       },
       {
-        id: "read", type: "s7rs-read", endpoint: "ep",
+        id: "read",
+        type: "s7rs-read",
+        endpoint: "ep",
         tags: vars.map((x) => x.tag).join("\n"),
-        output: "object", wires: [["out"]],
+        output: "object",
+        wires: [["out"]],
       },
       { id: "out", type: "helper" },
     ],
@@ -128,9 +192,7 @@ function loadConfig(port) {
 function observedValues(message) {
   const values = message?.payload;
   if (!values || typeof values !== "object") return null;
-  return vars.map((x) =>
-    engine === "js" ? values[x.name] : values[x.tag],
-  );
+  return vars.map((x) => (engine === "js" ? values[x.name] : values[x.tag]));
 }
 async function main() {
   let server;
@@ -149,11 +211,21 @@ async function main() {
     await bounded(helper.startServer(), 14000, "Node-RED start");
     started = true;
     const config = loadConfig(peer.port);
-    await bounded(helper.load(config.factories, config.flow), 14000, "load installed candidate");
+    await bounded(
+      helper.load(config.factories, config.flow),
+      14000,
+      "load installed candidate",
+    );
     loaded = true;
     const ep = helper.getNode("ep");
-    await until(() => engine === "js" ? ep.getStatus?.() === "online" :
-      ep.state?.state === "connected", 13000, "healthy S7Comm handshake");
+    await until(
+      () =>
+        engine === "js"
+          ? ep.getStatus?.() === "online"
+          : ep.state?.state === "connected",
+      13000,
+      "healthy S7Comm handshake",
+    );
 
     const sink = helper.getNode("out");
     assert.ok(sink);
@@ -166,9 +238,16 @@ async function main() {
 
     peer.readReplyMutation = fault;
     const readBefore = peer.reads.length;
-    if (engine === "js") helper.getNode("control").receive({ function: "trigger", payload: "read" });
+    if (engine === "js")
+      helper
+        .getNode("control")
+        .receive({ function: "trigger", payload: "read" });
     else helper.getNode("read").receive({ payload: "read" });
-    await until(() => peer.mutatedReadReplies.length > 0, 9000, "actual malformed READ_VAR reply on wire");
+    await until(
+      () => peer.mutatedReadReplies.length > 0,
+      9000,
+      "actual malformed READ_VAR reply on wire",
+    );
     const mutation = peer.mutatedReadReplies[0];
     assert.equal(mutation.mutation, fault);
     assert.equal(mutation.requestObserved, true);
@@ -178,14 +257,24 @@ async function main() {
     report.readRequests = peer.reads.length - readBefore;
     report.proxyErrors = peer.errors.slice(0, 5);
     report.readErrorMessages = report.seen.filter((x) => x.errors);
-    report.correctReadbacks = report.seen.filter((x) =>
-      x.values && vars.every((tag, i) => x.values[i] === tag.expected)).length;
-    const firstInvalidAccepted = report.correctReadbacks > 0 && report.readRequests === 1;
+    report.correctReadbacks = report.seen.filter(
+      (x) => x.values && vars.every((tag, i) => x.values[i] === tag.expected),
+    ).length;
+    const firstInvalidAccepted =
+      report.correctReadbacks > 0 && report.readRequests === 1;
     report.unverifiedFreshValues = firstInvalidAccepted;
     report.firstReadObserved = readBefore + 1;
     report.observedEmissions = report.seen.length;
-    assert.equal(peer.mutatedReadReplies.length, 1, "one independently observed corrupt ACK");
-    assert.equal(firstInvalidAccepted, false, "cannot accept corrupted single READ_VAR reply as valid fresh data");
+    assert.equal(
+      peer.mutatedReadReplies.length,
+      1,
+      "one independently observed corrupt ACK",
+    );
+    assert.equal(
+      firstInvalidAccepted,
+      false,
+      "cannot accept corrupted single READ_VAR reply as valid fresh data",
+    );
     assert.equal(report.proxyErrors.length, 0, "proxy itself must not fail");
     // A later transparent successful retry is allowed for reads; no delivery
     // is also allowed after a real parsing/transport error. This test does NOT
@@ -195,30 +284,56 @@ async function main() {
     report.error = String(error?.stack || error).slice(0, 2800);
   } finally {
     if (loaded) {
-      try { await bounded(helper.unload(), 9000, "flow unload"); }
-      catch (error) { report.unloadError = String(error); report.verdict = "failed"; }
+      try {
+        await bounded(helper.unload(), 9000, "flow unload");
+      } catch (error) {
+        report.unloadError = String(error);
+        report.verdict = "failed";
+      }
     }
     if (started) {
-      try { await bounded(helper.stopServer(), 11000, "Node-RED stop"); }
-      catch (error) { report.stopError = String(error); report.verdict = "failed"; }
+      try {
+        await bounded(helper.stopServer(), 11000, "Node-RED stop");
+      } catch (error) {
+        report.stopError = String(error);
+        report.verdict = "failed";
+      }
     }
     if (peer) {
-      try { await bounded(peer.close(), 8000, "proxy close"); }
-      catch (error) { report.proxyStopError = String(error); report.verdict = "failed"; }
+      try {
+        await bounded(peer.close(), 8000, "proxy close");
+      } catch (error) {
+        report.proxyStopError = String(error);
+        report.verdict = "failed";
+      }
     }
     if (server) {
-      try { await server.stop(); }
-      catch (error) { report.fixtureStopError = String(error); report.verdict = "failed"; }
+      try {
+        await server.stop();
+      } catch (error) {
+        report.fixtureStopError = String(error);
+        report.verdict = "failed";
+      }
     }
     fs.mkdirSync(path.dirname(reportFile), { recursive: true });
     fs.writeFileSync(reportFile, JSON.stringify(report, null, 2) + "\n");
-    console.log("MALFORMED_READ_RESULT=" + JSON.stringify({
-      engine, fault, result: report.verdict, requests: report.readRequests,
-      injected: report.mutation?.deliveredBytes, emitted: report.observedEmissions,
-      acceptedInvalid: report.unverifiedFreshValues,
-    }));
+    console.log(
+      "MALFORMED_READ_RESULT=" +
+        JSON.stringify({
+          engine,
+          fault,
+          result: report.verdict,
+          requests: report.readRequests,
+          injected: report.mutation?.deliveredBytes,
+          emitted: report.observedEmissions,
+          acceptedInvalid: report.unverifiedFreshValues,
+        }),
+    );
     if (report.error) console.error(report.error);
     if (report.verdict !== "passed") process.exitCode = 1;
   }
 }
-main().catch((error) => { console.error(error); process.exitCode = 1; });
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
