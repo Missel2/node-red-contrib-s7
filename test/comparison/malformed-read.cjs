@@ -300,6 +300,13 @@ async function main() {
       }
     }
     if (peer) {
+      report.proxyDiagnostics = {
+        reads: peer.reads.slice(-10),
+        errors: peer.errors.slice(-10),
+        injectedReplies: peer.mutatedReadReplies.slice(-10),
+        mutationStillArmed: peer.readReplyMutation,
+        activeSessionsBeforeCleanup: peer.active.size,
+      };
       try {
         await bounded(peer.close(), 8000, "proxy close");
       } catch (error) {
