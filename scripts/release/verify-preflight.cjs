@@ -301,6 +301,17 @@ function main() {
       version: pkg.version,
       distTag: pkg.publishConfig.tag,
       fileCount: filePaths.length,
+      files: record.files
+        .map((entry) => ({
+          path: entry.path,
+          mode: entry.mode,
+          size: entry.size,
+          sha256: digest(
+            fs.readFileSync(path.join(root, entry.path)),
+            "sha256",
+          ),
+        }))
+        .sort((a, b) => a.path.localeCompare(b.path)),
       bytes: tarBytes.length,
       sha256: digest(tarBytes, "sha256"),
       sha512: digest(tarBytes, "sha512"),
