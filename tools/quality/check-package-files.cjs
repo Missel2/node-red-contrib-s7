@@ -50,7 +50,7 @@ if (!file) throw new Error("Missing npm pack JSON path");
 const packs = JSON.parse(fs.readFileSync(file, "utf8"));
 assert.equal(packs.length, 1, "npm pack must describe exactly one package");
 assert.equal(packs[0].name, "@missel2/node-red-contrib-s7");
-assert.equal(packs[0].version, "0.1.0-alpha.1");
+assert.equal(packs[0].version, "0.1.0-alpha.2");
 assertPackageFiles(packs[0].files);
 
 for (const prefix of excluded) {
