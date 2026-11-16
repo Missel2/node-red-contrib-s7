@@ -1,0 +1,78 @@
+name: Alpha2 archive reproducibility (no publish)
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+# Never upload the npm archive or allow npm writes from PR or master CI.
+permissions:
+  contents: read
+
+jobs:
+  pack-matrix:
+    name: Canonical Contrib alpha2 archive (${{ matrix.os }}, Node 22)
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    env:
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.4'
+      - name: Install locked production dependencies (no scripts)
+        run: npm ci --omit=dev --ignore-scripts --no-audit --no-fund
+      - name: Test archive and public registry fail-closed contracts
+        run: node --test test/release/alpha2-archive.test.cjs
+      - name: Verify next version is absent on public npm (PR review only)
+        if: github.event_name == 'pull_request'
+        run: node scripts/release/check-alpha2-npm-availability.cjs
+      - name: Pack and independently verify source, license, SBOM and archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release-evidence
+          npm pack --ignore-scripts --json --pack-destination release-evidence > release-evidence/pack.json
+          node tools/quality/check-package-files.cjs release-evidence/pack.json
+          npm sbom --package-lock-only --omit=dev --sbom-format=spdx > release-evidence/sbom.spdx.json
+          npm sbom --package-lock-only --omit=dev --sbom-format=cyclonedx > release-evidence/sbom.cdx.json
+          node scripts/release/verify-preflight.cjs release-evidence
+      - name: Retain non-executable JSON digest only (never the npm archive)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: contrib-alpha2-archive-${{ matrix.os }}-node22
+          path: release-evidence/manifest.json
+          if-no-files-found: error
+          retention-days: 14
+
+  compare-packages:
+    name: Compare immutable alpha2 archive bytes (Ubuntu vs Windows)
+    needs: pack-matrix
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    env:
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.4'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: contrib-alpha2-archive-*-node22
+          path: compare-manifests
+      - name: Require same source, package SHA256, SHA512, lock and artifact bytes
+        run: node scripts/release/compare-alpha2-archives.cjs compare-manifests

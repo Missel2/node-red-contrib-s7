@@ -1,6 +1,6 @@
 {
   "name": "@missel2/node-red-contrib-s7",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "description": "A Node-RED node to interact with Siemens S7 PLCs",
   "main": "red/s7.js",
   "dependencies": {

@@ -1,6 +1,6 @@
 # Public nodes7 alpha.2 → Contrib source dependency qualification
 
-**Status 2026-11-15:** source-only **Draft [PR #53](https://github.com/Missel2/node-red-contrib-s7/pull/53)**, NOT merged, NOT published as a new wrapper version, NOT deployed. It changes the **next Contrib source candidate's runtime dependency** only. The already published immutable `@missel2/node-red-contrib-s7@0.1.0-alpha.1` retains `@missel2/nodes7@0.1.0-alpha.1`; its npm bytes cannot be retroactively changed.
+**Status update 2026-11-16:** human-authorized [PR #53](https://github.com/Missel2/node-red-contrib-s7/pull/53) was squash-merged to protected Contrib `master` `8ca11b75a5e3bf46202dbb1ea42b9fda23fbd369`; independent actual-master CI had **32/32 success, 9/9 required** (see [post-merge verification](https://github.com/Missel2/node-red-contrib-s7/actions/runs/43815629357)). The repository now pins the independently published `nodes7@0.1.0-alpha.2`, while the already published immutable `@missel2/node-red-contrib-s7@0.1.0-alpha.1` still contains `nodes7@alpha.1`. The next new Contrib source package **version** is separately prepared in [Draft PR #54](https://github.com/Missel2/node-red-contrib-s7/pull/54); no new public wrapper npm version, deployment or hardware qualification follows from PR #53.
 
 ## Independent public-npm input evidence (completed)
 
