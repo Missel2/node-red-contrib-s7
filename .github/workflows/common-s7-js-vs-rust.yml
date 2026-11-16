@@ -32,6 +32,7 @@ jobs:
         run: |
           set -euo pipefail
           node --check test/comparison/common-s7-read.cjs
+          node --test test/comparison/wire-proxy-header-safety.test.cjs
           mkdir -p "$S7_COMPARISON_DIR/consumer"
           npm pack --ignore-scripts --json --pack-destination "$S7_COMPARISON_DIR" > "$S7_COMPARISON_DIR/pack.json"
           node -e '
