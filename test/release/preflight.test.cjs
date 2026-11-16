@@ -57,6 +57,23 @@ function fixture() {
   return { pkg, lock, pack };
 }
 
+test("next wrapper alpha has a distinct immutable npm package identity", () => {
+  const { pkg, lock, pack } = fixture();
+  assert.equal(pkg.version, "0.1.0-alpha.2");
+  assert.equal(lock.version, "0.1.0-alpha.2");
+  assert.equal(lock.packages[""].version, "0.1.0-alpha.2");
+  assert.equal(
+    pack.filename,
+    "missel2-node-red-contrib-s7-0.1.0-alpha.2.tgz",
+  );
+  assert.throws(() =>
+    assertReleaseIdentity(
+      { ...pkg, version: "0.1.0-alpha.1" },
+      lock,
+    ),
+  );
+});
+
 test("release preflight accepts the controlled alpha identity", () => {
   const { pkg, lock, pack } = fixture();
   assert.doesNotThrow(() => assertReleaseIdentity(pkg, lock));
