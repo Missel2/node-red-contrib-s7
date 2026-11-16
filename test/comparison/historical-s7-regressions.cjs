@@ -10,6 +10,7 @@ const path = require("node:path");
 const readline = require("node:readline");
 const { performance } = require("node:perf_hooks");
 const { setTimeout: delay } = require("node:timers/promises");
+const { createWirePeer } = require("../runtime-lab/wire-peer.cjs");
 
 const root = path.resolve(__dirname, "../..");
 const userDir = path.resolve(process.argv[2] || "/dev/null");
@@ -128,7 +129,7 @@ async function read(mode, vars) {
     x.name, mode === "js" ? message.payload[x.name] : message.payload[x.addr],
   ]));
 }
-async function runOne(mode, port, testcase, vars) {
+async function runOne(mode, port, testcase, vars, peer) {
   const start = performance.now();
   let loaded = false;
   const result = { verdict: "failed", case: testcase, node: mode };
@@ -143,9 +144,36 @@ async function runOne(mode, port, testcase, vars) {
     if (testcase === "multi_write_padding") {
       const vals = [15, 29, 43];
       const node = helper.getNode("writer");
+      const callbackErrors = [];
+      node.on("call:error", (...args) => {
+        callbackErrors.push(args.map((x) => typeof x === "string" ? x : String(x?.message || x)).join(" "));
+      });
+      // Positive control: exact same S7 endpoint can write one BYTE to this
+      // disposable DB, so a multi-item failure is not a read-only PLC.
+      const sendOne = (value) => {
+        if (mode === "js") node.receive({ variable: vars[0].name, payload: value });
+        else node.receive({ topic: vars[0].addr, payload: value });
+      };
+      const singleBefore = peer.writes.length;
+      sendOne(99);
+      let singleSeen = false;
+      const singleDeadline = performance.now() + 4500;
+      while (performance.now() < singleDeadline) {
+        const onceRead = await read(mode, vars);
+        if (onceRead[vars[0].name] === 99) {
+          singleSeen = true;
+          break;
+        }
+        await delay(90);
+      }
+      assert.ok(singleSeen, mode + ": positive control single BYTE write must succeed");
+      const singleRequests = peer.writes.length - singleBefore;
+      assert.equal(singleRequests, 1, mode + ": one user single write must have one WRITE_VAR");
+      const writesBefore = peer.writes.length;
       if (mode === "js") node.receive({ variable: vars.map((x) => x.name), payload: vals });
       else node.receive({ payload: Object.fromEntries(vars.map((x, i) => [x.addr, vals[i]])) });
       let good = false;
+      let lastValues = null;
       const end = performance.now() + 7500;
       while (performance.now() < end) {
         let values;
@@ -154,14 +182,20 @@ async function runOne(mode, port, testcase, vars) {
         } catch (error) {
           result.readbackRetry = String(error);
         }
+        if (values) lastValues = vars.map((x) => values[x.name]);
         if (values && vars.every((x, i) => values[x.name] === vals[i])) {
           good = true;
           break;
         }
         await delay(120);
       }
-      assert.ok(good, "all 3 dispersed 1-byte writes must be applied");
+      result.positiveSingleByteWrite = singleSeen;
+      result.positiveSingleWriteRequests = singleRequests;
+      result.multiWriteRequests = peer.writes.length - writesBefore;
       result.expectedBytes = vals;
+      result.actualReadback = lastValues;
+      result.nodeErrors = callbackErrors.slice(0, 8);
+      assert.ok(good, "all 3 dispersed 1-byte writes must be applied");
     } else {
       const values = await read(mode, vars);
       for (const item of vars) {
@@ -189,6 +223,7 @@ async function runOne(mode, port, testcase, vars) {
 }
 async function main() {
   let server;
+  let peer;
   let running = false;
   try {
     assert.equal(process.platform, "linux");
@@ -198,14 +233,15 @@ async function main() {
     assert.equal(report.rustVersion, "1.4.0");
     assert.equal(process.env.S7RS_NAPI, undefined);
     server = await startFixture();
+    peer = await createWirePeer(server.port);
     helper.init(consumer.resolve("node-red"));
     await bound(helper.startServer(), 15000, "Node-RED start");
     running = true;
     for (const mode of ["js", "rust"]) {
       report.results[mode] = {};
-      await runOne(mode, server.port, "odd_length_read_pdu", odd);
-      await runOne(mode, server.port, "overlapping_split_parts", overlap);
-      await runOne(mode, server.port, "multi_write_padding", writable);
+      await runOne(mode, peer.port, "odd_length_read_pdu", odd, peer);
+      await runOne(mode, peer.port, "overlapping_split_parts", overlap, peer);
+      await runOne(mode, peer.port, "multi_write_padding", writable, peer);
     }
     report.status = Object.values(report.results).every((suite) =>
       Object.values(suite).every((x) => x.verdict === "passed")) ? "passed" : "failed";
@@ -215,6 +251,10 @@ async function main() {
     if (running) {
       try { await bound(helper.stopServer(), 11000, "Node-RED shutdown"); }
       catch (error) { report.stopError = String(error); report.status = "failed"; }
+    }
+    if (peer) {
+      try { await bound(peer.close(), 8000, "proxy shutdown"); }
+      catch (error) { report.proxyError = String(error); report.status = "failed"; }
     }
     if (server) {
       try { await server.stop(); }
