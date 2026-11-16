@@ -54,6 +54,12 @@ function s7Pdu(frame) {
   };
 }
 
+// A partial/malformed reply may not contain header fields at their usual
+// offsets. The observer itself must never throw while recording such a frame.
+function read16IfPresent(frame, offset) {
+  return frame.length >= offset + 2 ? frame.readUInt16BE(offset) : null;
+}
+
 // Opt-in deterministic corruption of a LIVE fixture ReadVar ACK. Keep actual
 // COTP/S7 handshake and read request authentic; only the selected reply is
 // mutated. The normal relay is byte-identical when readReplyMutation is null.
@@ -203,11 +209,9 @@ async function createWirePeer(upstreamPort) {
                 deliveredBytes: mutant.length,
                 originalItemCount: frame[20],
                 originalPduRef: frame.readUInt16BE(11),
-                deliveredPduRef:
-                  mutant.length >= 13 ? mutant.readUInt16BE(11) : null,
+                deliveredPduRef: read16IfPresent(mutant, 11),
                 originalDataLength: frame.readUInt16BE(15),
-                deliveredDataLength:
-                  mutant.length >= 17 ? mutant.readUInt16BE(15) : null,
+                deliveredDataLength: read16IfPresent(mutant, 15),
                 originalTpktLength: frame.readUInt16BE(2),
                 deliveredTpktLength: mutant.readUInt16BE(2),
               });
@@ -254,4 +258,4 @@ async function createWirePeer(upstreamPort) {
   return peer;
 }
 
-module.exports = { createWirePeer, loopback };
+module.exports = { createWirePeer, loopback, read16IfPresent };
