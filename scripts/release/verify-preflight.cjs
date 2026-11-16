@@ -8,7 +8,7 @@ const { execFileSync } = require("node:child_process");
 
 const root = path.resolve(__dirname, "../..");
 const expectedName = "@missel2/node-red-contrib-s7";
-const expectedVersion = "0.1.0-alpha.1";
+const expectedVersion = "0.1.0-alpha.2";
 const dependencies = ["@st-one-io/nodes7", "iso-on-tcp"];
 const aliasName = "@st-one-io/nodes7";
 const publishedName = "@missel2/nodes7";
