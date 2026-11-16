@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
-      S7_COMPARISON_DIR: ${{ runner.temp }}/s7-common-compare
+      S7_COMPARISON_DIR: /tmp/s7-common-compare
     steps:
       - uses: actions/checkout@v4
         with:
