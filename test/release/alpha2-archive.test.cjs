@@ -138,3 +138,33 @@ test("cross-OS GitHub workflow cannot publish or upload the tarball", () => {
     /id-token: write|npm stage|npm publish|npm dist-tag/,
   );
 });
+test("the eight packed text assets have identical LF checkout bytes on every OS", () => {
+  const files = [
+    "LICENSE",
+    "README.md",
+    "package.json",
+    "red/s7.js",
+    "red/s7.html",
+    "red/locales/de/s7.json",
+    "red/locales/en-US/s7.json",
+    "src/tools.js",
+  ];
+  const attributes = fs
+    .readFileSync(".gitattributes", "utf8")
+    .replace(/\r\n/g, "\n")
+    .split("\n")
+    .filter((line) => line && !line.startsWith("#"));
+  assert.deepEqual(
+    attributes,
+    files.map((file) => file + " text eol=lf"),
+    "Only the eight released files may change checkout newline policy",
+  );
+  for (const file of files) {
+    const bytes = fs.readFileSync(file);
+    assert.equal(
+      bytes.includes(Buffer.from("\r\n")),
+      false,
+      "CRLF would change release archive bytes: " + file,
+    );
+  }
+});
