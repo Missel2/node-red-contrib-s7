@@ -138,7 +138,7 @@ test("cross-OS GitHub workflow cannot publish or upload the tarball", () => {
     /id-token: write|npm stage|npm publish|npm dist-tag/,
   );
 });
-test("the eight packed text assets have identical LF checkout bytes on every OS", () => {
+test("the eight packed assets and production lock have canonical LF bytes", () => {
   const files = [
     "LICENSE",
     "README.md",
@@ -149,6 +149,7 @@ test("the eight packed text assets have identical LF checkout bytes on every OS"
     "red/locales/en-US/s7.json",
     "src/tools.js",
   ];
+  const inputs = [...files.slice(0, 3), "package-lock.json", ...files.slice(3)];
   const attributes = fs
     .readFileSync(".gitattributes", "utf8")
     .replace(/\r\n/g, "\n")
@@ -156,10 +157,10 @@ test("the eight packed text assets have identical LF checkout bytes on every OS"
     .filter((line) => line && !line.startsWith("#"));
   assert.deepEqual(
     attributes,
-    files.map((file) => file + " text eol=lf"),
-    "Only the eight released files may change checkout newline policy",
+    inputs.map((file) => file + " text eol=lf"),
+    "Only packed assets and the production lock may change checkout policy",
   );
-  for (const file of files) {
+  for (const file of inputs) {
     const bytes = fs.readFileSync(file);
     assert.equal(
       bytes.includes(Buffer.from("\r\n")),
