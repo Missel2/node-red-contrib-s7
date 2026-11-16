@@ -218,3 +218,37 @@ jobs:
           set -euo pipefail
           node tools/quality/node_modules/prettier/bin/prettier.cjs --write test/comparison/malformed-cotp.cjs test/comparison/malformed-read.cjs test/runtime-lab/wire-peer.cjs
           node -e 'const fs=require("node:fs"); for(const [k,p] of [["COTP","test/comparison/malformed-cotp.cjs"],["READ","test/comparison/malformed-read.cjs"],["PROXY","test/runtime-lab/wire-peer.cjs"]]) console.log("PROTOCOL_FORMAT_"+k+"_B64="+fs.readFileSync(p).toString("base64"))'
+
+  released-rust-addon-platforms:
+    name: Published Rust native addon on glibc and musl (no PLC)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Load release addon from npm under Node 22/glibc and Node 24/musl
+        shell: bash
+        run: |
+          set -euo pipefail
+          for image in node:22-bookworm-slim node:24-alpine; do
+            echo "::group::Native NAPI release smoke: $image"
+            docker pull "$image"
+            docker image inspect --format='IMAGE_DIGEST={{index .RepoDigests 0}}' "$image"
+            docker run --rm --entrypoint sh "$image" -ec '
+              set -eu
+              mkdir -p /tmp/s7-native-release
+              cd /tmp/s7-native-release
+              printf "%s\n" "{\"name\":\"disposable-native-check\",\"version\":\"0.0.0\",\"private\":true}" > package.json
+              npm install --ignore-scripts --no-audit --no-fund --save-exact node-red-contrib-s7-rust@1.4.0
+              node -e "
+                const p=require(\"node-red-contrib-s7-rust/package.json\");
+                if(p.version!==\"1.4.0\") throw Error(\"Unexpected Rust package version\");
+                if(process.env.S7RS_NAPI) throw Error(\"Unexpected external test addon\");
+                const bridge=require(\"node-red-contrib-s7-rust/lib/napi-bridge\");
+                const binary=bridge.addonPath();
+                const addon=bridge.loadAddon();
+                if(typeof addon.S7Native!==\"function\") throw Error(\"Native S7Native export missing\");
+                console.log(\"RELEASE_NAPI_OK=\"+process.platform+\"/\"+process.arch+\" \"+process.version);
+                console.log(\"RELEASE_NAPI_BINARY=\"+binary.replace(process.cwd(),\"<consumer>\"));
+              "
+            '
+            echo "::endgroup::"
+          done
