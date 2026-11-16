@@ -48,6 +48,9 @@ const RELEASE_REQUIRED = [
 ];
 const root = path.resolve(__dirname, "../..");
 
+function requiredForRelease(required) {
+  return [...new Set([...required, ...RELEASE_REQUIRED])];
+}
 function inspectEnvironment(env, checkedOutSha) {
   assert.equal(env.GITHUB_REPOSITORY, REPO, "Wrong publishing repository");
   assert.equal(
@@ -194,8 +197,7 @@ async function main() {
     "/commits/" + env.GITHUB_SHA + "/check-runs?per_page=100",
     env.GITHUB_TOKEN,
   );
-  const allRequired = [...new Set([...required, ...RELEASE_REQUIRED])];
-  inspectCheckRuns(checks, allRequired, env.GITHUB_SHA);
+  inspectCheckRuns(checks, requiredForRelease(required), env.GITHUB_SHA);
   console.log(
     "CONTRIB_ALPHA2_PROTECTED_MASTER_AND_CI_VERIFIED=" + env.GITHUB_SHA,
   );
@@ -212,4 +214,5 @@ module.exports = {
   inspectMaster,
   inspectRuleset,
   inspectCheckRuns,
+  requiredForRelease,
 };
