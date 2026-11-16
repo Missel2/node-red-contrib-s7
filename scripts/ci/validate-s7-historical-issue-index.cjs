@@ -20,7 +20,9 @@ for (const entry of index.entries) {
   assert.ok(["open", "closed"].includes(entry.state));
   assert.ok(entry.family && typeof entry.family === "string");
   assert.ok(
-    ["manually_curated_family", "title_classification_unverified"].includes(entry.triage),
+    ["manually_curated_family", "title_classification_unverified"].includes(
+      entry.triage,
+    ),
   );
   assert.equal(
     entry.testEvidence,
@@ -32,7 +34,10 @@ for (const entry of index.entries) {
   ids.add(id);
 }
 for (const [repo, count] of Object.entries(index.countsByRepository)) {
-  assert.equal(index.entries.filter((entry) => entry.repo === repo).length, count);
+  assert.equal(
+    index.entries.filter((entry) => entry.repo === repo).length,
+    count,
+  );
 }
 for (const ref of [
   "st-one-io/nodes7#16",
@@ -51,5 +56,7 @@ for (const fileName of [
   assert.ok(fs.existsSync(path.join(root, fileName)));
 }
 console.log("HISTORIC_S7_ISSUE_INDEX_VERIFIED=" + index.entries.length);
-console.log("HISTORIC_S7_ISSUE_SOURCE_COUNT=" + index.sourceRepositories.length);
+console.log(
+  "HISTORIC_S7_ISSUE_SOURCE_COUNT=" + index.sourceRepositories.length,
+);
 console.log("HISTORIC_S7_ISSUE_EVIDENCE=metadata_only");
