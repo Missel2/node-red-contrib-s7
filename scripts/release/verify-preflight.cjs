@@ -220,7 +220,15 @@ function main() {
   assert.equal(record.integrity, integrity, "Pack metadata integrity mismatch");
   assert.equal(record.shasum, digest(tarBytes, "sha1"), "Pack shasum mismatch");
 
-  const archived = execFileSync("tar", ["-tzf", tarball], {
+  // A Windows drive-letter path is parsed by GNU tar as a remote archive.
+  // Pass a validated source-relative path under the repository working dir.
+  const tarArg = path.relative(root, tarball).split(path.sep).join("/");
+  assert.ok(
+    !tarArg.startsWith("../") && !path.posix.isAbsolute(tarArg),
+    "Tarball must stay inside the source checkout",
+  );
+  const archived = execFileSync("tar", ["-tzf", tarArg], {
+    cwd: root,
     encoding: "utf8",
     timeout: 10000,
   })
