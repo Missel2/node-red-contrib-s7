@@ -23,6 +23,29 @@ const BASE_REQUIRED = [
   "Analyze (python)",
   "Analyze (actions)",
 ];
+const RELEASE_REQUIRED = [
+  "Alpha archive, SBOM and license preflight",
+  "Canonical Contrib alpha2 archive (ubuntu-24.04, Node 22)",
+  "Canonical Contrib alpha2 archive (windows-2025, Node 22)",
+  "Compare immutable alpha2 archive bytes (Ubuntu vs Windows)",
+  "Installed Node-RED runtime (ubuntu-24.04, Node 22)",
+  "Installed Node-RED runtime (ubuntu-24.04, Node 24)",
+  "Installed Node-RED runtime (windows-2025, Node 22)",
+  "Installed Node-RED runtime (windows-2025, Node 24)",
+  "NPM lockfile (ubuntu-24.04, Node 22)",
+  "NPM lockfile (windows-2025, Node 22)",
+  "Pinned nodes7 integration (ubuntu-24.04, Node 22)",
+  "Pinned nodes7 integration (windows-2025, Node 22)",
+  "Public npm consumer (ubuntu-24.04, Node 22)",
+  "Public npm consumer (windows-2025, Node 22)",
+  "Published nodes7 alpha2 artifact (ubuntu-24.04, Node 22)",
+  "Published nodes7 alpha2 artifact (windows-2025, Node 22)",
+  "S7 wire tests (ubuntu-24.04, Node 22)",
+  "S7 wire tests (windows-2025, Node 22)",
+  "Static quality (ubuntu-24.04, Node 22)",
+  "Static quality (windows-2025, Node 22)",
+  "Manual alpha2 admission negative controls (Ubuntu, Node 22)",
+];
 const root = path.resolve(__dirname, "../..");
 
 function inspectEnvironment(env, checkedOutSha) {
@@ -171,7 +194,8 @@ async function main() {
     "/commits/" + env.GITHUB_SHA + "/check-runs?per_page=100",
     env.GITHUB_TOKEN,
   );
-  inspectCheckRuns(checks, required, env.GITHUB_SHA);
+  const allRequired = [...new Set([...required, ...RELEASE_REQUIRED])];
+  inspectCheckRuns(checks, allRequired, env.GITHUB_SHA);
   console.log(
     "CONTRIB_ALPHA2_PROTECTED_MASTER_AND_CI_VERIFIED=" + env.GITHUB_SHA,
   );
