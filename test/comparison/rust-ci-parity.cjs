@@ -228,148 +228,147 @@ async function main() {
       consumer("node-red-contrib-s7-rust/nodes/s7rs-write.js"),
     ];
     if (report.caseMode === "full") {
-    await bounded(
-      helper.load(factories, flow(peer.port)),
-      12000,
-      "initial Rust flow load",
-    );
-    loaded = true;
-    const endpoint = helper.getNode("ep");
-    await until(
-      () => endpoint.state?.state === "connected",
-      14000,
-      "initial connect",
-    );
-    const activeSockets = kernelClientCount(peer.port);
-    assert.ok(
-      activeSockets >= 1,
-      "POSITIVE CONTROL: native Rust client is OS-visible",
-    );
-    assert.deepEqual(await readValues(), baseline);
-    record("healthy_read", { activeSockets, values: baseline });
-
-    const beforeInvalid = peer.writes.length;
-    let invalidError = null;
-    try {
-      await send("writer", "out-write", { payload: 9 }, 2000);
-    } catch (error) {
-      invalidError = error;
-    }
-    assert.ok(
-      invalidError && !/HARNESS_TIMEOUT/.test(String(invalidError)),
-      "invalid write must fail via the node",
-    );
-    assert.equal(
-      peer.writes.length,
-      beforeInvalid,
-      "invalid input must not produce wire writes",
-    );
-    record("invalid_write", {
-      error: String(invalidError.message),
-      wireWrites: 0,
-    });
-
-    const beforeWrites = peer.writes.length;
-    await send("writer", "out-write", { topic: tags[2], payload: 19.75 });
-    assert.equal(peer.writes.length, beforeWrites + 1);
-    assert.deepEqual(await readValues(), { ...baseline, [tags[2]]: 19.75 });
-    record("acknowledged_write", { writesOnWire: 1, readback: 19.75 });
-
-    peer.dropWriteAck = true;
-    const preLoss = peer.writes.length;
-    const t0 = performance.now();
-    let lostAckOutcome = null;
-    try {
-      await send(
-        "writer",
-        "out-write",
-        { topic: tags[2], payload: -8.5 },
+      await bounded(
+        helper.load(factories, flow(peer.port)),
         12000,
+        "initial Rust flow load",
       );
-      lostAckOutcome = "unexpected_success";
-    } catch (error) {
-      if (/HARNESS_TIMEOUT/.test(String(error))) throw error;
-      lostAckOutcome = String(error.message);
-    }
+      loaded = true;
+      const endpoint = helper.getNode("ep");
+      await until(
+        () => endpoint.state?.state === "connected",
+        14000,
+        "initial connect",
+      );
+      const activeSockets = kernelClientCount(peer.port);
+      assert.ok(
+        activeSockets >= 1,
+        "POSITIVE CONTROL: native Rust client is OS-visible",
+      );
+      assert.deepEqual(await readValues(), baseline);
+      record("healthy_read", { activeSockets, values: baseline });
 
-    // Check the fault injection itself before interpreting a client result.
-    await until(
-      () => peer.droppedWrites.length === 1,
-      2500,
-      "proxy omitted acknowledged write reply",
-    );
-    assert.equal(
-      peer.droppedWrites[0].fixtureAcknowledged,
-      true,
-      "fixture must have applied the first write",
-    );
-    await until(
-      () => endpoint.state?.state === "connected",
-      14000,
-      "Rust recovers after lost ACK",
-    );
-    const postLossValues = await readValues();
-    assert.deepEqual(postLossValues, { ...baseline, [tags[2]]: -8.5 });
-    await delay(5500);
-    const totalWireWrites = peer.writes.length - preLoss;
-    const replayedWrites = Math.max(0, totalWireWrites - 1);
-    const validOutcome =
-      lostAckOutcome !== "unexpected_success" &&
-      totalWireWrites === 1 &&
-      replayedWrites === 0;
-    report.scenarios.lost_write_ack = {
-      result: validOutcome ? "passed" : "failed",
-      observedOutcome: lostAckOutcome,
-      ackDropsObserved: peer.droppedWrites.length,
-      fixtureApplied: peer.droppedWrites[0].fixtureAcknowledged,
-      totalWireWritesForAttempt: totalWireWrites,
-      replayedWriteCount: replayedWrites,
-      verifiedReadback: postLossValues[tags[2]],
-      observationMs: Math.round(performance.now() - t0),
-    };
+      const beforeInvalid = peer.writes.length;
+      let invalidError = null;
+      try {
+        await send("writer", "out-write", { payload: 9 }, 2000);
+      } catch (error) {
+        invalidError = error;
+      }
+      assert.ok(
+        invalidError && !/HARNESS_TIMEOUT/.test(String(invalidError)),
+        "invalid write must fail via the node",
+      );
+      assert.equal(
+        peer.writes.length,
+        beforeInvalid,
+        "invalid input must not produce wire writes",
+      );
+      record("invalid_write", {
+        error: String(invalidError.message),
+        wireWrites: 0,
+      });
 
-    const withheldBefore = peer.withheldReads.length;
-    peer.withholdReadAck = true;
-    const sink = helper.getNode("out-read");
-    let messagesAfterHeldRead = 0;
-    sink.on("input", () => {
-      messagesAfterHeldRead++;
-    });
-    helper.getNode("reader").receive({ payload: "held-read" });
-    await until(
-      () => peer.withheldReads.length === withheldBefore + 1,
-      6000,
-      "held real S7 READ_VAR reply",
-    );
-    assert.equal(
-      messagesAfterHeldRead,
-      0,
-      "withheld reply must not emit stale value",
-    );
-    await bounded(helper.unload(), 9000, "Rust unload during pending read");
-    loaded = false;
-    await until(
-      () => peer.active.size === 0,
-      4000,
-      "Rust closes pending-read TCP peer",
-    );
-    await delay(500);
-    assert.equal(
-      messagesAfterHeldRead,
-      0,
-      "removed Rust flow must never emit a late value",
-    );
-    assert.equal(
-      kernelClientCount(peer.port),
-      0,
-      "native Rust socket must be gone before fixture stop",
-    );
-    record("pending_read_on_unload", {
-      withheldReadReplies: 1,
-      lateEmittedMessages: 0,
-      socketsAfterUnload: 0,
-    });
+      const beforeWrites = peer.writes.length;
+      await send("writer", "out-write", { topic: tags[2], payload: 19.75 });
+      assert.equal(peer.writes.length, beforeWrites + 1);
+      assert.deepEqual(await readValues(), { ...baseline, [tags[2]]: 19.75 });
+      record("acknowledged_write", { writesOnWire: 1, readback: 19.75 });
 
+      peer.dropWriteAck = true;
+      const preLoss = peer.writes.length;
+      const t0 = performance.now();
+      let lostAckOutcome = null;
+      try {
+        await send(
+          "writer",
+          "out-write",
+          { topic: tags[2], payload: -8.5 },
+          12000,
+        );
+        lostAckOutcome = "unexpected_success";
+      } catch (error) {
+        if (/HARNESS_TIMEOUT/.test(String(error))) throw error;
+        lostAckOutcome = String(error.message);
+      }
+
+      // Check the fault injection itself before interpreting a client result.
+      await until(
+        () => peer.droppedWrites.length === 1,
+        2500,
+        "proxy omitted acknowledged write reply",
+      );
+      assert.equal(
+        peer.droppedWrites[0].fixtureAcknowledged,
+        true,
+        "fixture must have applied the first write",
+      );
+      await until(
+        () => endpoint.state?.state === "connected",
+        14000,
+        "Rust recovers after lost ACK",
+      );
+      const postLossValues = await readValues();
+      assert.deepEqual(postLossValues, { ...baseline, [tags[2]]: -8.5 });
+      await delay(5500);
+      const totalWireWrites = peer.writes.length - preLoss;
+      const replayedWrites = Math.max(0, totalWireWrites - 1);
+      const validOutcome =
+        lostAckOutcome !== "unexpected_success" &&
+        totalWireWrites === 1 &&
+        replayedWrites === 0;
+      report.scenarios.lost_write_ack = {
+        result: validOutcome ? "passed" : "failed",
+        observedOutcome: lostAckOutcome,
+        ackDropsObserved: peer.droppedWrites.length,
+        fixtureApplied: peer.droppedWrites[0].fixtureAcknowledged,
+        totalWireWritesForAttempt: totalWireWrites,
+        replayedWriteCount: replayedWrites,
+        verifiedReadback: postLossValues[tags[2]],
+        observationMs: Math.round(performance.now() - t0),
+      };
+
+      const withheldBefore = peer.withheldReads.length;
+      peer.withholdReadAck = true;
+      const sink = helper.getNode("out-read");
+      let messagesAfterHeldRead = 0;
+      sink.on("input", () => {
+        messagesAfterHeldRead++;
+      });
+      helper.getNode("reader").receive({ payload: "held-read" });
+      await until(
+        () => peer.withheldReads.length === withheldBefore + 1,
+        6000,
+        "held real S7 READ_VAR reply",
+      );
+      assert.equal(
+        messagesAfterHeldRead,
+        0,
+        "withheld reply must not emit stale value",
+      );
+      await bounded(helper.unload(), 9000, "Rust unload during pending read");
+      loaded = false;
+      await until(
+        () => peer.active.size === 0,
+        4000,
+        "Rust closes pending-read TCP peer",
+      );
+      await delay(500);
+      assert.equal(
+        messagesAfterHeldRead,
+        0,
+        "removed Rust flow must never emit a late value",
+      );
+      assert.equal(
+        kernelClientCount(peer.port),
+        0,
+        "native Rust socket must be gone before fixture stop",
+      );
+      record("pending_read_on_unload", {
+        withheldReadReplies: 1,
+        lateEmittedMessages: 0,
+        socketsAfterUnload: 0,
+      });
     }
     peer.blackhole = true;
     const priorBlackholed = peer.blackholedRequests;
