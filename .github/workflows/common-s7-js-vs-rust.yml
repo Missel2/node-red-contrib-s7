@@ -66,6 +66,17 @@ jobs:
       - name: Run identical classic S7Comm DB1 read and flow-removal teardown
         run: node test/comparison/common-s7-read.cjs "$S7_COMPARISON_DIR/consumer"
         timeout-minutes: 5
+      - name: Compare historical multi-write, odd PDU and overlapping read regressions
+        run: node test/comparison/historical-s7-regressions.cjs "$S7_COMPARISON_DIR/consumer"
+        timeout-minutes: 7
+      - name: Preserve historical cross-engine evidence on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s7-historical-cross-engine
+          path: test-reports/s7-historical-cross-engine.json
+          if-no-files-found: warn
+          retention-days: 14
       - name: Keep neutral protocol proof regardless of test outcome
         if: always()
         uses: actions/upload-artifact@v4
