@@ -76,11 +76,16 @@ jobs:
           retention-days: 14
 
   rust-regression-parity:
-    name: Rust 1.4.0 installed Node-RED fault-parity vs existing JS CI
+    name: Rust 1.4.0 fault-parity (${{ matrix.scenario }})
     runs-on: ubuntu-24.04
     timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: [full, blackhole_only]
     env:
       S7_RUST_PARITY_DIR: /tmp/s7-rust-ci-parity
+      S7_RUST_PARITY_CASE: ${{ matrix.scenario }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -115,7 +120,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rust-s7-ci-parity-faults
+          name: rust-s7-ci-parity-${{ matrix.scenario }}
           path: test-reports/rust-s7-ci-parity.json
           if-no-files-found: warn
           retention-days: 14
