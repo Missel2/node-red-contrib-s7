@@ -289,20 +289,8 @@ async function main() {
       if (/HARNESS_TIMEOUT/.test(String(error))) throw error;
       lostAckOutcome = String(error.message);
     }
-    report.scenarios.lost_write_ack = {
-      result: "failed",
-      observedOutcome: lostAckOutcome,
-      ackDropsObserved: peer.droppedWrites.length,
-      fixtureApplied: peer.droppedWrites[0]?.fixtureAcknowledged ?? null,
-      totalWireWritesForAttempt: peer.writes.length - preLoss,
-      replayedWriteCount: Math.max(0, peer.writes.length - preLoss - 1),
-      elapsedMs: Math.round(performance.now() - t0),
-    };
-    assert.notEqual(
-      lostAckOutcome,
-      "unexpected_success",
-      "lost ACK cannot report success",
-    );
+
+    // Check the fault injection itself before interpreting a client result.
     await until(
       () => peer.droppedWrites.length === 1,
       2500,
@@ -311,33 +299,32 @@ async function main() {
     assert.equal(
       peer.droppedWrites[0].fixtureAcknowledged,
       true,
-      "fixture must have applied the write",
-    );
-    assert.equal(
-      peer.writes.length,
-      preLoss + 1,
-      "no duplicate write before recovery",
+      "fixture must have applied the first write",
     );
     await until(
       () => endpoint.state?.state === "connected",
       14000,
-      "Rust reconnect after lost ACK",
+      "Rust recovers after lost ACK",
     );
-    assert.deepEqual(await readValues(), { ...baseline, [tags[2]]: -8.5 });
+    const postLossValues = await readValues();
+    assert.deepEqual(postLossValues, { ...baseline, [tags[2]]: -8.5 });
     await delay(5500);
-    assert.equal(
-      peer.writes.length,
-      preLoss + 1,
-      "lost ACK cannot trigger silent wire replay",
-    );
-    record("lost_write_ack", {
-      status: "unknown_result_reported_as_error",
-      error: lostAckOutcome,
-      firstErrorMs: Math.round(performance.now() - t0),
-      appliedValue: -8.5,
-      wireWrites: 1,
-      replayedWrites: 0,
-    });
+    const totalWireWrites = peer.writes.length - preLoss;
+    const replayedWrites = Math.max(0, totalWireWrites - 1);
+    const validOutcome =
+      lostAckOutcome !== "unexpected_success" &&
+      totalWireWrites === 1 &&
+      replayedWrites === 0;
+    report.scenarios.lost_write_ack = {
+      result: validOutcome ? "passed" : "failed",
+      observedOutcome: lostAckOutcome,
+      ackDropsObserved: peer.droppedWrites.length,
+      fixtureApplied: peer.droppedWrites[0].fixtureAcknowledged,
+      totalWireWritesForAttempt: totalWireWrites,
+      replayedWriteCount: replayedWrites,
+      verifiedReadback: postLossValues[tags[2]],
+      observationMs: Math.round(performance.now() - t0),
+    };
 
     const withheldBefore = peer.withheldReads.length;
     peer.withholdReadAck = true;
@@ -424,7 +411,9 @@ async function main() {
     });
 
     assert.equal(Object.keys(report.scenarios).length, 5);
-    report.result = "passed";
+    report.result = Object.values(report.scenarios).every((scenario) => scenario.result === "passed")
+      ? "passed"
+      : "failed";
   } catch (error) {
     report.failed = String(error?.stack || error).slice(0, 3500);
   } finally {
