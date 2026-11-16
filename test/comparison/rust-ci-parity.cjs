@@ -397,18 +397,20 @@ async function main() {
     assert.equal(kernelClientCount(peer.port), 0);
     const afterRemoval = peer.cotpRequests;
     await delay(5400);
-    assert.equal(
-      peer.cotpRequests,
-      afterRemoval,
-      "removed Rust flow must not reconnect",
-    );
-    assert.equal(peer.active.size, 0, "removed flow has zero surviving peers");
-    record("blackhole_and_explicit_removal", {
+    const lateCotpAttempts = peer.cotpRequests - afterRemoval;
+    const livePeersAfterObservation = peer.active.size;
+    report.scenarios.blackhole_and_explicit_removal = {
+      result:
+        lateCotpAttempts === 0 && livePeersAfterObservation === 0
+          ? "passed"
+          : "failed",
       cotpObserved: true,
-      reconnectAttemptsAfterRemoval: 0,
-      socketsAfterRemoval: 0,
+      cotpBeforeUnloadObservation: afterRemoval,
+      cotpAfterUnloadObservation: peer.cotpRequests,
+      reconnectAttemptsAfterRemoval: lateCotpAttempts,
+      socketsAfterRemoval: livePeersAfterObservation,
       observationMs: 5400,
-    });
+    };
 
     assert.equal(Object.keys(report.scenarios).length, 5);
     report.result = Object.values(report.scenarios).every(
