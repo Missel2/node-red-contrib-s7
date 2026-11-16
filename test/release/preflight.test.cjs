@@ -11,7 +11,7 @@ const {
 function fixture() {
   const pkg = {
     name: "@missel2/node-red-contrib-s7",
-    version: "0.1.0-alpha.1",
+    version: "0.1.0-alpha.2",
     license: "GPL-3.0-or-later",
     files: ["red/", "src/"],
     publishConfig: { access: "public", tag: "alpha" },
@@ -42,7 +42,7 @@ function fixture() {
   const pack = {
     name: pkg.name,
     version: pkg.version,
-    filename: "missel2-node-red-contrib-s7-0.1.0-alpha.1.tgz",
+    filename: "missel2-node-red-contrib-s7-0.1.0-alpha.2.tgz",
     files: [
       "LICENSE",
       "README.md",
@@ -194,7 +194,7 @@ test("SBOM rejects missing locked production dependencies", () => {
     bomFormat: "CycloneDX",
     metadata: {
       component: {
-        purl: "pkg:npm/%40missel2/node-red-contrib-s7@0.1.0-alpha.1",
+        purl: "pkg:npm/%40missel2/node-red-contrib-s7@0.1.0-alpha.2",
       },
     },
     components: [
