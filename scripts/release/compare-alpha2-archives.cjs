@@ -21,7 +21,11 @@ function checkManifest(manifest, sourceCommit, platform) {
   assert.equal(manifest.package?.name, NAME);
   assert.equal(manifest.package.version, VERSION);
   assert.equal(manifest.package.distTag, "alpha");
-  assert.equal(manifest.package.fileCount, 8, "Unexpected files in npm package");
+  assert.equal(
+    manifest.package.fileCount,
+    8,
+    "Unexpected files in npm package",
+  );
   assert.ok(manifest.package.bytes > 10000, "Suspiciously short package");
   assert.match(manifest.package.sha256, /^[a-f0-9]{64}$/);
   assert.match(manifest.package.sha512, /^[a-f0-9]{128}$/);
@@ -48,13 +52,7 @@ function checkManifest(manifest, sourceCommit, platform) {
 function compareManifests(linux, windows, sourceCommit) {
   checkManifest(linux, sourceCommit, "linux");
   checkManifest(windows, sourceCommit, "win32");
-  for (const field of [
-    "fileCount",
-    "bytes",
-    "sha256",
-    "sha512",
-    "integrity",
-  ]) {
+  for (const field of ["fileCount", "bytes", "sha256", "sha512", "integrity"]) {
     assert.equal(
       linux.package[field],
       windows.package[field],
@@ -85,7 +83,9 @@ function main() {
     JSON.parse(fs.readFileSync(path.join(root, name, "manifest.json"), "utf8")),
   );
   const result = compareManifests(linux, windows, sourceCommit);
-  console.log("CONTRIB_ALPHA2_CROSS_OS_ARCHIVE_IDENTICAL=" + JSON.stringify(result));
+  console.log(
+    "CONTRIB_ALPHA2_CROSS_OS_ARCHIVE_IDENTICAL=" + JSON.stringify(result),
+  );
 }
 
 if (require.main === module) main();
