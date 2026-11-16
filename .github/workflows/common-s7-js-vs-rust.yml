@@ -216,8 +216,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          node tools/quality/node_modules/prettier/bin/prettier.cjs --write test/comparison/malformed-cotp.cjs test/comparison/malformed-read.cjs test/runtime-lab/wire-peer.cjs
+          node tools/quality/node_modules/prettier/bin/prettier.cjs --write test/comparison/malformed-cotp.cjs test/comparison/malformed-read.cjs test/runtime-lab/wire-peer.cjs scripts/ci/validate-s7-historical-issue-index.cjs docs/s7-regression-contracts.json
           node -e 'const fs=require("node:fs"); for(const [k,p] of [["COTP","test/comparison/malformed-cotp.cjs"],["READ","test/comparison/malformed-read.cjs"],["PROXY","test/runtime-lab/wire-peer.cjs"]]) console.log("PROTOCOL_FORMAT_"+k+"_B64="+fs.readFileSync(p).toString("base64"))'
+          node -e 'const fs=require("node:fs");for(const [k,p] of [["CONTRACTS","docs/s7-regression-contracts.json"],["VALIDATOR","scripts/ci/validate-s7-historical-issue-index.cjs"]])console.log("PROTOCOL_FORMAT_"+k+"_B64="+fs.readFileSync(p).toString("base64"))'
 
   released-rust-addon-platforms:
     name: Published Rust native addon on glibc and musl (no PLC)
