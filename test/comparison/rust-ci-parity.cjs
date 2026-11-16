@@ -411,7 +411,9 @@ async function main() {
     });
 
     assert.equal(Object.keys(report.scenarios).length, 5);
-    report.result = Object.values(report.scenarios).every((scenario) => scenario.result === "passed")
+    report.result = Object.values(report.scenarios).every(
+      (scenario) => scenario.result === "passed",
+    )
       ? "passed"
       : "failed";
   } catch (error) {
