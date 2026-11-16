@@ -78,16 +78,31 @@ for (const item of contracts.contracts) {
   assert.ok(["js", "rust", "both"].includes(item.target));
   if (item.implementation === "implemented") {
     implemented++;
-    assert.ok(typeof item.driver === "string" && item.driver.startsWith("test/"));
-    assert.ok(typeof item.caseMarker === "string" && item.caseMarker.length > 3);
+    assert.ok(
+      typeof item.driver === "string" && item.driver.startsWith("test/"),
+    );
+    assert.ok(
+      typeof item.caseMarker === "string" && item.caseMarker.length > 3,
+    );
     const source = fs.readFileSync(path.join(root, item.driver), "utf8");
-    assert.ok(source.includes(item.caseMarker), "Missing executable case " + item.id);
-    assert.equal(item.verdict, undefined, "Static manifest cannot assert a candidate passed");
+    assert.ok(
+      source.includes(item.caseMarker),
+      "Missing executable case " + item.id,
+    );
+    assert.equal(
+      item.verdict,
+      undefined,
+      "Static manifest cannot assert a candidate passed",
+    );
   } else {
     assert.equal(item.implementation, "pending");
     pending++;
     assert.ok(typeof item.reason === "string" && item.reason.length > 20);
-    assert.equal(item.driver, undefined, "Unimplemented case cannot have a test driver");
+    assert.equal(
+      item.driver,
+      undefined,
+      "Unimplemented case cannot have a test driver",
+    );
   }
 }
 assert.ok(implemented >= 14 && pending >= 8);
