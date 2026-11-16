@@ -6,7 +6,6 @@ const { execFileSync, spawn } = require("node:child_process");
 const { createRequire } = require("node:module");
 const { once } = require("node:events");
 const fs = require("node:fs");
-const net = require("node:net");
 const path = require("node:path");
 const readline = require("node:readline");
 const { performance } = require("node:perf_hooks");
@@ -54,13 +53,24 @@ async function until(fn, ms, what) {
   }
   throw Error("Timeout: " + what);
 }
-function openSockets(port) {
-  if (typeof process._getActiveHandles !== "function") return null;
-  return process
-    ._getActiveHandles()
-    .filter(
-      (h) => h instanceof net.Socket && !h.destroyed && h.remotePort === port,
-    ).length;
+// /proc/net/tcp reports kernel TCP sockets, including native Rust addon sockets.
+// Node's _getActiveHandles() cannot see sockets owned by the native addon.
+// Both candidates connect to the same pinned IPv4 loopback fixture.
+function establishedClientSockets(port) {
+  const rows = fs.readFileSync("/proc/net/tcp", "utf8").trim().split("\n").slice(1);
+  const fixturePortHex = port.toString(16).toUpperCase().padStart(4, "0");
+  return rows.filter((line) => {
+    const fields = line.trim().split(/\s+/);
+    const [localHost, localPort] = fields[1].split(":");
+    const [remoteHost, remotePort] = fields[2].split(":");
+    return (
+      fields[3] === "01" &&
+      localHost === "0100007F" &&
+      remoteHost === "0100007F" &&
+      remotePort === fixturePortHex &&
+      localPort !== fixturePortHex
+    );
+  }).length;
 }
 async function startFixture() {
   const python = process.env.S7_FIXTURE_PYTHON || "python";
@@ -220,12 +230,29 @@ async function exercise(mode, port) {
           );
     assert.deepEqual(result.observed, expected);
     result.readVerified = true;
+    // Positive control: the kernel must actually see the candidate's TCP
+    // connection while the Node-RED flow is still active. This detects a
+    // broken observer that would otherwise report false zero after unload.
+    result.connectedClientSockets = establishedClientSockets(port);
+    assert.ok(
+      result.connectedClientSockets >= 1,
+      mode + " must have a kernel-observed S7 TCP client",
+    );
     await deadline(helper.unload(), 8000, mode + " unload");
     loaded = false;
-    await sleep(250);
-    result.clientSocketsBeforeFixtureStop = openSockets(port);
-    assert.notEqual(result.clientSocketsBeforeFixtureStop, null);
-    assert.equal(result.clientSocketsBeforeFixtureStop, 0);
+    await until(
+      () => establishedClientSockets(port) === 0,
+      3500,
+      mode + " OS-visible TCP client teardown",
+    );
+    await sleep(300);
+    result.clientSocketsBeforeFixtureStop = establishedClientSockets(port);
+    assert.equal(
+      result.clientSocketsBeforeFixtureStop,
+      0,
+      mode + " must not retain or reopen its native/JS socket",
+    );
+    result.socketObserver = "Linux /proc/net/tcp (kernel TCP state ESTABLISHED)";
     result.closeVerified = true;
     result.status = "passed";
   } catch (error) {
