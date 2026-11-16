@@ -253,17 +253,17 @@ async function installArtifact(
     }
   }
   const nodes7 = installed["node_modules/@st-one-io/nodes7"];
-  const identity = "@missel2/nodes7@0.1.0-alpha.1";
+  const identity = "@missel2/nodes7@0.1.0-alpha.2";
   const releaseIntegrity =
-    "sha512-07lzsDrfxQ5P15iM/+rjxNVbo0gyIGWjKivXfgU/tEUQs1qO+A0upy6690qy85mG7mEiNpek1xqhRVASvb9ktw==";
+    "sha512-4Lmejz+WT5YOLHBXfdSForyHltgct5A9J1indi0Q/sxZKpGIY2omRrjSMRU6fKeW6YDAb+jwAjjEz7hQE/Z9pQ==";
   assert.equal(nodes7.name, "@missel2/nodes7");
-  assert.equal(nodes7.version, "0.1.0-alpha.1");
+  assert.equal(nodes7.version, "0.1.0-alpha.2");
   assert.equal(nodes7.integrity, releaseIntegrity);
   const aliasPackage = readJson(
     path.join(userDir, "node_modules", "@st-one-io", "nodes7", "package.json"),
   );
   assert.equal(aliasPackage.name, "@missel2/nodes7");
-  assert.equal(aliasPackage.version, "0.1.0-alpha.1");
+  assert.equal(aliasPackage.version, "0.1.0-alpha.2");
   evidence.nodes7Release = { identity, integrity: releaseIntegrity };
   evidence.transportDiffersFromRepoLock =
     installed["node_modules/iso-on-tcp"].version !==

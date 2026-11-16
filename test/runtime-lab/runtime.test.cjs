@@ -16,7 +16,7 @@ const { createWirePeer, loopback } = require("./wire-peer.cjs");
 const [, , userDir, fixturePort, evidenceFile, nodes7Identity] = process.argv;
 assert.equal(
   nodes7Identity,
-  "@missel2/nodes7@0.1.0-alpha.1",
+  "@missel2/nodes7@0.1.0-alpha.2",
   "Only the independently released nodes7 alpha is qualified",
 );
 const packageName = "@missel2/node-red-contrib-s7";

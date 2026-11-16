@@ -16,7 +16,7 @@ function fixture() {
     files: ["red/", "src/"],
     publishConfig: { access: "public", tag: "alpha" },
     dependencies: {
-      "@st-one-io/nodes7": "npm:@missel2/nodes7@0.1.0-alpha.1",
+      "@st-one-io/nodes7": "npm:@missel2/nodes7@0.1.0-alpha.2",
     },
   };
   const lock = {
@@ -30,11 +30,11 @@ function fixture() {
       },
       "node_modules/@st-one-io/nodes7": {
         name: "@missel2/nodes7",
-        version: "0.1.0-alpha.1",
+        version: "0.1.0-alpha.2",
         resolved:
-          "https://registry.npmjs.org/@missel2/nodes7/-/nodes7-0.1.0-alpha.1.tgz",
+          "https://registry.npmjs.org/@missel2/nodes7/-/nodes7-0.1.0-alpha.2.tgz",
         integrity:
-          "sha512-07lzsDrfxQ5P15iM/+rjxNVbo0gyIGWjKivXfgU/tEUQs1qO+A0upy6690qy85mG7mEiNpek1xqhRVASvb9ktw==",
+          "sha512-4Lmejz+WT5YOLHBXfdSForyHltgct5A9J1indi0Q/sxZKpGIY2omRrjSMRU6fKeW6YDAb+jwAjjEz7hQE/Z9pQ==",
       },
       "node_modules/iso-on-tcp": { version: "0.1.0" },
     },
@@ -105,6 +105,44 @@ test("wrong published alias or SHA512 integrity is rejected", () => {
   );
 });
 
+test("historical alpha.1 cannot sneak into the new source-only dependency pin", () => {
+  const { pkg, lock } = fixture();
+  const alias = "node_modules/@st-one-io/nodes7";
+  assert.throws(() =>
+    assertReleaseIdentity(
+      {
+        ...pkg,
+        dependencies: {
+          "@st-one-io/nodes7": "npm:@missel2/nodes7@0.1.0-alpha.1",
+        },
+      },
+      lock,
+    ),
+  );
+  assert.throws(() =>
+    assertReleaseIdentity(pkg, {
+      ...lock,
+      packages: {
+        ...lock.packages,
+        [alias]: { ...lock.packages[alias], version: "0.1.0-alpha.1" },
+      },
+    }),
+  );
+  assert.throws(() =>
+    assertReleaseIdentity(pkg, {
+      ...lock,
+      packages: {
+        ...lock.packages,
+        [alias]: {
+          ...lock.packages[alias],
+          resolved:
+            "https://registry.npmjs.org/@missel2/nodes7/-/nodes7-0.1.0-alpha.1.tgz",
+        },
+      },
+    }),
+  );
+});
+
 test("archive reject-list catches unexpected files and missing runtime assets", () => {
   const { pkg, pack } = fixture();
   assert.throws(() =>
@@ -131,7 +169,7 @@ test("SBOM rejects missing locked production dependencies", () => {
     SPDXID: "SPDXRef-DOCUMENT",
     packages: [
       { name: pkg.name, versionInfo: pkg.version },
-      { name: "@missel2/nodes7", versionInfo: "0.1.0-alpha.1" },
+      { name: "@missel2/nodes7", versionInfo: "0.1.0-alpha.2" },
       { name: "iso-on-tcp", versionInfo: "0.1.0" },
     ],
   };
@@ -143,7 +181,7 @@ test("SBOM rejects missing locked production dependencies", () => {
       },
     },
     components: [
-      { name: "@missel2/nodes7", version: "0.1.0-alpha.1" },
+      { name: "@missel2/nodes7", version: "0.1.0-alpha.2" },
       { name: "iso-on-tcp", version: "0.1.0" },
     ],
   };
